@@ -1,0 +1,20 @@
+{
+  "name": "catatumbo-protocol",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=4096 astro build",
+    "preview": "astro preview",
+    "test": "node tools/test-net.cjs"
+  },
+  "dependencies": {
+    "astro": "^5.0.0",
+    "phaser": "^3.87.0",
+    "playroomkit": "^0.0.73"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
+  }
+}
