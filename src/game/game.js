@@ -1879,7 +1879,16 @@ function create() {
     window.__forcePlan = (plan) => {
       if (scene.ph === S_CHOOSE || scene.ph === S_AIM) lockP1(scene, plan || WAIT_PLAN);
     };
-    window.__sceneInfo = () => ({ md: scene.md, ph: scene.ph, rt: scene.rt, hp: scene.q.us.map((u) => u.hp) });
+    window.__sceneInfo = () => ({ md: scene.md, ph: scene.ph, rt: scene.rt, hp: scene.q.us.map((u) => u.hp), us: scene.q.us.map((u) => ({ x: u.x, y: u.y, fc: u.fc })) });
+    // Reposition both mechas for deterministic grab/clash tests. Only in debug.
+    window.__forceState = (units) => {
+      units.forEach((u, i) => Object.assign(scene.q.us[i], u));
+      scene.vw.forEach((v, i) => Object.assign(v, { gx: scene.q.us[i].x, gy: scene.q.us[i].y, fc: scene.q.us[i].fc }));
+      scene.dH = scene.q.us.map((u) => u.hp);
+    };
+    // Answer sub-round UIs deterministically (throw direction / clash pick).
+    window.__forceThrow = (dir) => { if (scene.thR) scene.thR(dir); };
+    window.__forceClash = (pick) => { if (scene.clR) scene.clR(pick); };
   }
 }
 
@@ -2279,18 +2288,21 @@ const lockTurnNet = async (s, token) => {
   const dbg = BOOT.debug ? (...a) => console.log('[net]', ...a) : () => {};
   net.setSeq(s.rt);
   dbg('turn', s.rt, 'seat', net.seat, 'host', net.isHost, 'plan', JSON.stringify(s.pp));
-  // Host: how to run a turn (with scene access for its own throw/clash UI).
+  // Host: how to run a turn. The host resolves its OWN sub-rounds with local UI
+  // (askThrowLocal / askClashPick) and sources the guest's (seat 1) via net hooks.
   net.bindTurn({
     run: (plans, hooks) => resolveFullTurn(s.q, plans, {
-      throwDir: (who) => hooks.throwDir(who),
-      clashPicks: () => hooks.clashPicks(),
+      throwDir: (who) => (who === 0 ? askThrowLocal(s, 0) : hooks.guestThrowDir()),
+      clashPicks: async () => {
+        const hostPick = await askClashPick(s);
+        const guestPick = await hooks.guestClashPick();
+        return [hostPick, guestPick];
+      },
     }),
-    localThrow: () => s.thD,
-    localClash: () => (s.ci !== undefined ? CLASH_PICKS[s.ci] : CLASH_PICKS[0]),
   });
   // Guest: answer the host's mid-resolution sub-round requests with local UI.
   net.onThrowRequest = () => askThrowLocal(s, meIdx());
-  net.onClashRequest = () => askClashLocal(s);
+  net.onClashRequest = () => askClashPick(s);
 
   // Publish our plan.
   await net.submit(s.pp);
@@ -2360,9 +2372,9 @@ const askThrowLocal = (s, who) => {
   });
 };
 
-// Local clash picker: the LOCAL human always chooses via UI. The rival's pick comes
-// from the CPU (cpu mode) — net mode sources the rival pick through RPC hooks instead.
-const askClashLocal = (s) => {
+// Local clash picker: shows the UI and returns ONLY the local human's pick (a string).
+// The caller combines it with the rival's pick (CPU in cpu mode, RPC in net mode).
+const askClashPick = (s) => {
   s.ph = S_CLASH;
   s.ci = 0;
   s.phS = s.time.now;
@@ -2372,10 +2384,16 @@ const askClashLocal = (s) => {
     s.clR = (pick) => {
       s.clR = null;
       s.ph = Q_RESOLVE;
-      if (BOOT.ai) BOOT.ai.clashPick(s.lp, s.q.us[1].b).then((foe) => res([pick, foe]));
-      else res([pick, cpuClashPick(s.lp, s.q.us[1].b)]);
+      res(pick);
     };
   });
+};
+
+// CPU-mode clash: local pick + CPU pick as a pair.
+const askClashLocal = async (s) => {
+  const pick = await askClashPick(s);
+  const foe = BOOT.ai ? await BOOT.ai.clashPick(s.lp, s.q.us[1].b) : cpuClashPick(s.lp, s.q.us[1].b);
+  return [pick, foe];
 };
 
 const tweenTo = (s, o, x, y, ms) => {

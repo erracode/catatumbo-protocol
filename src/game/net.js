@@ -56,27 +56,33 @@ export async function createNetSession({ gameId, roomCode } = {}) {
   const seat = host ? 0 : 1;
 
   let seq = 0;
-  let turn = null; // { run, localThrow, localClash } set by bindTurn (host only)
+  let turn = null; // { run } set by bindTurn (host only)
 
-  const planBuf = {};
-  const planWaiters = {};
-  const waitPlan = (s) =>
+  // Plans are buffered per (seq, seat) so a plan that arrives "early" (guest advanced
+  // to turn N before the host did) is not lost. waitPlan(seq, seat) resolves when that
+  // specific plan is present.
+  const planBuf = {}; // seq -> { 0: plan, 1: plan }
+  const planWaiters = {}; // `${seq}:${seat}` -> [resolve]
+  const planKey = (sq, s) => sq + ':' + s;
+  const waitPlan = (sq, s) =>
     new Promise((res) => {
-      if (planBuf[s] !== undefined) return res(planBuf[s]);
-      (planWaiters[s] = planWaiters[s] || []).push(res);
+      const got = planBuf[sq] && planBuf[sq][s];
+      if (got !== undefined) return res(got);
+      const k = planKey(sq, s);
+      (planWaiters[k] = planWaiters[k] || []).push(res);
     });
-  const deliverPlan = (s, plan) => {
-    planBuf[s] = plan;
-    (planWaiters[s] || []).forEach((fn) => fn(plan));
-    planWaiters[s] = [];
+  const deliverPlan = (sq, s, plan) => {
+    (planBuf[sq] = planBuf[sq] || {})[s] = plan;
+    const k = planKey(sq, s);
+    (planWaiters[k] || []).forEach((fn) => fn(plan));
+    planWaiters[k] = [];
   };
 
   // --- RPC handlers ---
-  // Plan transport only: buffer the plan; the host's own lockTurnNet drives resolution.
+  // Plan transport only: buffer the plan under its seq; the host's lockTurnNet resolves.
   RPC.register(RPC_SUBMIT, async (data) => {
     if (!host) return null;
-    if (data.seq !== seq) return null;
-    deliverPlan(data.seat, data.plan);
+    deliverPlan(data.seq, data.seat, data.plan);
     return true;
   });
 
@@ -99,8 +105,11 @@ export async function createNetSession({ gameId, roomCode } = {}) {
 
     setSeq(n) {
       seq = n;
-      delete planBuf[0];
-      delete planBuf[1];
+      // Do NOT clear planBuf: a plan for this seq may already have arrived early.
+      // Prune only seqs older than the current one.
+      for (const k of Object.keys(planBuf)) {
+        if (Number(k) < n) delete planBuf[k];
+      }
     },
     bindTurn(t) {
       turn = t;
@@ -118,10 +127,10 @@ export async function createNetSession({ gameId, roomCode } = {}) {
       });
     },
 
-    // Publish our plan. Host buffers locally; guest RPCs to host.
+    // Publish our plan for the current seq. Host buffers locally; guest RPCs to host.
     async submit(plan) {
       if (host) {
-        deliverPlan(seat, plan);
+        deliverPlan(seq, seat, plan);
         return;
       }
       await RPC.call(RPC_SUBMIT, { seq, seat, plan }, RPC.Mode.HOST);
@@ -129,12 +138,13 @@ export async function createNetSession({ gameId, roomCode } = {}) {
 
     // Host: wait for both plans for the current seq (with a safety timeout).
     async waitBothPlans(timeoutMs = 60000) {
-      const both = Promise.all([waitPlan(0), waitPlan(1)]);
-      const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('waitBothPlans timeout')), timeoutMs));
+      const sq = seq;
+      const both = Promise.all([waitPlan(sq, 0), waitPlan(sq, 1)]);
+      const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('waitBothPlans timeout seq ' + sq)), timeoutMs));
       return Promise.race([both, timeout]);
     },
 
-    // Host: broadcast the resolved segments.
+    // Host: broadcast the resolved segments for the current seq.
     broadcast(segments) {
       setState(STATE_RESULT, { seq, segments });
     },
@@ -152,19 +162,14 @@ export async function createNetSession({ gameId, roomCode } = {}) {
       }
     },
 
-    // Host: run the full turn with scene access, sourcing guest sub-rounds via RPC.
+    // Host: run the full turn with scene access. The `run` callback (from game.js)
+    // handles the host's OWN sub-rounds locally; these hooks only source the GUEST's
+    // (seat 1) throw direction and clash pick over RPC.
     async runHostTurn() {
       const plans = await api.waitBothPlans();
       const hooks = {
-        throwDir: async (who) => {
-          if (who === 0) return turn.localThrow();
-          return RPC.call(RPC_THROW, { seq }, RPC.Mode.OTHERS);
-        },
-        clashPicks: async () => {
-          const hostPick = turn.localClash();
-          const guestPick = await RPC.call(RPC_CLASH, { seq }, RPC.Mode.OTHERS);
-          return [hostPick, guestPick];
-        },
+        guestThrowDir: async () => RPC.call(RPC_THROW, { seq }, RPC.Mode.OTHERS),
+        guestClashPick: async () => RPC.call(RPC_CLASH, { seq }, RPC.Mode.OTHERS),
       };
       const result = await turn.run(plans, hooks);
       api.broadcast(result.segments);
