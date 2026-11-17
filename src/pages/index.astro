@@ -6,7 +6,7 @@ import Base from '../layouts/Base.astro';
   title="CATATUMBO PROTOCOL — 1996 SEGA Saturn / PSX Archive Edition"
   description="Combate táctico de mechas 1v1 por turnos simultáneos sobre el Lago de Maracaibo. Archive Edition para navegador."
 >
-  <div class="landing-shell starfield-radar-bg">
+  <div id="content" class="landing-shell starfield-radar-bg">
     <!-- Capa CRT -->
     <div class="crt-overlay" aria-hidden="true"></div>
 
@@ -25,8 +25,8 @@ import Base from '../layouts/Base.astro';
         </div>
 
         <!-- 4 Paradas de navegación -->
-        <nav class="flex items-center gap-1 sm:gap-1.5 overflow-x-auto">
-          <button type="button" data-stop="0" id="nav-stop-0" class="nav-stop nav-stop-active">
+        <nav class="flex items-center gap-1 sm:gap-1.5 overflow-x-auto" aria-label="Archive sections">
+          <button type="button" data-stop="0" id="nav-stop-0" class="nav-stop nav-stop-active" aria-current="true">
             01 PORTADA
           </button>
           <button type="button" data-stop="1" id="nav-stop-1" class="nav-stop">
@@ -78,9 +78,17 @@ import Base from '../layouts/Base.astro';
             </div>
 
             <p class="text-slate-200 text-sm sm:text-base leading-relaxed border-l-2 border-[#FF2A55] pl-3.5 bg-white/5 py-2">
-              Combate táctico de mechas <strong>1v1 por turnos simultáneos</strong> sobre el Lago de Maracaibo.
-              Predice la maniobra enemiga, aprovecha la cobertura del Puente Rafael Urdaneta y sobrevive al relámpago eterno.
+              Duelo de mechas <strong>1v1 por turnos simultáneos</strong> sobre el Lago de Maracaibo.
+              Ambos pilotos eligen su acción en secreto y la resuelven a la vez: la <strong>velocidad</strong> decide quién golpea primero.
+              Encadena <strong>posturas</strong>, gasta <strong>Guts</strong> en especiales y sobrevive al relámpago del Catatumbo.
             </p>
+
+            <!-- Ticker de mecánicas reales -->
+            <div class="ticker bg-black border border-[#10F57A]/40 py-1" aria-hidden="true">
+              <span class="ticker__track mono-font text-[10px] font-bold tracking-wider text-[#10F57A]">
+                &gt;&gt; MECHA SIMULTACTICS · ACCIONES SECRETAS · ORDEN POR VELOCIDAD · POSTURAS: NORMAL→ATURDIDO→RETROCESO→DERRIBADO · GUTS DESDE PARRY/AGARRE/PETRÓLEO · RAYO CATATUMBO 12 DMG · VERDÍN 8 DMG · PETRÓLEO 10 DMG · LANZAMIENTOS ROMPEN PUENTE Y PALAFITOS &lt;&lt;
+              </span>
+            </div>
 
             <!-- Ficha de Precio + Selector de Modo -->
             <div class="bg-[#09121C] border border-slate-700 p-4 space-y-3">
@@ -101,9 +109,9 @@ import Base from '../layouts/Base.astro';
                 >
                   <div>
                     <div class="pixel-font text-[10px] sm:text-[11px] font-bold">[ 1P VS CPU ]</div>
-                    <div class="mono-font text-[11px] font-bold opacity-80">Modo Arcade Solo</div>
+                    <div class="mono-font text-[11px] font-bold opacity-80">Arcade gauntlet · 5 rivales + jefe</div>
                   </div>
-                  <span class="pixel-font text-xs">▶</span>
+                  <span class="pixel-font text-xs" aria-hidden="true">▶</span>
                 </a>
 
                 <a
@@ -112,7 +120,7 @@ import Base from '../layouts/Base.astro';
                 >
                   <div>
                     <div class="pixel-font text-[10px] sm:text-[11px] font-bold text-[#00F0FF]">[ 2P ONLINE - PLAYROOM ]</div>
-                    <div class="mono-font text-[11px] text-slate-300">Sala P2P Instantánea</div>
+                    <div class="mono-font text-[11px] text-slate-300">Sala P2P con código</div>
                   </div>
                   <span class="pixel-font text-[10px] text-[#00F0FF]">NET</span>
                 </a>
@@ -164,10 +172,10 @@ import Base from '../layouts/Base.astro';
                   VR.RELAMPAGO
                 </div>
                 <div id="bp-weapons" class="mono-font text-[11px] text-[#FFD23F] font-bold leading-snug pt-1">
-                  BEAM SABER<br />CATATUMBO RIFLE<br />HYDRO DASH
+                  RAYO OCULTO<br />CORTE V / CORTE H<br />ESQUIVA + TELEPORTE
                 </div>
                 <div id="bp-stats" class="mono-font text-[10px] text-slate-300 border-t border-slate-800 pt-1">
-                  MOBILITY: 92% | OUTPUT: 4800 KW | ARMOR: B+
+                  HP: 160 | VEL: ALTA | POSTURA: BALANCE
                 </div>
                 <div id="bp-sector" class="pixel-font text-[9px] text-[#10F57A]">
                   SECTOR: PUENTE RAFAEL URDANETA
@@ -180,15 +188,15 @@ import Base from '../layouts/Base.astro';
               <button type="button" id="mech-card-0" data-mech="0" class="mech-card active w-full p-2 text-left flex items-center justify-between gap-3 cursor-pointer">
                 <div>
                   <div class="pixel-font text-[10px] sm:text-[11px] text-[#00F0FF] font-bold">01. VR.RELAMPAGO (MBV-04)</div>
-                  <div class="mono-font text-[11px] text-slate-300">Equilibrado • Sable de Plasma + Impulso Eléctrico</div>
+                  <div class="mono-font text-[11px] text-slate-300">Equilibrado • Rayo Oculto + Esquiva</div>
                 </div>
-                <span class="bg-[#00F0FF] text-black pixel-font text-[9px] px-2 py-0.5 font-bold">SPD S</span>
+                <span class="bg-[#00F0FF] text-black pixel-font text-[9px] px-2 py-0.5 font-bold">VEL S</span>
               </button>
 
               <button type="button" id="mech-card-1" data-mech="1" class="mech-card w-full p-2 text-left flex items-center justify-between gap-3 cursor-pointer">
                 <div>
                   <div class="pixel-font text-[10px] sm:text-[11px] text-[#10F57A] font-bold">02. VR.PALAFITO (XBV-13)</div>
-                  <div class="mono-font text-[11px] text-slate-300">Anfibio Ligero • Minas Flotantes + Arco Tesla</div>
+                  <div class="mono-font text-[11px] text-slate-300">Anfibio Ágil • Orbe Rayo + Teleporte</div>
                 </div>
                 <span class="bg-[#10F57A] text-black pixel-font text-[9px] px-2 py-0.5 font-bold">EVA A+</span>
               </button>
@@ -196,7 +204,7 @@ import Base from '../layouts/Base.astro';
               <button type="button" id="mech-card-2" data-mech="2" class="mech-card w-full p-2 text-left flex items-center justify-between gap-3 cursor-pointer">
                 <div>
                   <div class="pixel-font text-[10px] sm:text-[11px] text-[#FF2A55] font-bold">03. VR.URDANETA (RVR-01)</div>
-                  <div class="mono-font text-[11px] text-slate-300">Artillería Pesada • Railgun + Escudo Aegis</div>
+                  <div class="mono-font text-[11px] text-slate-300">Pesado • Cañón Solazo + Escudo</div>
                 </div>
                 <span class="bg-[#FF2A55] text-white pixel-font text-[9px] px-2 py-0.5 font-bold">DEF MAX</span>
               </button>
@@ -229,7 +237,7 @@ import Base from '../layouts/Base.astro';
             </div>
 
             <p class="mono-font text-[11px] font-bold text-black/90 mb-2.5 leading-snug">
-              Aborda tu Virtualoid de 50 pies y prepárate para duelos tácticos simultáneos a 360° straight out of the Arcade.
+              Pilota tu Virtualoid en duelos tácticos simultáneos sobre el Lago de Maracaibo. Acciones secretas, orden por velocidad y el relámpago eterno del Catatumbo, straight out of the Arcade.
             </p>
 
             <!-- 4 Capturas enmarcadas en rojo (compactas) -->
@@ -239,7 +247,7 @@ import Base from '../layouts/Base.astro';
                   <canvas id="shot-1" width="320" height="145" class="w-full h-auto block"></canvas>
                 </div>
                 <p class="text-[11px] font-bold leading-tight">
-                  <strong>Duelo Isométrico:</strong> Turnos simultáneos en el Lago.
+                  <strong>Duelo Simultáneo:</strong> Ambos eligen en secreto; la velocidad decide.
                 </p>
               </div>
 
@@ -248,7 +256,7 @@ import Base from '../layouts/Base.astro';
                   <canvas id="shot-2" width="320" height="145" class="w-full h-auto block"></canvas>
                 </div>
                 <p class="text-[11px] font-bold leading-tight">
-                  <strong>Impacto en Puente:</strong> Descargas del Catatumbo.
+                  <strong>Rayo del Catatumbo:</strong> 12 DMG en la casilla marcada.
                 </p>
               </div>
 
@@ -257,7 +265,7 @@ import Base from '../layouts/Base.astro';
                   <canvas id="shot-3" width="320" height="145" class="w-full h-auto block"></canvas>
                 </div>
                 <p class="text-[11px] font-bold leading-tight">
-                  <strong>Palafitos:</strong> Cobertura anfibia y minas.
+                  <strong>Palafitos:</strong> Lanza al rival y rompe la cobertura.
                 </p>
               </div>
 
@@ -266,7 +274,7 @@ import Base from '../layouts/Base.astro';
                   <canvas id="shot-4" width="320" height="145" class="w-full h-auto block"></canvas>
                 </div>
                 <p class="text-[11px] font-bold leading-tight">
-                  <strong>Sables Láser:</strong> Combate P2P Playroom Kit.
+                  <strong>Posturas:</strong> Encadena Aturdido→Retroceso→Derribado.
                 </p>
               </div>
             </div>
@@ -326,12 +334,27 @@ import Base from '../layouts/Base.astro';
               </div>
               <div class="bg-black p-2 border border-slate-800 text-center">
                 <kbd class="bg-[#00F0FF] text-black pixel-font text-[8px] px-1.5 py-0.5 border border-black font-bold block mb-1">TECLA U</kbd>
-                <span class="text-slate-300 font-bold">SABER</span>
+                <span class="text-slate-300 font-bold">ACCIÓN 1</span>
               </div>
               <div class="bg-black p-2 border border-slate-800 text-center">
                 <kbd class="bg-[#FF2A55] text-white pixel-font text-[8px] px-1.5 py-0.5 border border-black font-bold block mb-1">TECLA I</kbd>
-                <span class="text-slate-300 font-bold">GUARDIA</span>
+                <span class="text-slate-300 font-bold">ACCIÓN 2</span>
               </div>
+            </div>
+            <p class="mono-font text-[10px] text-slate-400 leading-snug">
+              <span class="text-[#10F57A] font-bold">ENTER</span> = START. En <span class="text-[#00F0FF] font-bold">2P online</span> cada piloto usa su propio teclado.
+            </p>
+
+            <!-- Cómo se juega (mecánicas reales) -->
+            <div class="bg-black/60 border border-slate-800 p-2.5 space-y-1.5">
+              <div class="pixel-font text-[9px] text-[#FFD23F]">MECHA SIMULTACTICS</div>
+              <ul class="mono-font text-[10px] text-slate-300 leading-snug space-y-1 list-none">
+                <li><span class="text-[#00F0FF] font-bold">SIMULTÁNEO:</span> ambos eligen acción en secreto y resuelven a la vez.</li>
+                <li><span class="text-[#00F0FF] font-bold">VELOCIDAD:</span> la acción más rápida golpea primero; si choca, clash.</li>
+                <li><span class="text-[#00F0FF] font-bold">POSTURAS:</span> Normal→Aturdido→Retroceso→Derribado; encadena para rematar.</li>
+                <li><span class="text-[#00F0FF] font-bold">GUTS:</span> se llena con parry, agarres y petróleo; gástalo en especiales.</li>
+                <li><span class="text-[#00F0FF] font-bold">ZONAS:</span> rayo Catatumbo, verdín resbaladizo y petróleo explosivo.</li>
+              </ul>
             </div>
 
             <!-- Top 5 High Scores compacto -->
@@ -363,7 +386,7 @@ import Base from '../layouts/Base.astro';
 
             <!-- Nota de origen -->
             <div class="p-2.5 bg-[#10F57A]/10 border-l-2 border-[#10F57A] text-[10px] text-slate-300 leading-snug">
-              <strong class="text-[#10F57A]">ORIGEN:</strong> Prototipado en <strong>Platanus Hack 26</strong> (&lt;50 KB) y expandido con <strong>Playroom Kit</strong> para duelos online.
+              <strong class="text-[#10F57A]">ORIGEN:</strong> Nacido en <strong>Platanus Hack 26 — Arcade Challenge</strong> (&lt;50 KB) y expandido con <strong>Playroom Kit</strong> para duelos online 2P.
             </div>
 
             <!-- Botón lanzar disco -->
@@ -695,6 +718,39 @@ import Base from '../layouts/Base.astro';
     }
   }
 
+  /* Skip-link target: scroll-margin keeps the fixed nav from covering it. */
+  #content {
+    scroll-margin-top: 64px;
+  }
+
+  /* Accessible focus ring for icon/knob buttons that rely on the global ring. */
+  .nav-stop:focus-visible,
+  #btn-manual-lid:focus-visible {
+    outline: 2px solid #00f0ff;
+    outline-offset: 2px;
+  }
+
+  /* Marquee ticker strip (top of landing). GPU-only transform; pauses on hover. */
+  .ticker {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .ticker__track {
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 28s linear infinite;
+    will-change: transform;
+  }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-100%); }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ticker:hover .ticker__track {
+      animation-play-state: paused;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -709,6 +765,11 @@ import Base from '../layouts/Base.astro';
     .mech-card,
     .nav-stop {
       transition-duration: 0.01ms;
+    }
+    /* Stop the infinite ticker; keep it readable as a static line. */
+    .ticker__track {
+      animation: none;
+      padding-left: 0;
     }
   }
 </style>
@@ -1116,8 +1177,9 @@ import Base from '../layouts/Base.astro';
     ctx.fillStyle = '#00F0FF';
     ctx.font = 'bold 12px monospace';
     ctx.fillText('WASD : MOVE CURSOR', 26, 76);
-    ctx.fillText('U    : BEAM SABER', 26, 100);
-    ctx.fillText('I    : AEGIS GUARD', 26, 124);
+    ctx.fillText('U    : ACTION 1', 26, 100);
+    ctx.fillText('I    : ACTION 2', 26, 124);
+    ctx.fillText('ENTER: START', 26, 148);
 
     ctx.fillStyle = '#10F57A';
     ctx.fillText('LAKE MARACAIBO SECTOR', 26, 166);
@@ -1482,7 +1544,11 @@ import Base from '../layouts/Base.astro';
       const panel = document.getElementById(`panel-${i}`);
       const navBtn = document.getElementById(`nav-stop-${i}`);
       if (panel) panel.classList.toggle('active', i === activeStop);
-      if (navBtn) navBtn.classList.toggle('nav-stop-active', i === activeStop);
+      if (navBtn) {
+        navBtn.classList.toggle('nav-stop-active', i === activeStop);
+        if (i === activeStop) navBtn.setAttribute('aria-current', 'true');
+        else navBtn.removeAttribute('aria-current');
+      }
     }
 
     const stageNames = [
@@ -1516,6 +1582,7 @@ import Base from '../layouts/Base.astro';
   }
 
   let lastFrame = performance.now();
+  const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   function animate3D() {
     requestAnimationFrame(animate3D);
     if (!jewelCaseGroup) return;
@@ -1524,20 +1591,24 @@ import Base from '../layouts/Base.astro';
     const dt = Math.min(0.05, (now - lastFrame) / 1000);
     lastFrame = now;
 
+    const reduceMotion = reduceMotionQuery.matches;
+    // With reduced motion, snap to targets instead of easing, and skip the idle bob.
+    const ease = reduceMotion ? 1 : 0.12;
+
     // Lee continuamente el progreso del scroll en cada frame
     updateScrollStory();
 
-    currentPose.posX += (targetPose.posX - currentPose.posX) * 0.12;
-    currentPose.posY += (targetPose.posY - currentPose.posY) * 0.12;
-    currentPose.posZ += (targetPose.posZ - currentPose.posZ) * 0.12;
-    currentPose.rotY += (targetPose.rotY - currentPose.rotY) * 0.12;
-    currentPose.rotX += (targetPose.rotX - currentPose.rotX) * 0.12;
+    currentPose.posX += (targetPose.posX - currentPose.posX) * ease;
+    currentPose.posY += (targetPose.posY - currentPose.posY) * ease;
+    currentPose.posZ += (targetPose.posZ - currentPose.posZ) * ease;
+    currentPose.rotY += (targetPose.rotY - currentPose.rotY) * ease;
+    currentPose.rotX += (targetPose.rotX - currentPose.rotX) * ease;
 
     const desiredLid = manualLidOverride !== null ? (manualLidOverride ? -2.15 : 0) : targetPose.lidAngle;
     const desiredPop = manualLidOverride !== null ? (manualLidOverride ? 1 : 0) : targetPose.discPop;
 
-    currentPose.lidAngle += (desiredLid - currentPose.lidAngle) * 0.12;
-    currentPose.discPop += (desiredPop - currentPose.discPop) * 0.12;
+    currentPose.lidAngle += (desiredLid - currentPose.lidAngle) * ease;
+    currentPose.discPop += (desiredPop - currentPose.discPop) * ease;
 
     // Si el usuario abre la tapa manualmente en cualquier parada, ajusta el encuadre
     const manualZoomOffset = manualLidOverride ? -1.1 : 0;
@@ -1546,7 +1617,7 @@ import Base from '../layouts/Base.astro';
     jewelCaseGroup.scale.setScalar(currentPose.scale);
     jewelCaseGroup.position.set(
       currentPose.posX + manualShiftX,
-      currentPose.posY + Math.sin(Date.now() * 0.0025) * 0.04,
+      currentPose.posY + (reduceMotion ? 0 : Math.sin(Date.now() * 0.0025) * 0.04),
       currentPose.posZ + manualZoomOffset
     );
     jewelCaseGroup.rotation.y = currentPose.rotY + dragRotY;
@@ -1588,8 +1659,8 @@ import Base from '../layouts/Base.astro';
       code: 'MBV-04-MCBO',
       fullName: 'MBV-04-MCBO RELAMPAGO',
       shortName: 'VR.RELAMPAGO',
-      weapons: 'BEAM SABER<br/>CATATUMBO RIFLE<br/>HYDRO DASH',
-      stats: 'MOBILITY: 92% | OUTPUT: 4800 KW | ARMOR: B+',
+      weapons: 'RAYO OCULTO<br/>CORTE V / CORTE H<br/>ESQUIVA + TELEPORTE',
+      stats: 'HP: 160 | VEL: ALTA | POSTURA: BALANCE',
       sector: 'SECTOR: PUENTE RAFAEL URDANETA',
       primary: '#1D4ED8',
       trim: '#FFD23F',
@@ -1614,8 +1685,8 @@ import Base from '../layouts/Base.astro';
       code: 'XBV-13-ZULIA',
       fullName: 'XBV-13-ZULIA PALAFITO',
       shortName: 'VR.PALAFITO',
-      weapons: 'ARC TESLA COIL<br/>FLOATING MINES<br/>AMPHIBIAN STEP',
-      stats: 'MOBILITY: 98% | OUTPUT: 4100 KW | ARMOR: C+',
+      weapons: 'ORBE RAYO<br/>TELEPORTE<br/>ESQUIVA ANFIBIA',
+      stats: 'HP: 160 | VEL: MUY ALTA | POSTURA: ÁGIL',
       sector: 'SECTOR: SANTA ROSA DE AGUA',
       primary: '#16A34A',
       trim: '#00F0FF',
@@ -1635,8 +1706,8 @@ import Base from '../layouts/Base.astro';
       code: 'RVR-01-LAGO',
       fullName: 'RVR-01-LAGO URDANETA',
       shortName: 'VR.URDANETA',
-      weapons: 'HEAVY RAILGUN<br/>AEGIS BARRIER<br/>SIEGE THRUSTER',
-      stats: 'MOBILITY: 74% | OUTPUT: 6200 KW | ARMOR: S',
+      weapons: 'CAÑÓN SOLAZO<br/>CORTE H (ÁREA)<br/>ESCUDO + AGARRE',
+      stats: 'HP: 160 | VEL: BAJA | POSTURA: PESADO',
       sector: 'SECTOR: CANAL DE NAVEGACIÓN',
       primary: '#DC2626',
       trim: '#E2E8F0',

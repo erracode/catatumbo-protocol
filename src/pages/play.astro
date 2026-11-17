@@ -3,8 +3,26 @@ import Base from '../layouts/Base.astro';
 ---
 <Base title="Catatumbo Protocol — Play">
   <main class="play-shell">
+    <div class="play-bar">
+      <a href="/" class="play-home mono-font" aria-label="Back to archive landing">
+        <span aria-hidden="true">◀</span> ARCHIVE
+      </a>
+      <span class="play-bar-title pixel-font">CATATUMBO PROTOCOL</span>
+      <button
+        type="button"
+        id="fs-toggle"
+        class="fs-btn"
+        aria-label="Enter fullscreen"
+        aria-pressed="false"
+        title="Fullscreen (F)"
+      >
+        <span class="fs-icon" aria-hidden="true">⛶</span>
+        <span class="fs-label pixel-font">FULLSCREEN</span>
+      </button>
+    </div>
+
     <div id="game-root"></div>
-    <div id="net-status" class="net-status" hidden></div>
+    <div id="net-status" class="net-status" role="status" aria-live="polite" hidden></div>
   </main>
 </Base>
 
@@ -17,17 +35,146 @@ import Base from '../layouts/Base.astro';
     min-height: 100vh;
     padding: 16px;
     gap: 12px;
+    background: #071019;
   }
+
+  /* Top bar: back link, title, fullscreen toggle */
+  .play-bar {
+    width: min(800px, 100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 6px 8px;
+    border: 1px solid #14324a;
+    background: #05070a;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .play-bar-title {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: #ffd23f;
+    text-align: center;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .play-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #10f57a;
+    text-decoration: none;
+    padding: 6px 8px;
+    border: 1px solid #10f57a;
+    transition: background-color 0.14s ease, color 0.14s ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .play-home:hover {
+      background: #10f57a;
+      color: #000;
+    }
+  }
+  .play-home:focus-visible {
+    outline: 2px solid #00f0ff;
+    outline-offset: 2px;
+  }
+
+  /* Fullscreen button — square, neon, pixel/mono */
+  .fs-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+    padding: 6px 10px;
+    background: #0b1928;
+    color: #00f0ff;
+    border: 2px solid #00f0ff;
+    box-shadow: 3px 3px 0 #000;
+    cursor: pointer;
+    transition: transform 0.12s cubic-bezier(0.23, 1, 0.32, 1),
+      box-shadow 0.12s cubic-bezier(0.23, 1, 0.32, 1),
+      background-color 0.14s ease, color 0.14s ease;
+  }
+  .fs-icon {
+    font-size: 15px;
+    line-height: 1;
+    transform: translateY(-0.5px);
+  }
+  .fs-label {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .fs-btn:hover {
+      background: #00f0ff;
+      color: #000;
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 #000;
+    }
+  }
+  .fs-btn:active {
+    transform: translate(2px, 2px) scale(0.98);
+    box-shadow: 1px 1px 0 #000;
+  }
+  .fs-btn:focus-visible {
+    outline: 2px solid #ffd23f;
+    outline-offset: 2px;
+  }
+  .fs-btn[aria-pressed='true'] {
+    background: #ffd23f;
+    color: #000;
+    border-color: #ffd23f;
+  }
+
   #game-root {
     width: min(800px, 100%);
     aspect-ratio: 4 / 3;
     box-shadow: 0 0 60px rgba(77, 208, 255, 0.15);
     border: 1px solid #14324a;
+    background: #05070a;
+    overflow: hidden;
   }
+
+  /* Fullscreen: fill the viewport, letterbox the 4:3 Phaser canvas via FIT */
+  #game-root:fullscreen,
+  #game-root.is-fullscreen {
+    width: 100vw;
+    height: 100vh;
+    aspect-ratio: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #071019;
+    border: none;
+    box-shadow: none;
+    overflow: hidden;
+  }
+  #game-root:fullscreen canvas,
+  #game-root.is-fullscreen canvas {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
   .net-status {
     font-size: 13px;
     color: #7fb8dd;
     letter-spacing: 0.04em;
+    text-align: center;
+    max-width: min(800px, 100%);
+    overflow-wrap: anywhere;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fs-btn,
+    .play-home {
+      transition-duration: 0.01ms;
+    }
   }
 </style>
 
@@ -43,6 +190,62 @@ import Base from '../layouts/Base.astro';
     statusEl.hidden = !msg;
     statusEl.textContent = msg || '';
   }
+
+  // ---- Fullscreen (browser Fullscreen API on the #game-root container) ----
+  const gameRoot = document.getElementById('game-root');
+  const fsBtn = document.getElementById('fs-toggle');
+  const fsLabel = fsBtn?.querySelector('.fs-label');
+  const fsIcon = fsBtn?.querySelector('.fs-icon');
+
+  function syncFullscreenUi() {
+    const active = !!document.fullscreenElement;
+    if (fsBtn) {
+      fsBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      fsBtn.setAttribute('aria-label', active ? 'Exit fullscreen' : 'Enter fullscreen');
+      fsBtn.setAttribute('title', active ? 'Exit fullscreen (F)' : 'Fullscreen (F)');
+    }
+    if (fsLabel) fsLabel.textContent = active ? 'EXIT' : 'FULLSCREEN';
+    if (fsIcon) fsIcon.textContent = active ? '⤢' : '⛶';
+    gameRoot?.classList.toggle('is-fullscreen', active);
+  }
+
+  async function toggleFullscreen() {
+    if (!gameRoot) return;
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else if (gameRoot.requestFullscreen) {
+        await gameRoot.requestFullscreen();
+      } else if ((gameRoot as any).webkitRequestFullscreen) {
+        // Safari fallback
+        (gameRoot as any).webkitRequestFullscreen();
+      }
+    } catch (err) {
+      // Some browsers block fullscreen without a direct user gesture, or the
+      // element can't be fullscreened. Fail silently and keep state in sync.
+      console.warn('Fullscreen request rejected:', err);
+    } finally {
+      syncFullscreenUi();
+    }
+  }
+
+  fsBtn?.addEventListener('click', toggleFullscreen);
+  document.addEventListener('fullscreenchange', syncFullscreenUi);
+  document.addEventListener('webkitfullscreenchange', syncFullscreenUi);
+
+  // Keyboard shortcut: F toggles fullscreen, only when not typing and not
+  // colliding with game controls (W/A/S/D + U/I/O/J/K/L + Enter). F is free.
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'f' && e.key !== 'F') return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const t = e.target as HTMLElement | null;
+    const tag = t?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || t?.isContentEditable) return;
+    e.preventDefault();
+    toggleFullscreen();
+  });
+
+  syncFullscreenUi();
 
   async function start() {
     if (mode === 'net') {

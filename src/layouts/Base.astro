@@ -13,6 +13,7 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#05070a" />
     <link rel="icon" type="image/png" href="/cover.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,6 +25,7 @@ const {
     <slot name="head" />
   </head>
   <body>
+    <a class="skip-link pixel-font" href="#content">SKIP TO CONTENT</a>
     <slot />
   </body>
 </html>
@@ -38,4 +40,30 @@ const {
     min-height: 100vh;
   }
   a { color: #4dd0ff; }
+
+  /* Keyboard-only skip link: hidden until focused. */
+  .skip-link {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 100;
+    padding: 8px 12px;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: #000;
+    background: #ffd23f;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 #000;
+    text-decoration: none;
+    transform: translateY(-160%);
+    transition: transform 0.16s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .skip-link:focus-visible {
+    transform: translateY(0);
+    outline: 2px solid #00f0ff;
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skip-link { transition-duration: 0.01ms; }
+  }
 </style>

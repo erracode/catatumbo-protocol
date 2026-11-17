@@ -1,1 +1,46 @@
 @import "tailwindcss";
+
+/* =========================================================================
+   GLOBAL FOUNDATIONS (shared by landing + play)
+   PSX / Sega Saturn / Virtual-On arcade shell. Square corners, neon palette.
+   ========================================================================= */
+
+:root {
+  --space-black: #05070a;
+  --saturn-yellow: #ffd23f;
+  --holo-cyan: #00f0ff;
+  --radar-green: #10f57a;
+  --arcade-red: #ff2a55;
+
+  /* Shared motion curves (strong ease-out for UI feedback) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Crisper text on macOS */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Dynamic numbers (scores, HP, timers) never shift the layout */
+  font-variant-numeric: tabular-nums;
+}
+
+/* Consistent, high-contrast keyboard focus across the whole app.
+   Mouse users never see it; keyboard users always do. */
+:focus-visible {
+  outline: 2px solid var(--holo-cyan);
+  outline-offset: 2px;
+}
+
+/* Respect the OS "reduce motion" preference everywhere.
+   Keep opacity/color (aids comprehension); drop movement + looping animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
