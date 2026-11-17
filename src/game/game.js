@@ -41,7 +41,7 @@ const makeStorage = () => {
 // `myIndex` is which global unit index the LOCAL human controls (0 in CPU mode; in net
 // mode it is the player's seat). The camera and radial menu anchor to this unit, so
 // each client sees its own mecha up front without mirroring world coordinates.
-const BOOT = { ai: null, storage: makeStorage(), mode: 'cpu', myIndex: 0, net: null };
+const BOOT = { ai: null, storage: makeStorage(), mode: 'cpu', myIndex: 0, net: null, debug: false };
 
 const W = 800;
 const H = 600;
@@ -1870,7 +1870,17 @@ function create() {
       this.top = [...this.top, ...ok].sort((a, b) => b.s - a.s).slice(0, 5);
     }).catch(() => {});
   } catch (e) {}
-  resetMatch(this, MD_ATTRACT);
+  // Net mode starts straight into the match (no CPU-vs-CPU attract loop).
+  resetMatch(this, BOOT.mode === 'net' ? S_PLAY : MD_ATTRACT);
+  // Debug hook (only with ?debug=1): force-lock a plan so e2e tests don't depend on
+  // fragile menu input. Exposed on window for Playwright.
+  if (BOOT.debug) {
+    const scene = this;
+    window.__forcePlan = (plan) => {
+      if (scene.ph === S_CHOOSE || scene.ph === S_AIM) lockP1(scene, plan || WAIT_PLAN);
+    };
+    window.__sceneInfo = () => ({ md: scene.md, ph: scene.ph, rt: scene.rt, hp: scene.q.us.map((u) => u.hp) });
+  }
 }
 
 function update(time, delta) {
@@ -1945,6 +1955,7 @@ const resetMatch = (s, mode, next) => {
   s.lp = null;
   s.clR = null;
   s.thR = null;
+  s.locking = false;
   s.mp = { col: 0, row: 0, o: 0 };
   s.wa = 0;
   if (mode === MD_ATTRACT) s.as = s.time.now;
@@ -2108,7 +2119,7 @@ const handleInput = (s, time) => {
     return;
   }
   if (s.ph === Q_LOCKED) {
-    if (time > s.cRdy + 300) lockTurn(s);
+    if (!s.locking && time > s.cRdy + 300) lockTurn(s);
     return;
   }
   if (s.ph !== S_CHOOSE && s.ph !== S_AIM) return;
@@ -2236,28 +2247,38 @@ const resolveFullTurn = async (q, plans, hooks) => {
 
 const lockTurn = async (s) => {
   const token = s.tk;
+  s.locking = true;
   s.ph = Q_RESOLVE;
 
   // Net mode: host-authoritative. The host resolves the whole turn (incl. RNG and
   // sub-rounds) and broadcasts the segments; the guest just replays them.
-  if (BOOT.mode === 'net' && BOOT.net) return lockTurnNet(s, token);
+  if (BOOT.mode === 'net' && BOOT.net) {
+    try { await lockTurnNet(s, token); } finally { s.locking = false; }
+    return;
+  }
 
   // CPU mode: resolve locally. The rival's plan is s.cp (computed in beginTurn).
-  const { state, segments } = await resolveFullTurn(s.q, [s.pp, s.cp], {
-    throwDir: (who) => askThrowLocal(s, who),
-    clashPicks: () => askClashLocal(s),
-  });
-  if (token !== s.tk) return;
-  await playSegments(s, segments, token);
-  if (token !== s.tk) return;
-  s.q = state;
-  await finishTurnView(s);
+  try {
+    const { state, segments } = await resolveFullTurn(s.q, [s.pp, s.cp], {
+      throwDir: (who) => askThrowLocal(s, who),
+      clashPicks: () => askClashLocal(s),
+    });
+    if (token !== s.tk) return;
+    await playSegments(s, segments, token);
+    if (token !== s.tk) return;
+    s.q = state;
+    await finishTurnView(s);
+  } finally {
+    s.locking = false;
+  }
 };
 
 // Net turn: publish our plan. Host resolves + broadcasts; guest waits + replays.
 const lockTurnNet = async (s, token) => {
   const net = BOOT.net;
+  const dbg = BOOT.debug ? (...a) => console.log('[net]', ...a) : () => {};
   net.setSeq(s.rt);
+  dbg('turn', s.rt, 'seat', net.seat, 'host', net.isHost, 'plan', JSON.stringify(s.pp));
   // Host: how to run a turn (with scene access for its own throw/clash UI).
   net.bindTurn({
     run: (plans, hooks) => resolveFullTurn(s.q, plans, {
@@ -2273,6 +2294,7 @@ const lockTurnNet = async (s, token) => {
 
   // Publish our plan.
   await net.submit(s.pp);
+  dbg('plan submitted');
   if (token !== s.tk) return;
 
   let segments;
@@ -2280,14 +2302,17 @@ const lockTurnNet = async (s, token) => {
     // Host: we have (or will get) the guest's plan via RPC; run the turn ourselves.
     const result = await net.runHostTurn();
     segments = result.segments;
+    dbg('host resolved', segments.length, 'segments');
   } else {
     // Guest: wait for the host's broadcast.
     segments = await net.awaitResult();
+    dbg('guest got', segments.length, 'segments');
   }
   if (token !== s.tk) return;
   await playSegments(s, segments, token);
   if (token !== s.tk) return;
   s.q = segments.length ? segments[segments.length - 1].state : s.q;
+  dbg('turn applied, hp', s.q.us.map((u) => u.hp).join('/'));
   await finishTurnView(s);
 };
 
@@ -3043,6 +3068,7 @@ export function bootGame(opts = {}) {
   if (opts.mode) BOOT.mode = opts.mode;
   if (opts.net) BOOT.net = opts.net;
   if (opts.myIndex !== undefined) BOOT.myIndex = opts.myIndex;
+  if (opts.debug !== undefined) BOOT.debug = opts.debug;
   BOOT.ai = opts.ai || (BOOT.mode === 'net' ? null : CpuController);
   if (opts.parent) config.parent = opts.parent;
   return new Phaser.Game(config);

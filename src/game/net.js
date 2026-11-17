@@ -32,8 +32,10 @@ import {
   insertCoin,
   isHost,
   getRoomCode,
+  getState,
   setState,
   waitForState,
+  onPlayerJoin,
   RPC,
 } from 'playroomkit';
 
@@ -47,7 +49,8 @@ export async function createNetSession({ gameId, roomCode } = {}) {
   if (!id) throw new Error('Playroom gameId missing: pass ?gameId=... in the URL');
   const code = roomCode || new URLSearchParams(location.search).get('r') || undefined;
 
-  await insertCoin({ gameId: id, roomCode: code, skipLobby: false });
+  // skipLobby: we run our own minimal flow (no profile needed for a duel).
+  await insertCoin({ gameId: id, roomCode: code, skipLobby: true, maxPlayersPerRoom: 2 });
 
   const host = isHost();
   const seat = host ? 0 : 1;
@@ -103,6 +106,18 @@ export async function createNetSession({ gameId, roomCode } = {}) {
       turn = t;
     },
 
+    // Resolves the first time another player joins (or immediately if one already
+    // did). Used to gate the match start and to show "opponent joined" UI.
+    waitForOpponent() {
+      return new Promise((resolve) => {
+        const off = onPlayerJoin(() => { off && off(); resolve(); });
+        // onPlayerJoin fires for future joins; if the opponent is already here the
+        // host's turn loop simply won't block (plans arrive via RPC). Resolve after
+        // a short grace so a lone player can still see the attract screen.
+        setTimeout(resolve, 1500);
+      });
+    },
+
     // Publish our plan. Host buffers locally; guest RPCs to host.
     async submit(plan) {
       if (host) {
@@ -112,9 +127,11 @@ export async function createNetSession({ gameId, roomCode } = {}) {
       await RPC.call(RPC_SUBMIT, { seq, seat, plan }, RPC.Mode.HOST);
     },
 
-    // Host: wait for both plans for the current seq.
-    async waitBothPlans() {
-      return Promise.all([waitPlan(0), waitPlan(1)]);
+    // Host: wait for both plans for the current seq (with a safety timeout).
+    async waitBothPlans(timeoutMs = 60000) {
+      const both = Promise.all([waitPlan(0), waitPlan(1)]);
+      const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('waitBothPlans timeout')), timeoutMs));
+      return Promise.race([both, timeout]);
     },
 
     // Host: broadcast the resolved segments.
@@ -122,14 +139,17 @@ export async function createNetSession({ gameId, roomCode } = {}) {
       setState(STATE_RESULT, { seq, segments });
     },
 
-    // Guest: wait for the host's result for the current seq.
-    async awaitResult() {
-      let r = await waitForState(STATE_RESULT);
-      // Guard against a stale result from a previous turn.
-      while (r && r.seq !== seq) {
-        r = await waitForState(STATE_RESULT);
+    // Guest: wait for the host's result for the current seq (poll getState to avoid
+    // waitForState edge cases when the value changes across consecutive turns).
+    async awaitResult(timeoutMs = 60000) {
+      const deadline = Date.now() + timeoutMs;
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const r = getState(STATE_RESULT);
+        if (r && r.seq === seq) return r.segments;
+        if (Date.now() > deadline) throw new Error('awaitResult timeout for seq ' + seq);
+        await new Promise((res) => setTimeout(res, 50));
       }
-      return r.segments;
     },
 
     // Host: run the full turn with scene access, sourcing guest sub-rounds via RPC.

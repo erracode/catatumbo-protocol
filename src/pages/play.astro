@@ -50,8 +50,12 @@ import Base from '../layouts/Base.astro';
       try {
         const { createNetSession } = await import('../game/net.js');
         const net = await createNetSession({});
-        setStatus(`Room ${net.roomCode} — you are P${net.seat + 1}`);
-        bootGame({ mode: 'net', net, myIndex: net.seat });
+        const invite = `${location.origin}/play?mode=net&gameId=${params.get('gameId') || ''}&r=${net.roomCode}`;
+        setStatus(`Room ${net.roomCode} — waiting for opponent… (share: ${invite})`);
+        // Give the opponent a moment to join; the turn loop waits naturally anyway.
+        await net.waitForOpponent();
+        setStatus(`Room ${net.roomCode} — you are P${net.seat + 1}. Fight!`);
+        bootGame({ mode: 'net', net, myIndex: net.seat, debug: params.get('debug') === '1' });
       } catch (err) {
         console.error(err);
         setStatus('Multiplayer unavailable — falling back to CPU. (' + err.message + ')');
