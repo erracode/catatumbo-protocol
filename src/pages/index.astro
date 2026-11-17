@@ -1,129 +1,1816 @@
 ---
 import Base from '../layouts/Base.astro';
 ---
-<Base title="Catatumbo Protocol — Mecha Duel">
-  <main class="landing">
-    <section class="hero">
-      <img class="cover" src="/cover.png" alt="Catatumbo Protocol cover art" width="400" height="300" />
-      <div class="hero-text">
-        <h1>Catatumbo Protocol</h1>
-        <p class="tagline">
-          A simultaneous-turn mecha duel over Lake Maracaibo.
-          Both pilots commit their moves in secret, then watch the clash unfold.
-        </p>
-        <div class="cta">
-          <a class="btn primary" href="/play">Play vs CPU</a>
-          <a class="btn" href="/play?mode=net">Play Online (2P)</a>
+
+<Base
+  title="CATATUMBO PROTOCOL — 1996 SEGA Saturn / PSX Archive Edition"
+  description="Combate táctico de mechas 1v1 por turnos simultáneos sobre el Lago de Maracaibo. Archive Edition para navegador."
+>
+  <div class="landing-shell starfield-radar-bg">
+    <!-- Capa CRT -->
+    <div class="crt-overlay" aria-hidden="true"></div>
+
+    <!-- ===================================================================== -->
+    <!-- BARRA DE NAVEGACIÓN SUPERIOR (4 PARADAS + ERRACODE // ARCHIVE)        -->
+    <!-- ===================================================================== -->
+    <header class="fixed top-0 left-0 right-0 border-b border-[#10F57A]/60 bg-[#05070A]/95 backdrop-blur-md z-40">
+      <div class="max-w-7xl mx-auto px-3 sm:px-5 py-2 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="bg-[#00F0FF] text-black pixel-font font-bold px-2 py-0.5 text-[10px] border border-black">
+            PSX / SATURN
+          </span>
+          <span class="mono-font text-xs text-[#10F57A] hidden xl:inline font-bold tracking-wider">
+            CATATUMBO PROTOCOL // OBI SLUS-1996-MCBO
+          </span>
+        </div>
+
+        <!-- 4 Paradas de navegación -->
+        <nav class="flex items-center gap-1 sm:gap-1.5 overflow-x-auto">
+          <button type="button" data-stop="0" id="nav-stop-0" class="nav-stop nav-stop-active">
+            01 PORTADA
+          </button>
+          <button type="button" data-stop="1" id="nav-stop-1" class="nav-stop">
+            02 LOMO / MECHAS
+          </button>
+          <button type="button" data-stop="2" id="nav-stop-2" class="nav-stop">
+            03 CONTRAPORTADA
+          </button>
+          <button type="button" data-stop="3" id="nav-stop-3" class="nav-stop">
+            04 MANUAL &amp; DISCO
+          </button>
+        </nav>
+
+        <a
+          href="https://erracode.pages.dev"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="pixel-font text-[9px] sm:text-[10px] bg-[#10F57A] hover:bg-white text-black border border-black px-2.5 py-1 font-bold shrink-0 transition-colors duration-150"
+        >
+          ERRACODE // ARCHIVE ↗
+        </a>
+      </div>
+    </header>
+
+    <!-- ESCENARIO 3D INTERACTIVO -->
+    <div id="three-stage" title="Arrastra para girar la caja en 360°"></div>
+
+    <!-- PISTA DE SCROLL -->
+    <div id="scroll-track" aria-hidden="true"></div>
+
+    <!-- ===================================================================== -->
+    <!-- STOP 01: PORTADA (ARCHIVE EDITION STORE LISTING)                      -->
+    <!-- ===================================================================== -->
+    <section id="panel-0" class="story-panel active">
+      <div class="max-w-7xl mx-auto w-full px-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <div class="lg:col-start-7 lg:col-span-6 interactive-card panel-scroll-box mt-[42vh] lg:mt-0">
+          <div class="bg-[#060C13]/95 border-2 border-[#00F0FF] p-4 sm:p-5 shadow-[8px_8px_0px_#000000] space-y-3.5">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
+              <span class="inline-flex items-center gap-2 bg-black border border-[#FFD23F] px-2.5 py-1">
+                <span class="w-2 h-2 bg-[#10F57A] animate-ping"></span>
+                <span class="pixel-font text-[9px] sm:text-[10px] text-[#FFD23F]">ARCHIVE EDITION • NTSC-U</span>
+              </span>
+              <span class="mono-font text-xs text-[#00F0FF] font-bold">SCROLL PARA GIRAR CAJA ↓</span>
+            </div>
+
+            <div>
+              <h1 class="virtual-title text-4xl sm:text-5xl md:text-6xl leading-none">CATATUMBO</h1>
+              <h2 class="virtual-subtitle text-3xl sm:text-4xl md:text-5xl leading-tight mt-1">PROTOCOL</h2>
+            </div>
+
+            <p class="text-slate-200 text-sm sm:text-base leading-relaxed border-l-2 border-[#FF2A55] pl-3.5 bg-white/5 py-2">
+              Combate táctico de mechas <strong>1v1 por turnos simultáneos</strong> sobre el Lago de Maracaibo.
+              Predice la maniobra enemiga, aprovecha la cobertura del Puente Rafael Urdaneta y sobrevive al relámpago eterno.
+            </p>
+
+            <!-- Ficha de Precio + Selector de Modo -->
+            <div class="bg-[#09121C] border border-slate-700 p-4 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-slate-500 line-through text-base font-bold mono-font">Bs. 1996.00</span>
+                  <span class="bg-[#10F57A] text-black pixel-font text-[10px] px-2.5 py-1 border border-black font-bold">
+                    FREE / JUGAR EN NAVEGADOR
+                  </span>
+                </div>
+                <span class="mono-font text-xs text-[#00F0FF] font-bold">OBI: SLUS-1996-MCBO</span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <a
+                  href="/play?mode=cpu"
+                  class="btn-brutal bg-[#FFD23F] text-black p-3 text-left flex items-center justify-between cursor-pointer"
+                >
+                  <div>
+                    <div class="pixel-font text-[10px] sm:text-[11px] font-bold">[ 1P VS CPU ]</div>
+                    <div class="mono-font text-[11px] font-bold opacity-80">Modo Arcade Solo</div>
+                  </div>
+                  <span class="pixel-font text-xs">▶</span>
+                </a>
+
+                <a
+                  href="/play?mode=net&gameId=9zfQpYpu1MrPWjldLTfD"
+                  class="btn-brutal bg-slate-900 text-white border-[#00F0FF] p-3 text-left flex items-center justify-between cursor-pointer"
+                >
+                  <div>
+                    <div class="pixel-font text-[10px] sm:text-[11px] font-bold text-[#00F0FF]">[ 2P ONLINE - PLAYROOM ]</div>
+                    <div class="mono-font text-[11px] text-slate-300">Sala P2P Instantánea</div>
+                  </div>
+                  <span class="pixel-font text-[10px] text-[#00F0FF]">NET</span>
+                </a>
+              </div>
+
+              <a
+                href="/play"
+                class="btn-brutal w-full bg-[#FF2A55] hover:bg-[#ff3b63] text-white py-3.5 px-5 flex flex-col items-center justify-center gap-1 cursor-pointer"
+              >
+                <span class="pixel-font text-sm sm:text-base tracking-wider blink-coin font-bold">
+                  INSERT COIN / JUGAR AHORA
+                </span>
+                <span class="mono-font text-[11px] font-bold uppercase tracking-widest text-yellow-200">
+                  INICIAR CABINA VIRTUAL-ON EN NAVEGADOR
+                </span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="info">
-      <div class="card">
-        <h2>How it plays</h2>
-        <ul>
-          <li>Pick your action each turn — movement, strike, or special.</li>
-          <li>Your rival does the same, blind to your choice.</li>
-          <li>Both plans resolve at once: clashes, grabs, and zone hazards.</li>
-          <li>Chain stances — staggered, knockback, down — to land finishers.</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h2>Controls</h2>
-        <ul>
-          <li><b>P1:</b> W/A/S/D to move, U/I/O/J/K/L to act.</li>
-          <li><b>P2 (online):</b> your own keyboard.</li>
-          <li>START to begin.</li>
-        </ul>
+    <!-- ===================================================================== -->
+    <!-- STOP 02: LOMO & OBI STRIP — MACHINE SELECT + SVG BLUEPRINTS           -->
+    <!-- ===================================================================== -->
+    <section id="panel-1" class="story-panel">
+      <div class="max-w-7xl mx-auto w-full px-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <div class="lg:col-span-6 interactive-card panel-scroll-box mt-[42vh] lg:mt-0">
+          <div class="bg-[#050B11]/95 border-2 border-[#10F57A] p-4 sm:p-5 shadow-[8px_8px_0px_#000000] space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#10F57A]/40 pb-2">
+              <div>
+                <span class="pixel-font text-xs sm:text-sm text-[#10F57A] font-bold block">MACHINE SELECT</span>
+                <span class="mono-font text-[11px] text-slate-300">OBI STRIP: SLUS-1996-MCBO // SEGA AM3 SPEC</span>
+              </div>
+              <span id="selected-mech-badge" class="bg-[#FFD23F] text-black pixel-font text-[9px] sm:text-[10px] px-2.5 py-1 border border-black font-bold">
+                MBV-04-MCBO RELAMPAGO
+              </span>
+            </div>
+
+            <!-- Visor Blueprint Wireframe tipo VR.TEMJIN Saturn -->
+            <div class="bg-[#03080C] border border-[#00F0FF] p-3 grid grid-cols-1 sm:grid-cols-12 gap-3 items-center relative">
+              <div class="sm:col-span-5 flex items-center justify-center border border-[#10F57A]/30 bg-[#040D12] p-2">
+                <div id="mech-blueprint-svg" class="w-28 h-28 sm:w-32 sm:h-32"></div>
+              </div>
+              <div class="sm:col-span-7 space-y-1.5">
+                <div class="pixel-font text-[10px] text-[#FF2A55] tracking-widest">&gt; NEXT VIRTUALOID &lt;</div>
+                <div id="bp-code" class="mono-font text-xs text-[#10F57A] font-bold">MBV-04-MCBO</div>
+                <div id="bp-name" class="display-font text-xl sm:text-2xl font-bold italic text-[#00F0FF] leading-none">
+                  VR.RELAMPAGO
+                </div>
+                <div id="bp-weapons" class="mono-font text-[11px] text-[#FFD23F] font-bold leading-snug pt-1">
+                  BEAM SABER<br />CATATUMBO RIFLE<br />HYDRO DASH
+                </div>
+                <div id="bp-stats" class="mono-font text-[10px] text-slate-300 border-t border-slate-800 pt-1">
+                  MOBILITY: 92% | OUTPUT: 4800 KW | ARMOR: B+
+                </div>
+                <div id="bp-sector" class="pixel-font text-[9px] text-[#10F57A]">
+                  SECTOR: PUENTE RAFAEL URDANETA
+                </div>
+              </div>
+            </div>
+
+            <!-- Selector de 3 Virtualoids Zulianos -->
+            <div class="space-y-1.5">
+              <button type="button" id="mech-card-0" data-mech="0" class="mech-card active w-full p-2 text-left flex items-center justify-between gap-3 cursor-pointer">
+                <div>
+                  <div class="pixel-font text-[10px] sm:text-[11px] text-[#00F0FF] font-bold">01. VR.RELAMPAGO (MBV-04)</div>
+                  <div class="mono-font text-[11px] text-slate-300">Equilibrado • Sable de Plasma + Impulso Eléctrico</div>
+                </div>
+                <span class="bg-[#00F0FF] text-black pixel-font text-[9px] px-2 py-0.5 font-bold">SPD S</span>
+              </button>
+
+              <button type="button" id="mech-card-1" data-mech="1" class="mech-card w-full p-2 text-left flex items-center justify-between gap-3 cursor-pointer">
+                <div>
+                  <div class="pixel-font text-[10px] sm:text-[11px] text-[#10F57A] font-bold">02. VR.PALAFITO (XBV-13)</div>
+                  <div class="mono-font text-[11px] text-slate-300">Anfibio Ligero • Minas Flotantes + Arco Tesla</div>
+                </div>
+                <span class="bg-[#10F57A] text-black pixel-font text-[9px] px-2 py-0.5 font-bold">EVA A+</span>
+              </button>
+
+              <button type="button" id="mech-card-2" data-mech="2" class="mech-card w-full p-2 text-left flex items-center justify-between gap-3 cursor-pointer">
+                <div>
+                  <div class="pixel-font text-[10px] sm:text-[11px] text-[#FF2A55] font-bold">03. VR.URDANETA (RVR-01)</div>
+                  <div class="mono-font text-[11px] text-slate-300">Artillería Pesada • Railgun + Escudo Aegis</div>
+                </div>
+                <span class="bg-[#FF2A55] text-white pixel-font text-[9px] px-2 py-0.5 font-bold">DEF MAX</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <footer class="credits">
-      <p>
-        Originally built for the <b>Platanus Hack 26 — Arcade Challenge</b> (Caracas).
-        Now running standalone with online multiplayer via Playroom Kit.
-      </p>
-      <p class="muted">Mecha duel · Simultaneous turns · Lake Maracaibo</p>
-    </footer>
-  </main>
+    <!-- ===================================================================== -->
+    <!-- STOP 03: CONTRAPORTADA (180°) — BLOQUE AMARILLO SEGA SATURN           -->
+    <!-- ===================================================================== -->
+    <section id="panel-2" class="story-panel">
+      <div class="max-w-7xl mx-auto w-full px-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <div class="lg:col-start-7 lg:col-span-6 interactive-card panel-scroll-box mt-[42vh] lg:mt-0">
+          <div class="saturn-backcover p-4 sm:p-5">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-black pb-2 mb-2.5">
+              <div>
+                <span class="bg-black text-[#FFD23F] pixel-font text-[9px] px-2 py-0.5">
+                  SEGA SATURN / PSX ARCHIVE • 1996
+                </span>
+                <h3 class="text-lg sm:text-xl font-bold italic uppercase tracking-tight text-black mt-1 leading-tight">
+                  ¡ARMAGEDÓN TÁCTICO SOBRE EL LAGO DE MARACAIBO!
+                </h3>
+              </div>
+              <div class="bg-black text-white px-2 py-1 border border-black text-right">
+                <div class="pixel-font text-[8px] text-[#00F0FF]">CYBER TROOPERS</div>
+                <div class="mono-font text-[10px] font-bold text-[#10F57A]">ZULIA ARENA</div>
+              </div>
+            </div>
+
+            <p class="mono-font text-[11px] font-bold text-black/90 mb-2.5 leading-snug">
+              Aborda tu Virtualoid de 50 pies y prepárate para duelos tácticos simultáneos a 360° straight out of the Arcade.
+            </p>
+
+            <!-- 4 Capturas enmarcadas en rojo (compactas) -->
+            <div class="grid grid-cols-2 gap-2.5">
+              <div class="space-y-1">
+                <div class="vo-frame">
+                  <canvas id="shot-1" width="320" height="145" class="w-full h-auto block"></canvas>
+                </div>
+                <p class="text-[11px] font-bold leading-tight">
+                  <strong>Duelo Isométrico:</strong> Turnos simultáneos en el Lago.
+                </p>
+              </div>
+
+              <div class="space-y-1">
+                <div class="vo-frame">
+                  <canvas id="shot-2" width="320" height="145" class="w-full h-auto block"></canvas>
+                </div>
+                <p class="text-[11px] font-bold leading-tight">
+                  <strong>Impacto en Puente:</strong> Descargas del Catatumbo.
+                </p>
+              </div>
+
+              <div class="space-y-1">
+                <div class="vo-frame">
+                  <canvas id="shot-3" width="320" height="145" class="w-full h-auto block"></canvas>
+                </div>
+                <p class="text-[11px] font-bold leading-tight">
+                  <strong>Palafitos:</strong> Cobertura anfibia y minas.
+                </p>
+              </div>
+
+              <div class="space-y-1">
+                <div class="vo-frame">
+                  <canvas id="shot-4" width="320" height="145" class="w-full h-auto block"></canvas>
+                </div>
+                <p class="text-[11px] font-bold leading-tight">
+                  <strong>Sables Láser:</strong> Combate P2P Playroom Kit.
+                </p>
+              </div>
+            </div>
+
+            <!-- Código de barras + 1 or 2 Players + ESRB retro -->
+            <div class="mt-3 pt-2.5 border-t-2 border-black flex flex-wrap items-center justify-between gap-2">
+              <div class="bg-white border border-black px-2.5 py-1 flex flex-col items-center">
+                <div class="flex items-stretch h-6 gap-[2px]">
+                  <span class="w-1 bg-black"></span><span class="w-0.5 bg-black"></span><span class="w-1.5 bg-black"></span>
+                  <span class="w-0.5 bg-black"></span><span class="w-1 bg-black"></span><span class="w-2 bg-black"></span>
+                  <span class="w-0.5 bg-black"></span><span class="w-1 bg-black"></span><span class="w-1.5 bg-black"></span>
+                  <span class="w-0.5 bg-black"></span><span class="w-1 bg-black"></span><span class="w-2 bg-black"></span>
+                </div>
+                <span class="mono-font text-[9px] font-bold tracking-widest text-black">0 10086 81042 4</span>
+              </div>
+
+              <div class="bg-white border border-black px-2.5 py-1 flex items-center gap-2">
+                <div class="bg-[#1E1B4B] text-white font-black px-1.5 py-0.5 text-xs">1 OR 2</div>
+                <div class="text-[10px] font-black leading-none text-black">PLAYERS<br />ONLINE / CPU</div>
+              </div>
+
+              <div class="bg-white border border-black px-2.5 py-1 text-black flex items-center gap-2">
+                <div class="border border-black px-1.5 py-0.5 text-center leading-none">
+                  <div class="text-[7px] font-bold">KIDS TO ADULTS</div>
+                  <div class="text-sm font-black">K-A</div>
+                </div>
+                <div class="mono-font text-[9px] font-bold leading-tight">ANIMATED<br />MECHA COMBAT</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- STOP 04: MANUAL & DISCO (CAJA ABIERTA + CD EXTRAÍDO A LA DERECHA)     -->
+    <!-- ===================================================================== -->
+    <section id="panel-3" class="story-panel">
+      <div class="max-w-7xl mx-auto w-full px-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <div class="lg:col-start-8 lg:col-span-5 interactive-card panel-scroll-box mt-[42vh] lg:mt-0">
+          <div class="bg-[#060C13]/95 border-2 border-[#10F57A] p-4 sm:p-5 shadow-[8px_8px_0px_#000000] space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <div>
+                <span class="bg-[#00F0FF] text-black pixel-font text-[8px] px-2 py-0.5 border border-black font-bold">
+                  CD-ROM EXTRAÍDO • GIRANDO
+                </span>
+                <h4 class="pixel-font text-xs text-[#10F57A] font-bold mt-1">MANUAL &amp; DISC 1: MARACAIBO</h4>
+              </div>
+              <span class="mono-font text-[11px] text-slate-400">P.01</span>
+            </div>
+
+            <!-- Controles compactos -->
+            <div class="grid grid-cols-3 gap-1.5 text-[10px]">
+              <div class="bg-black p-2 border border-slate-800 text-center">
+                <kbd class="bg-[#FFD23F] text-black pixel-font text-[8px] px-1.5 py-0.5 border border-black font-bold block mb-1">WASD</kbd>
+                <span class="text-slate-300 font-bold">CURSOR</span>
+              </div>
+              <div class="bg-black p-2 border border-slate-800 text-center">
+                <kbd class="bg-[#00F0FF] text-black pixel-font text-[8px] px-1.5 py-0.5 border border-black font-bold block mb-1">TECLA U</kbd>
+                <span class="text-slate-300 font-bold">SABER</span>
+              </div>
+              <div class="bg-black p-2 border border-slate-800 text-center">
+                <kbd class="bg-[#FF2A55] text-white pixel-font text-[8px] px-1.5 py-0.5 border border-black font-bold block mb-1">TECLA I</kbd>
+                <span class="text-slate-300 font-bold">GUARDIA</span>
+              </div>
+            </div>
+
+            <!-- Top 5 High Scores compacto -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="pixel-font text-[9px] text-[#FFD23F]">TOP 5 HIGH SCORES</span>
+                <a href="https://erracode.pages.dev" target="_blank" rel="noopener noreferrer" class="mono-font text-[10px] text-[#00F0FF] hover:underline font-bold">
+                  erracode.pages.dev ↗
+                </a>
+              </div>
+              <ul class="space-y-1 pixel-font text-[9px]">
+                <li class="flex justify-between bg-[#FFD23F]/15 border border-[#FFD23F]/50 px-2 py-1 text-[#FFD23F]">
+                  <span>1. AAA</span><span>9190 PTS</span>
+                </li>
+                <li class="flex justify-between bg-black px-2 py-1 text-[#10F57A]">
+                  <span>2. ZUL</span><span>8450 PTS</span>
+                </li>
+                <li class="flex justify-between bg-black px-2 py-1 text-slate-200">
+                  <span>3. MAR</span><span>7820 PTS</span>
+                </li>
+                <li class="flex justify-between bg-black px-2 py-1 text-slate-400">
+                  <span>4. TEM</span><span>6900 PTS</span>
+                </li>
+                <li class="flex justify-between bg-black px-2 py-1 text-slate-500">
+                  <span>5. CPU</span><span>5120 PTS</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Nota de origen -->
+            <div class="p-2.5 bg-[#10F57A]/10 border-l-2 border-[#10F57A] text-[10px] text-slate-300 leading-snug">
+              <strong class="text-[#10F57A]">ORIGEN:</strong> Prototipado en <strong>Platanus Hack 26</strong> (&lt;50 KB) y expandido con <strong>Playroom Kit</strong> para duelos online.
+            </div>
+
+            <!-- Botón lanzar disco -->
+            <a
+              href="/play?mode=cpu"
+              class="btn-brutal w-full bg-[#10F57A] hover:bg-white text-black py-3 px-4 pixel-font text-[10px] sm:text-xs font-bold cursor-pointer block text-center"
+            >
+              SACAR DISCO / JUGAR (<span id="disc-mech-name">MBV-04</span>)
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- HUD INFERIOR DE PROGRESO + CONTROL MANUAL DE TAPA Y CD                -->
+    <!-- ===================================================================== -->
+    <div class="fixed bottom-3 left-3 right-3 z-40 pointer-events-none">
+      <div class="max-w-4xl mx-auto bg-[#05070A]/95 border border-slate-700 px-3.5 py-2 flex flex-wrap items-center justify-between gap-2 shadow-[4px_4px_0px_#000000] pointer-events-auto">
+        <div class="flex items-center gap-2.5">
+          <span id="hud-stage-label" class="pixel-font text-[9px] sm:text-[10px] text-[#FFD23F]">
+            01 / 04 • PORTADA
+          </span>
+          <div class="w-24 sm:w-36 h-2 bg-slate-800 border border-slate-600">
+            <div id="scroll-progress-bar" class="h-full bg-gradient-to-r from-[#00F0FF] via-[#FFD23F] to-[#10F57A] w-0"></div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="mono-font text-[11px] text-slate-400 hidden sm:inline">Arrastra caja 360°</span>
+          <button type="button" id="btn-manual-lid" class="btn-brutal bg-[#00F0FF] text-black pixel-font text-[9px] px-2.5 py-1 font-bold cursor-pointer">
+            ABRIR / CERRAR TAPA
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </Base>
 
-<style>
-  .landing {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 48px 24px;
+<style is:global>
+  :root {
+    --space-black: #05070a;
+    --saturn-yellow: #ffd23f;
+    --holo-cyan: #00f0ff;
+    --radar-green: #10f57a;
+    --arcade-red: #ff2a55;
+    --vo-pink: #e60067;
+    --vo-mint: #5eead4;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   }
-  .hero {
-    display: flex;
-    gap: 32px;
-    align-items: center;
-    flex-wrap: wrap;
+
+  /* 100% esquinas rectas industriales (0px border-radius en toda la UI) */
+  .landing-shell *,
+  .landing-shell *::before,
+  .landing-shell *::after {
+    box-sizing: border-box;
+    border-radius: 0px !important;
+    image-rendering: pixelated;
   }
-  .cover {
-    border-radius: 8px;
-    border: 1px solid #14324a;
-    box-shadow: 0 0 50px rgba(77, 208, 255, 0.18);
-    max-width: 100%;
-    height: auto;
+
+  html {
+    scroll-behavior: smooth;
   }
-  .hero-text { flex: 1; min-width: 260px; }
-  h1 {
-    font-size: clamp(28px, 5vw, 48px);
-    margin: 0 0 12px;
-    letter-spacing: 0.02em;
-    color: #eaf6ff;
+
+  /* Override the shared Base.astro body background for the landing only. */
+  body {
+    background-color: var(--space-black);
+    color: #f1f5f9;
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-  .tagline {
-    font-size: 16px;
-    line-height: 1.6;
-    color: #9fc4dd;
-    margin: 0 0 24px;
+
+  .landing-shell {
+    min-height: 100vh;
+    position: relative;
   }
-  .cta { display: flex; gap: 12px; flex-wrap: wrap; }
-  .btn {
-    display: inline-block;
-    padding: 12px 22px;
-    border-radius: 6px;
-    border: 1px solid #2a5f86;
-    color: #cfe6ff;
-    text-decoration: none;
-    font-weight: 600;
+
+  /* Fondo espacial estrellado + grilla radar verde del Lago de Maracaibo */
+  .starfield-radar-bg {
+    background-color: #05070a;
+    background-image:
+      linear-gradient(to right, rgba(16, 245, 122, 0.09) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(16, 245, 122, 0.09) 1px, transparent 1px),
+      radial-gradient(1px 1px at 24px 36px, #ffffff, transparent),
+      radial-gradient(2px 2px at 90px 130px, #00f0ff, transparent),
+      radial-gradient(1px 1px at 210px 70px, #ffd23f, transparent),
+      radial-gradient(2px 2px at 280px 200px, #ffffff, transparent);
+    background-size: 32px 32px, 32px 32px, 320px 240px, 320px 240px, 320px 240px, 320px 240px;
+  }
+
+  /* Scanlines CRT sutiles */
+  .crt-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 60;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.22) 50%);
+    background-size: 100% 3px;
+  }
+
+  .pixel-font {
+    font-family: 'Geist Pixel', 'Silkscreen', monospace;
     letter-spacing: 0.03em;
-    transition: transform 0.12s ease, background 0.12s ease;
   }
-  .btn:hover { transform: translateY(-2px); background: #0e2436; }
-  .btn.primary {
-    background: #1287c4;
-    border-color: #4dd0ff;
-    color: #06121b;
+
+  .mono-font {
+    font-family: 'JetBrains Mono', monospace;
   }
-  .btn.primary:hover { background: #4dd0ff; }
-  .info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    margin: 56px 0;
+
+  .display-font {
+    font-family: 'Space Grotesk', sans-serif;
   }
-  .card {
-    background: #0b1a28;
-    border: 1px solid #14324a;
-    border-radius: 8px;
-    padding: 24px;
+
+  /* Títulos inclinados estilo Virtual On: Cyber Troopers */
+  .virtual-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    background: linear-gradient(180deg, #fff7cc 0%, #ffd23f 55%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(3px 3px 0px #ff2a55) drop-shadow(5px 5px 0px #000000);
+    text-wrap: balance;
   }
-  .card h2 {
-    margin: 0 0 14px;
-    font-size: 18px;
-    color: #4dd0ff;
-    letter-spacing: 0.05em;
+
+  .virtual-subtitle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    background: linear-gradient(180deg, #e0ffff 0%, #00f0ff 65%, #0284c7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(2px 2px 0px #000000);
   }
-  .card ul { margin: 0; padding-left: 20px; line-height: 1.9; color: #a9c8de; }
-  .credits {
-    border-top: 1px solid #14324a;
-    padding-top: 28px;
-    margin-top: 40px;
-    line-height: 1.7;
-    color: #8fb4cc;
+
+  /* Botones brutalistas con borde industrial 1px-2px y sombra dura */
+  .btn-brutal {
+    border: 2px solid #000000;
+    box-shadow: 4px 4px 0px #000000;
+    transition:
+      transform 0.12s var(--ease-out),
+      box-shadow 0.12s var(--ease-out),
+      background-color 0.14s ease;
   }
-  .muted { color: #56788f; font-size: 13px; letter-spacing: 0.06em; }
+  @media (hover: hover) and (pointer: fine) {
+    .btn-brutal:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px #000000;
+    }
+  }
+  .btn-brutal:active {
+    transform: translate(2px, 2px) scale(0.99);
+    box-shadow: 2px 2px 0px #000000;
+  }
+  .btn-brutal:focus-visible {
+    outline: 2px solid #00f0ff;
+    outline-offset: 3px;
+  }
+
+  /* Contraportada amarilla estilo SEGA Saturn */
+  .saturn-backcover {
+    background-color: var(--saturn-yellow);
+    color: #05070a;
+    border: 2px solid #000000;
+    box-shadow: 0 0 0 2px var(--saturn-yellow), 8px 8px 0px #000000;
+  }
+
+  /* Marco rojo de capturas estilo Virtual On */
+  .vo-frame {
+    border: 2px solid #e11d48;
+    box-shadow: inset 0 0 0 1px #000000, 3px 3px 0px #000000;
+    background: #061217;
+  }
+
+  /* Tarjetas de selección de mecha */
+  .mech-card {
+    border: 1px solid #334155;
+    background: #070e16;
+    transition:
+      border-color 0.16s var(--ease-out),
+      background-color 0.16s var(--ease-out),
+      transform 0.16s var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .mech-card:not(.active):hover {
+      border-color: #475569;
+      transform: translateX(2px);
+    }
+  }
+  .mech-card.active {
+    border: 2px solid #00f0ff;
+    background: #0b1928;
+    box-shadow: 4px 4px 0px #000000;
+  }
+  .mech-card:focus-visible {
+    outline: 2px solid #00f0ff;
+    outline-offset: 2px;
+  }
+
+  /* Nav stop buttons */
+  .nav-stop {
+    font-family: 'Geist Pixel', 'Silkscreen', monospace;
+    letter-spacing: 0.03em;
+    font-size: 9px;
+    padding: 0.25rem 0.625rem;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: #e2e8f0;
+    cursor: pointer;
+    transition:
+      background-color 0.15s var(--ease-out),
+      color 0.15s var(--ease-out),
+      border-color 0.15s var(--ease-out);
+  }
+  @media (min-width: 640px) {
+    .nav-stop {
+      font-size: 10px;
+    }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .nav-stop:not(.nav-stop-active):hover {
+      color: #00f0ff;
+      border-color: #00f0ff;
+    }
+  }
+  .nav-stop-active {
+    background: #ffd23f;
+    color: #000000;
+    border-color: #000000;
+    font-weight: 700;
+  }
+
+  @keyframes blinkInsert {
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0.25;
+    }
+  }
+  .blink-coin {
+    animation: blinkInsert 1.1s infinite;
+  }
+
+  /* Escenario 3D fijo a pantalla completa */
+  #three-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    cursor: grab;
+  }
+  #three-stage:active {
+    cursor: grabbing;
+  }
+  /* Warp-speed glow behind the jewel case, above the starfield CSS layer */
+  #three-stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background:
+      radial-gradient(60% 50% at 50% 50%, rgba(0, 240, 255, 0.1) 0%, transparent 60%),
+      radial-gradient(40% 40% at 50% 50%, rgba(255, 210, 63, 0.05) 0%, transparent 70%);
+  }
+
+  /* Pista de Scrollytelling de 420vh */
+  #scroll-track {
+    position: relative;
+    height: 420vh;
+    z-index: 20;
+    pointer-events: none;
+  }
+
+  /* Paneles flotantes sincronizados */
+  .story-panel {
+    position: fixed;
+    inset: 0;
+    padding-top: 56px;
+    padding-bottom: 52px;
+    display: flex;
+    align-items: flex-end;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.28s var(--ease-out),
+      transform 0.28s var(--ease-out);
+    z-index: 25;
+  }
+
+  @media (min-width: 1024px) {
+    .story-panel {
+      align-items: center;
+    }
+  }
+
+  .story-panel.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .story-panel.active .interactive-card {
+    pointer-events: auto;
+  }
+
+  .panel-scroll-box {
+    max-height: 46vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #00f0ff #05070a;
+  }
+
+  @media (min-width: 1024px) {
+    .panel-scroll-box {
+      max-height: calc(100vh - 122px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    .blink-coin {
+      animation: none;
+    }
+    .story-panel {
+      transition-duration: 0.01ms;
+    }
+    .btn-brutal,
+    .mech-card,
+    .nav-stop {
+      transition-duration: 0.01ms;
+    }
+  }
 </style>
+
+<script>
+  import * as THREE from 'three';
+
+  // =========================================================================
+  // 1. PINTURA PROCEDURAL DE LA CARÁTULA OFICIAL (PORTADA + SUPERFICIE DEL CD)
+  // =========================================================================
+  function paintOfficialCoverArt(ctx: CanvasRenderingContext2D, size: number) {
+    ctx.imageSmoothingEnabled = false;
+    const s = size / 512;
+
+    // Fondo nocturno del Lago de Maracaibo
+    ctx.fillStyle = '#071117';
+    ctx.fillRect(0, 0, size, size);
+
+    // Grilla isométrica verde
+    ctx.strokeStyle = 'rgba(16, 245, 122, 0.18)';
+    ctx.lineWidth = Math.max(1, 1.5 * s);
+    for (let i = -size; i < size * 2; i += 34 * s) {
+      ctx.beginPath();
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i + size * 0.85, size * 0.5);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(i + size * 0.85, 0);
+      ctx.lineTo(i, size * 0.5);
+      ctx.stroke();
+    }
+
+    // Costa verde isométrica
+    ctx.fillStyle = '#152A22';
+    ctx.beginPath();
+    ctx.moveTo(0, 140 * s);
+    ctx.lineTo(270 * s, 290 * s);
+    ctx.lineTo(130 * s, 370 * s);
+    ctx.lineTo(240 * s, 440 * s);
+    ctx.lineTo(0, 512 * s);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(290 * s, 0);
+    ctx.lineTo(512 * s, 0);
+    ctx.lineTo(512 * s, 210 * s);
+    ctx.lineTo(395 * s, 145 * s);
+    ctx.closePath();
+    ctx.fill();
+
+    // Agua azul turquesa del Lago
+    ctx.fillStyle = '#0A516D';
+    ctx.beginPath();
+    ctx.moveTo(290 * s, 0);
+    ctx.lineTo(395 * s, 145 * s);
+    ctx.lineTo(512 * s, 210 * s);
+    ctx.lineTo(512 * s, 512 * s);
+    ctx.lineTo(240 * s, 440 * s);
+    ctx.lineTo(130 * s, 370 * s);
+    ctx.lineTo(270 * s, 290 * s);
+    ctx.lineTo(0, 140 * s);
+    ctx.lineTo(0, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // Orilla arena
+    ctx.strokeStyle = '#C2B280';
+    ctx.lineWidth = 4 * s;
+    ctx.beginPath();
+    ctx.moveTo(0, 140 * s);
+    ctx.lineTo(270 * s, 290 * s);
+    ctx.lineTo(130 * s, 370 * s);
+    ctx.lineTo(240 * s, 440 * s);
+    ctx.stroke();
+
+    // Puente Rafael Urdaneta
+    ctx.strokeStyle = '#94A3B8';
+    ctx.lineWidth = 14 * s;
+    ctx.beginPath();
+    ctx.moveTo(220 * s, 260 * s);
+    ctx.lineTo(375 * s, 175 * s);
+    ctx.stroke();
+
+    [255, 315, 360].forEach((px, idx) => {
+      const py = 240 - idx * 32;
+      ctx.fillStyle = '#CBD5E1';
+      ctx.fillRect((px - 4) * s, (py - 55) * s, 8 * s, 65 * s);
+      ctx.strokeStyle = '#E2E8F0';
+      ctx.lineWidth = 1.5 * s;
+      ctx.beginPath();
+      ctx.moveTo(px * s, (py - 52) * s);
+      ctx.lineTo((px - 32) * s, (py + 12) * s);
+      ctx.moveTo(px * s, (py - 52) * s);
+      ctx.lineTo((px + 32) * s, (py + 12) * s);
+      ctx.stroke();
+    });
+
+    // Palafitos
+    const drawPalafito = (px: number, py: number) => {
+      ctx.fillStyle = '#78350F';
+      ctx.fillRect(px * s, py * s, 18 * s, 14 * s);
+      ctx.fillStyle = '#92400E';
+      ctx.beginPath();
+      ctx.moveTo((px - 3) * s, py * s);
+      ctx.lineTo((px + 9) * s, (py - 12) * s);
+      ctx.lineTo((px + 21) * s, py * s);
+      ctx.closePath();
+      ctx.fill();
+    };
+    drawPalafito(160, 325);
+    drawPalafito(182, 336);
+
+    // Relámpagos amarillos del Catatumbo
+    const drawLightning = (points: number[][]) => {
+      ctx.strokeStyle = '#F59E0B';
+      ctx.lineWidth = 8 * s;
+      ctx.beginPath();
+      points.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x * s, y * s) : ctx.lineTo(x * s, y * s)));
+      ctx.stroke();
+
+      ctx.strokeStyle = '#FEF08A';
+      ctx.lineWidth = 3.5 * s;
+      ctx.beginPath();
+      points.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x * s, y * s) : ctx.lineTo(x * s, y * s)));
+      ctx.stroke();
+    };
+    drawLightning([[115, 0], [102, 75], [116, 130], [106, 185]]);
+    drawLightning([[148, 0], [136, 95], [148, 150], [134, 240]]);
+    drawLightning([[245, 0], [232, 85], [248, 135], [228, 200]]);
+    drawLightning([[315, 0], [302, 110], [316, 175], [295, 285]]);
+    drawLightning([[402, 0], [392, 70], [406, 115], [390, 170]]);
+
+    // 4 Mechas con sables láser cian
+    const drawMecha = (
+      x: number,
+      y: number,
+      scale: number,
+      bodyColor: string,
+      trimColor: string,
+      saberUp = true
+    ) => {
+      ctx.save();
+      ctx.translate(x * s, y * s);
+      ctx.scale(scale * s, scale * s);
+
+      ctx.fillStyle = '#D6D3C9';
+      ctx.fillRect(-16, 18, 12, 28);
+      ctx.fillRect(4, 18, 12, 28);
+
+      ctx.fillStyle = bodyColor;
+      ctx.fillRect(-19, 42, 16, 10);
+      ctx.fillRect(3, 42, 16, 10);
+
+      ctx.fillStyle = bodyColor;
+      ctx.fillRect(-18, -14, 36, 32);
+
+      ctx.fillStyle = trimColor;
+      ctx.fillRect(-27, -14, 10, 16);
+      ctx.fillRect(17, -14, 10, 16);
+
+      ctx.fillStyle = '#E7E5E4';
+      ctx.fillRect(-10, -30, 20, 16);
+      ctx.fillRect(-8, -38, 4, 8);
+      ctx.fillRect(4, -38, 4, 8);
+      ctx.fillStyle = '#00F0FF';
+      ctx.fillRect(-7, -25, 14, 5);
+
+      ctx.fillStyle = '#00F0FF';
+      if (saberUp) {
+        ctx.fillRect(-28, -72, 6, 56);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(-26, -70, 2, 52);
+      } else {
+        ctx.fillRect(-44, 6, 36, 5);
+      }
+      ctx.restore();
+    };
+
+    drawMecha(98, 225, 1.35, '#DC2626', '#EA580C', false);
+    drawMecha(415, 118, 0.72, '#16A34A', '#EA580C', true);
+    drawMecha(392, 192, 0.7, '#7E22CE', '#3B82F6', true);
+    drawMecha(412, 345, 2.35, '#1D4ED8', '#EA580C', true);
+
+    // Caja superior izquierda: PLATANUS HACK 26 / VE // CARACAS (tachado) MARACAIBO
+    ctx.fillStyle = 'rgba(5, 7, 10, 0.9)';
+    ctx.fillRect(10 * s, 10 * s, 156 * s, 54 * s);
+    ctx.strokeStyle = '#FFD23F';
+    ctx.lineWidth = 2 * s;
+    ctx.strokeRect(10 * s, 10 * s, 156 * s, 54 * s);
+
+    ctx.fillStyle = '#FFD23F';
+    ctx.font = `bold ${Math.round(10 * s)}px monospace`;
+    ctx.fillText('PLATANUS HACK 26', 18 * s, 27 * s);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText('VE // CARACAS', 18 * s, 45 * s);
+    ctx.strokeStyle = '#FF2A55';
+    ctx.lineWidth = 2.5 * s;
+    ctx.beginPath();
+    ctx.moveTo(50 * s, 41 * s);
+    ctx.lineTo(102 * s, 41 * s);
+    ctx.stroke();
+
+    ctx.save();
+    ctx.translate(106 * s, 49 * s);
+    ctx.rotate(-0.12);
+    ctx.fillStyle = '#FF2A55';
+    ctx.font = `bold italic ${Math.round(11 * s)}px sans-serif`;
+    ctx.fillText('MARACAIBO', 0, 0);
+    ctx.restore();
+
+    // Marca superior derecha: ERRACODE
+    ctx.fillStyle = '#CBD5E1';
+    ctx.font = `bold ${Math.round(10 * s)}px monospace`;
+    ctx.fillText('ERRACODE', 442 * s, 22 * s);
+
+    // Título principal inferior: CATATUMBO PROTOCOL
+    ctx.save();
+    ctx.font = `900 italic ${Math.round(52 * s)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#000000';
+    ctx.fillText('CATATUMBO', 260 * s, 444 * s);
+    ctx.fillStyle = '#FF2A55';
+    ctx.fillText('CATATUMBO', 257 * s, 441 * s);
+    ctx.fillStyle = '#FFD23F';
+    ctx.fillText('CATATUMBO', 255 * s, 438 * s);
+
+    ctx.font = `900 italic ${Math.round(31 * s)}px sans-serif`;
+    ctx.fillStyle = '#000000';
+    ctx.fillText('PROTOCOL', 258 * s, 479 * s);
+    ctx.fillStyle = '#00F0FF';
+    ctx.fillText('PROTOCOL', 256 * s, 477 * s);
+    ctx.restore();
+  }
+
+  function makeTex(canvas: HTMLCanvasElement) {
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.magFilter = THREE.NearestFilter;
+    tex.minFilter = THREE.NearestFilter;
+    return tex;
+  }
+
+  function createOfficialFrontCoverTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    paintOfficialCoverArt(canvas.getContext('2d') as CanvasRenderingContext2D, 512);
+    return makeTex(canvas);
+  }
+
+  // Textura circular para RingGeometry del CD con brillo iridiscente y etiqueta
+  function createPrintedDiscTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
+    paintOfficialCoverArt(ctx, 512);
+
+    // Brillo holográfico / iridiscente encima de la impresión
+    const grad = ctx.createLinearGradient(0, 0, 512, 512);
+    grad.addColorStop(0, 'rgba(0, 240, 255, 0.24)');
+    grad.addColorStop(0.35, 'rgba(255, 255, 255, 0.08)');
+    grad.addColorStop(0.7, 'rgba(255, 210, 63, 0.20)');
+    grad.addColorStop(1, 'rgba(230, 0, 103, 0.26)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 512, 512);
+
+    // Borde exterior plateado del CD
+    ctx.strokeStyle = '#F8FAFC';
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.arc(256, 256, 250, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Aro acrílico central del disco
+    ctx.strokeStyle = '#CBD5E1';
+    ctx.lineWidth = 14;
+    ctx.beginPath();
+    ctx.arc(256, 256, 58, 0, Math.PI * 2);
+    ctx.stroke();
+
+    return makeTex(canvas);
+  }
+
+  // Obi Strip japonés + lomo estilo SEGA Saturn / PS1
+  function createObiSpineTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 96;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    ctx.imageSmoothingEnabled = false;
+
+    // Mitad izquierda: lomo negro con borde cian
+    ctx.fillStyle = '#070B12';
+    ctx.fillRect(0, 0, 48, 512);
+    ctx.strokeStyle = '#00F0FF';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(2, 2, 44, 508);
+
+    // Mitad derecha: Obi Strip japonés amarillo/rojo estilo SEGA Saturn
+    ctx.fillStyle = '#FFD23F';
+    ctx.fillRect(48, 0, 48, 512);
+    ctx.fillStyle = '#E60067';
+    ctx.fillRect(48, 0, 48, 64);
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(48, 430, 48, 82);
+
+    ctx.save();
+    ctx.translate(31, 480);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 20px monospace';
+    ctx.fillText('CATATUMBO PROTOCOL', 0, 0);
+    ctx.fillStyle = '#00F0FF';
+    ctx.font = 'bold 16px monospace';
+    ctx.fillText('SLUS-1996-MCBO', 290, 0);
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(78, 415);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillStyle = '#000000';
+    ctx.font = 'bold 18px monospace';
+    ctx.fillText('電脳戦機 • 1996 ARCHIVE', 0, 0);
+    ctx.restore();
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 13px monospace';
+    ctx.fillText('SEGA', 55, 38);
+    ctx.fillStyle = '#10F57A';
+    ctx.font = 'bold 11px monospace';
+    ctx.fillText('NTSC', 56, 465);
+    ctx.fillText('1996', 56, 485);
+
+    return makeTex(canvas);
+  }
+
+  function createPixelBackCoverTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    ctx.imageSmoothingEnabled = false;
+
+    ctx.fillStyle = '#05070A';
+    ctx.fillRect(0, 0, 256, 256);
+
+    ctx.fillStyle = '#FFD23F';
+    ctx.fillRect(14, 14, 228, 205);
+
+    ctx.fillStyle = '#000000';
+    ctx.font = 'bold italic 16px sans-serif';
+    ctx.fillText('CATATUMBO PROTOCOL', 24, 36);
+
+    ctx.fillStyle = '#E11D48';
+    ctx.fillRect(24, 46, 98, 62);
+    ctx.fillStyle = '#07222B';
+    ctx.fillRect(28, 50, 90, 54);
+
+    ctx.fillStyle = '#E11D48';
+    ctx.fillRect(132, 114, 98, 62);
+    ctx.fillStyle = '#07222B';
+    ctx.fillRect(136, 118, 90, 54);
+
+    ctx.fillStyle = '#111827';
+    for (let i = 0; i < 6; i++) {
+      ctx.fillRect(132, 50 + i * 9, 95, 4);
+      ctx.fillRect(24, 118 + i * 9, 95, 4);
+    }
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(20, 225, 65, 22);
+    ctx.fillStyle = '#000000';
+    for (let b = 24; b < 80; b += 4) {
+      ctx.fillRect(b, 228, 2, 16);
+    }
+
+    ctx.fillStyle = '#00F0FF';
+    ctx.font = 'bold 11px monospace';
+    ctx.fillText('SEGA / PSX 1996', 135, 240);
+
+    return makeTex(canvas);
+  }
+
+  function createManualInsideTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    ctx.imageSmoothingEnabled = false;
+
+    ctx.fillStyle = '#070E16';
+    ctx.fillRect(0, 0, 256, 256);
+    ctx.strokeStyle = '#10F57A';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(10, 10, 236, 236);
+
+    ctx.fillStyle = '#FFD23F';
+    ctx.font = 'bold 16px monospace';
+    ctx.fillText('OPERATION MANUAL', 26, 40);
+
+    ctx.fillStyle = '#00F0FF';
+    ctx.font = 'bold 12px monospace';
+    ctx.fillText('WASD : MOVE CURSOR', 26, 76);
+    ctx.fillText('U    : BEAM SABER', 26, 100);
+    ctx.fillText('I    : AEGIS GUARD', 26, 124);
+
+    ctx.fillStyle = '#10F57A';
+    ctx.fillText('LAKE MARACAIBO SECTOR', 26, 166);
+    ctx.fillStyle = '#94A3B8';
+    ctx.font = '10px monospace';
+    ctx.fillText('PLATANUS HACK 26 ORIGIN', 26, 192);
+    ctx.fillText('ERRACODE.PAGES.DEV', 26, 214);
+
+    return makeTex(canvas);
+  }
+
+  // =========================================================================
+  // 2. WARP-SPEED BACKGROUND (speed lines flying toward camera)
+  //    ~750 instanced cylinders in a tilted group, behind the jewel case.
+  // =========================================================================
+  interface WarpLine {
+    x: number;
+    y: number;
+    z: number;
+    speed: number;
+  }
+
+  function createWarpField(scene: THREE.Scene) {
+    const COUNT = 750;
+    const palette = [0x00f0ff, 0xffd23f, 0xff2a55, 0x10f57a];
+    const geo = new THREE.CylinderGeometry(0.008, 0.008, 1, 5, 1, true);
+    // Cylinders point along Y by default; rotate so they lie along Z (depth).
+    geo.rotateX(Math.PI / 2);
+
+    const mat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.55,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      vertexColors: false,
+    });
+
+    const mesh = new THREE.InstancedMesh(geo, mat, COUNT);
+    mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    mesh.frustumCulled = false;
+
+    const group = new THREE.Group();
+    group.rotation.set(0.25, 0.45, -0.65);
+    group.position.set(0, 0, -18);
+    group.add(mesh);
+    scene.add(group);
+
+    const lines: WarpLine[] = [];
+    const dummy = new THREE.Object3D();
+    const color = new THREE.Color();
+
+    for (let i = 0; i < COUNT; i++) {
+      // Radial distribution in a disc so lines form a tunnel.
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 4 + Math.random() * 26;
+      lines.push({
+        x: Math.cos(angle) * radius,
+        y: Math.sin(angle) * radius,
+        z: -50 + Math.random() * 60,
+        speed: 0.6 + Math.random() * 1.9,
+      });
+      mesh.setColorAt(i, color.setHex(palette[i % palette.length]));
+    }
+    mesh.instanceColor!.needsUpdate = true;
+
+    let elapsed = 0;
+    function update(dt: number) {
+      elapsed += dt;
+      for (let i = 0; i < COUNT; i++) {
+        const l = lines[i];
+        l.z += l.speed * dt * 60;
+        if (l.z > 10) {
+          l.z = -50;
+          const angle = Math.random() * Math.PI * 2;
+          const radius = 4 + Math.random() * 26;
+          l.x = Math.cos(angle) * radius;
+          l.y = Math.sin(angle) * radius;
+        }
+        // Stretch lines with speed for a streak feel.
+        const len = 1.4 + l.speed * 1.6;
+        dummy.position.set(l.x, l.y, l.z);
+        dummy.scale.set(1, 1, len);
+        dummy.updateMatrix();
+        mesh.setMatrixAt(i, dummy.matrix);
+      }
+      mesh.instanceMatrix.needsUpdate = true;
+      // Slow drift of the whole tunnel for life.
+      group.rotation.z = -0.65 + Math.sin(elapsed * 0.12) * 0.04;
+    }
+
+    return { update };
+  }
+
+  // =========================================================================
+  // 3. ESCENA THREE.JS + FIX DEFINITIVO DEL CD VISIBLEMENTE EXTRAÍDO
+  // =========================================================================
+  let scene: THREE.Scene;
+  let camera: THREE.PerspectiveCamera;
+  let renderer: THREE.WebGLRenderer;
+  let jewelCaseGroup: THREE.Group;
+  let frontLidGroup: THREE.Group;
+  let discGroup: THREE.Group;
+  let warp: { update: (dt: number) => void } | null = null;
+  let manualLidOverride: boolean | null = null;
+  let dragRotY = 0;
+  let dragRotX = 0;
+  let isDragging = false;
+  let prevMouse = { x: 0, y: 0 };
+
+  const currentPose = { posX: -1.75, posY: 0, posZ: 0, rotX: 0.12, rotY: 0.32, lidAngle: 0, discPop: 0, scale: 1 };
+  const targetPose = { posX: -1.75, posY: 0, posZ: 0, rotX: 0.12, rotY: 0.32, lidAngle: 0, discPop: 0, scale: 1 };
+
+  function initJewelCase3D() {
+    const container = document.getElementById('three-stage');
+    if (!container) return;
+
+    scene = new THREE.Scene();
+
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+    camera.position.set(0, 0.08, width < 1024 ? 7.6 : 6.35);
+
+    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    container.appendChild(renderer.domElement);
+
+    const ambient = new THREE.AmbientLight(0xffffff, 1.0);
+    scene.add(ambient);
+    const dirLight = new THREE.DirectionalLight(0x00f0ff, 0.7);
+    dirLight.position.set(4, 6, 5);
+    scene.add(dirLight);
+
+    // Warp-speed background lines (behind the case, far in -Z).
+    warp = createWarpField(scene);
+
+    jewelCaseGroup = new THREE.Group();
+    scene.add(jewelCaseGroup);
+
+    const caseW = 3.1;
+    const caseH = 2.8;
+    const caseD = 0.28;
+
+    const frontTex = createOfficialFrontCoverTexture();
+    const spineTex = createObiSpineTexture();
+    const backTex = createPixelBackCoverTexture();
+    const discTex = createPrintedDiscTexture();
+    const manualTex = createManualInsideTexture();
+
+    // 1. Bandeja trasera negra (Z = -0.11 para dejar espacio holgado al CD)
+    const trayMat = new THREE.MeshLambertMaterial({ color: 0x101620 });
+    const backCoverMat = new THREE.MeshBasicMaterial({ map: backTex });
+    const backMaterials = [trayMat, trayMat, trayMat, trayMat, trayMat, backCoverMat];
+    const backBase = new THREE.Mesh(new THREE.BoxGeometry(caseW, caseH, 0.12), backMaterials);
+    backBase.position.z = -0.11;
+    jewelCaseGroup.add(backBase);
+
+    // Soporte / spindle central elevado y perfectamente centrado en la bandeja
+    const spindleGeo = new THREE.CylinderGeometry(0.22, 0.26, 0.11, 16);
+    spindleGeo.rotateX(Math.PI / 2);
+    const spindleMesh = new THREE.Mesh(spindleGeo, new THREE.MeshLambertMaterial({ color: 0x263244 }));
+    spindleMesh.position.set(0, 0, -0.02);
+    jewelCaseGroup.add(spindleMesh);
+
+    // 2. Grupo del CD (centrado en X = 0, Y = 0 sobre su eje)
+    discGroup = new THREE.Group();
+    discGroup.position.set(0, 0, 0.02);
+    jewelCaseGroup.add(discGroup);
+
+    // RingGeometry plano con normales DoubleSide para cero z-fighting y máxima nitidez
+    const ringGeo = new THREE.RingGeometry(0.24, 1.24, 36, 1);
+    const uvAttr = ringGeo.attributes.uv;
+    const posAttr = ringGeo.attributes.position;
+    for (let i = 0; i < posAttr.count; i++) {
+      const vx = posAttr.getX(i);
+      const vy = posAttr.getY(i);
+      uvAttr.setXY(i, vx / 2.48 + 0.5, vy / 2.48 + 0.5);
+    }
+
+    const discMat = new THREE.MeshBasicMaterial({ map: discTex, side: THREE.DoubleSide });
+    const discMesh = new THREE.Mesh(ringGeo, discMat);
+    discGroup.add(discMesh);
+
+    // Aro acrílico central transparente del CD
+    const clearHubGeo = new THREE.RingGeometry(0.14, 0.25, 24);
+    const clearHubMat = new THREE.MeshBasicMaterial({
+      color: 0xe2e8f0,
+      transparent: true,
+      opacity: 0.55,
+      side: THREE.DoubleSide,
+    });
+    const clearHub = new THREE.Mesh(clearHubGeo, clearHubMat);
+    discGroup.add(clearHub);
+
+    // 3. Tapa frontal abatible (bisagra en el borde izquierdo X = -caseW/2)
+    frontLidGroup = new THREE.Group();
+    frontLidGroup.position.set(-caseW / 2, 0, 0.05);
+    jewelCaseGroup.add(frontLidGroup);
+
+    // Portada oficial exterior
+    const coverPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(caseW - 0.06, caseH - 0.06),
+      new THREE.MeshBasicMaterial({ map: frontTex })
+    );
+    coverPlane.position.set(caseW / 2, 0, 0.045);
+    frontLidGroup.add(coverPlane);
+
+    // Interior de la tapa (Manual de operación)
+    const manualPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(caseW - 0.12, caseH - 0.12),
+      new THREE.MeshBasicMaterial({ map: manualTex })
+    );
+    manualPlane.rotation.y = Math.PI;
+    manualPlane.position.set(caseW / 2, 0, 0.03);
+    frontLidGroup.add(manualPlane);
+
+    // Cubierta acrílica translúcida frontal
+    const plasticMat = new THREE.MeshPhongMaterial({
+      color: 0xdbeafe,
+      transparent: true,
+      opacity: 0.18,
+      shininess: 95,
+    });
+    const frontAcrylic = new THREE.Mesh(new THREE.BoxGeometry(caseW, caseH, 0.05), plasticMat);
+    frontAcrylic.position.set(caseW / 2, 0, 0.07);
+    frontLidGroup.add(frontAcrylic);
+
+    // Lomo lateral izquierdo + Obi Strip japonés
+    const spineMat = new THREE.MeshBasicMaterial({ map: spineTex });
+    const spineMesh = new THREE.Mesh(new THREE.BoxGeometry(0.18, caseH, caseD), [
+      trayMat,
+      spineMat,
+      trayMat,
+      trayMat,
+      trayMat,
+      trayMat,
+    ]);
+    spineMesh.position.set(-0.02, 0, -0.06);
+    frontLidGroup.add(spineMesh);
+
+    // Aristas rectas cian sutiles
+    const edges = new THREE.EdgesGeometry(new THREE.BoxGeometry(caseW, caseH, caseD));
+    const line = new THREE.LineSegments(
+      edges,
+      new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.3 })
+    );
+    jewelCaseGroup.add(line);
+
+    // Rotación libre por arrastre con mouse o touch
+    const onPointerDown = (clientX: number, clientY: number) => {
+      isDragging = true;
+      prevMouse = { x: clientX, y: clientY };
+    };
+    const onPointerMove = (clientX: number, clientY: number) => {
+      if (!isDragging) return;
+      dragRotY += (clientX - prevMouse.x) * 0.009;
+      dragRotX = Math.max(-0.6, Math.min(0.6, dragRotX + (clientY - prevMouse.y) * 0.006));
+      prevMouse = { x: clientX, y: clientY };
+    };
+    const onPointerUp = () => {
+      isDragging = false;
+    };
+
+    container.addEventListener('mousedown', (e) => onPointerDown(e.clientX, e.clientY));
+    window.addEventListener('mousemove', (e) => onPointerMove(e.clientX, e.clientY));
+    window.addEventListener('mouseup', onPointerUp);
+
+    container.addEventListener(
+      'touchstart',
+      (e) => {
+        if (e.touches.length === 1) onPointerDown(e.touches[0].clientX, e.touches[0].clientY);
+      },
+      { passive: true }
+    );
+    window.addEventListener(
+      'touchmove',
+      (e) => {
+        if (e.touches.length === 1) onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+      },
+      { passive: true }
+    );
+    window.addEventListener('touchend', onPointerUp);
+
+    window.addEventListener('resize', () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      camera.aspect = w / h;
+      camera.position.z = w < 1024 ? 7.6 : 6.35;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+      updateScrollStory();
+    });
+  }
+
+  function lerp(a: number, b: number, t: number) {
+    return a + (b - a) * t;
+  }
+
+  function updateScrollStory() {
+    const track = document.getElementById('scroll-track');
+    if (!track) return;
+
+    const docEl = document.documentElement;
+    const scrollTop = window.pageYOffset || docEl.scrollTop || document.body.scrollTop || 0;
+    const maxScroll = Math.max(1, docEl.scrollHeight - window.innerHeight);
+    const progress = Math.max(0, Math.min(1, scrollTop / maxScroll));
+
+    const bar = document.getElementById('scroll-progress-bar');
+    if (bar) bar.style.width = `${(progress * 100).toFixed(1)}%`;
+
+    if (!isDragging) {
+      dragRotY *= 0.85;
+      dragRotX *= 0.85;
+    }
+
+    const isDesktop = window.innerWidth >= 1024;
+    let activeStop = 0;
+
+    // Stop 01 (0.00): Portada de frente
+    // Stop 02 (0.33): Lomo + Obi Strip (~90 deg / 1.52 rad)
+    // Stop 03 (0.66): Contraportada amarilla (180 deg / Math.PI)
+    // Stop 04 (1.00): Vuelta completa (360 deg) con tapa abierta y CD centrado
+    if (progress < 0.33) {
+      const t = progress / 0.33;
+      targetPose.posX = isDesktop ? lerp(-1.75, 1.85, t) : 0;
+      targetPose.posY = isDesktop ? 0 : 0.85;
+      targetPose.posZ = lerp(0, 0.25, t);
+      targetPose.rotY = lerp(0.32, 1.52, t);
+      targetPose.rotX = lerp(0.1, 0.04, t);
+      targetPose.lidAngle = 0;
+      targetPose.discPop = 0;
+      targetPose.scale = isDesktop ? 1 : 0.78;
+      activeStop = t < 0.55 ? 0 : 1;
+    } else if (progress < 0.66) {
+      const t = (progress - 0.33) / 0.33;
+      targetPose.posX = isDesktop ? lerp(1.85, -1.75, t) : 0;
+      targetPose.posY = isDesktop ? 0 : 0.85;
+      targetPose.posZ = lerp(0.25, 0.1, t);
+      targetPose.rotY = lerp(1.52, Math.PI - 0.18, t);
+      targetPose.rotX = lerp(0.04, 0.08, t);
+      targetPose.lidAngle = 0;
+      targetPose.discPop = 0;
+      targetPose.scale = isDesktop ? 1 : 0.78;
+      activeStop = t < 0.5 ? 1 : 2;
+    } else {
+      const t = (progress - 0.66) / 0.34;
+      const openRatio = Math.max(0, (t - 0.18) / 0.82);
+      targetPose.posX = isDesktop ? lerp(-1.75, -0.75, openRatio) : lerp(0, 0.25, openRatio);
+      targetPose.posY = isDesktop ? 0 : 0.85;
+      targetPose.posZ = lerp(0.1, -1.15, openRatio);
+      targetPose.rotY = lerp(Math.PI - 0.18, Math.PI * 2 + 0.08, t);
+      targetPose.rotX = lerp(0.08, 0.08, t);
+      targetPose.lidAngle = lerp(0, -2.15, openRatio);
+      targetPose.discPop = openRatio;
+      targetPose.scale = isDesktop ? lerp(1, 0.8, openRatio) : lerp(0.78, 0.62, openRatio);
+      activeStop = t < 0.42 ? 2 : 3;
+    }
+
+    for (let i = 0; i < 4; i++) {
+      const panel = document.getElementById(`panel-${i}`);
+      const navBtn = document.getElementById(`nav-stop-${i}`);
+      if (panel) panel.classList.toggle('active', i === activeStop);
+      if (navBtn) navBtn.classList.toggle('nav-stop-active', i === activeStop);
+    }
+
+    const stageNames = [
+      '01 / 04 • PORTADA',
+      '02 / 04 • LOMO & MECHAS',
+      '03 / 04 • CONTRAPORTADA',
+      '04 / 04 • MANUAL & DISCO',
+    ];
+    const hudLabel = document.getElementById('hud-stage-label');
+    if (hudLabel) hudLabel.textContent = stageNames[activeStop];
+
+    const effectiveLid = manualLidOverride !== null ? (manualLidOverride ? -2.15 : 0) : targetPose.lidAngle;
+    const btnLid = document.getElementById('btn-manual-lid');
+    if (btnLid) {
+      btnLid.textContent = effectiveLid < -0.5 ? 'CERRAR TAPA' : 'ABRIR / CERRAR TAPA';
+    }
+  }
+
+  function scrollToStop(stopIndex: number) {
+    manualLidOverride = null;
+    const docEl = document.documentElement;
+    const maxScroll = Math.max(1, docEl.scrollHeight - window.innerHeight);
+    const ratios = [0, 0.33, 0.66, 1.0];
+    window.scrollTo({ top: maxScroll * ratios[stopIndex], behavior: 'smooth' });
+  }
+
+  function toggleManualLid() {
+    const currentOpen = manualLidOverride !== null ? manualLidOverride : targetPose.lidAngle < -0.5;
+    manualLidOverride = !currentOpen;
+    updateScrollStory();
+  }
+
+  let lastFrame = performance.now();
+  function animate3D() {
+    requestAnimationFrame(animate3D);
+    if (!jewelCaseGroup) return;
+
+    const now = performance.now();
+    const dt = Math.min(0.05, (now - lastFrame) / 1000);
+    lastFrame = now;
+
+    // Lee continuamente el progreso del scroll en cada frame
+    updateScrollStory();
+
+    currentPose.posX += (targetPose.posX - currentPose.posX) * 0.12;
+    currentPose.posY += (targetPose.posY - currentPose.posY) * 0.12;
+    currentPose.posZ += (targetPose.posZ - currentPose.posZ) * 0.12;
+    currentPose.rotY += (targetPose.rotY - currentPose.rotY) * 0.12;
+    currentPose.rotX += (targetPose.rotX - currentPose.rotX) * 0.12;
+
+    const desiredLid = manualLidOverride !== null ? (manualLidOverride ? -2.15 : 0) : targetPose.lidAngle;
+    const desiredPop = manualLidOverride !== null ? (manualLidOverride ? 1 : 0) : targetPose.discPop;
+
+    currentPose.lidAngle += (desiredLid - currentPose.lidAngle) * 0.12;
+    currentPose.discPop += (desiredPop - currentPose.discPop) * 0.12;
+
+    // Si el usuario abre la tapa manualmente en cualquier parada, ajusta el encuadre
+    const manualZoomOffset = manualLidOverride ? -1.1 : 0;
+    const manualShiftX = manualLidOverride && window.innerWidth >= 1024 && currentPose.posX < -1.2 ? 0.95 : 0;
+
+    jewelCaseGroup.scale.setScalar(currentPose.scale);
+    jewelCaseGroup.position.set(
+      currentPose.posX + manualShiftX,
+      currentPose.posY + Math.sin(Date.now() * 0.0025) * 0.04,
+      currentPose.posZ + manualZoomOffset
+    );
+    jewelCaseGroup.rotation.y = currentPose.rotY + dragRotY;
+    jewelCaseGroup.rotation.x = currentPose.rotX + dragRotX;
+
+    frontLidGroup.rotation.y = currentPose.lidAngle;
+
+    if (discGroup) {
+      discGroup.position.x = 0;
+      discGroup.position.y = 0;
+      discGroup.position.z = 0.02 + currentPose.discPop * 0.22;
+      if (currentPose.lidAngle < -0.35) {
+        discGroup.rotation.z -= 0.014;
+      }
+    }
+
+    if (warp) warp.update(dt);
+
+    renderer.render(scene, camera);
+  }
+
+  // =========================================================================
+  // 4. MACHINE SELECT: BLUEPRINTS SVG WIREFRAME DINÁMICOS TIPO VR.TEMJIN
+  // =========================================================================
+  interface Virtualoid {
+    code: string;
+    fullName: string;
+    shortName: string;
+    weapons: string;
+    stats: string;
+    sector: string;
+    primary: string;
+    trim: string;
+    svg: string;
+  }
+
+  const virtualoids: Virtualoid[] = [
+    {
+      code: 'MBV-04-MCBO',
+      fullName: 'MBV-04-MCBO RELAMPAGO',
+      shortName: 'VR.RELAMPAGO',
+      weapons: 'BEAM SABER<br/>CATATUMBO RIFLE<br/>HYDRO DASH',
+      stats: 'MOBILITY: 92% | OUTPUT: 4800 KW | ARMOR: B+',
+      sector: 'SECTOR: PUENTE RAFAEL URDANETA',
+      primary: '#1D4ED8',
+      trim: '#FFD23F',
+      svg: `<svg viewBox="0 0 120 120" class="w-full h-full stroke-[#00F0FF] fill-none" stroke-width="2">
+        <rect x="46" y="14" width="28" height="18"/>
+        <line x1="48" y1="6" x2="48" y2="14"/>
+        <line x1="72" y1="6" x2="72" y2="14"/>
+        <rect x="50" y="20" width="20" height="5" class="fill-[#10F57A]/40"/>
+        <rect x="38" y="34" width="44" height="34"/>
+        <rect x="20" y="34" width="16" height="22"/>
+        <rect x="84" y="34" width="16" height="22"/>
+        <line x1="28" y1="56" x2="28" y2="82"/>
+        <line x1="92" y1="56" x2="92" y2="82"/>
+        <line x1="92" y1="10" x2="92" y2="66" class="stroke-[#FFD23F]" stroke-width="2.5"/>
+        <rect x="42" y="70" width="14" height="36"/>
+        <rect x="64" y="70" width="14" height="36"/>
+        <rect x="38" y="106" width="20" height="8"/>
+        <rect x="62" y="106" width="20" height="8"/>
+      </svg>`,
+    },
+    {
+      code: 'XBV-13-ZULIA',
+      fullName: 'XBV-13-ZULIA PALAFITO',
+      shortName: 'VR.PALAFITO',
+      weapons: 'ARC TESLA COIL<br/>FLOATING MINES<br/>AMPHIBIAN STEP',
+      stats: 'MOBILITY: 98% | OUTPUT: 4100 KW | ARMOR: C+',
+      sector: 'SECTOR: SANTA ROSA DE AGUA',
+      primary: '#16A34A',
+      trim: '#00F0FF',
+      svg: `<svg viewBox="0 0 120 120" class="w-full h-full stroke-[#10F57A] fill-none" stroke-width="2">
+        <polygon points="60,10 42,28 78,28"/>
+        <rect x="46" y="28" width="28" height="12"/>
+        <polygon points="34,42 86,42 78,72 42,72"/>
+        <polygon points="14,38 32,44 26,64 12,56"/>
+        <polygon points="106,38 88,44 94,64 108,56"/>
+        <rect x="44" y="74" width="12" height="32"/>
+        <rect x="64" y="74" width="12" height="32"/>
+        <polygon points="36,106 58,106 54,114 32,114"/>
+        <polygon points="62,106 84,106 88,114 66,114"/>
+      </svg>`,
+    },
+    {
+      code: 'RVR-01-LAGO',
+      fullName: 'RVR-01-LAGO URDANETA',
+      shortName: 'VR.URDANETA',
+      weapons: 'HEAVY RAILGUN<br/>AEGIS BARRIER<br/>SIEGE THRUSTER',
+      stats: 'MOBILITY: 74% | OUTPUT: 6200 KW | ARMOR: S',
+      sector: 'SECTOR: CANAL DE NAVEGACIÓN',
+      primary: '#DC2626',
+      trim: '#E2E8F0',
+      svg: `<svg viewBox="0 0 120 120" class="w-full h-full stroke-[#FF2A55] fill-none" stroke-width="2">
+        <rect x="44" y="14" width="32" height="16"/>
+        <rect x="48" y="20" width="24" height="5" class="fill-[#00F0FF]/40"/>
+        <rect x="30" y="32" width="60" height="38"/>
+        <rect x="12" y="26" width="18" height="30"/>
+        <rect x="90" y="26" width="18" height="30"/>
+        <rect x="16" y="56" width="12" height="34" class="stroke-[#FFD23F]"/>
+        <rect x="92" y="56" width="12" height="34" class="stroke-[#FFD23F]"/>
+        <rect x="36" y="72" width="18" height="34"/>
+        <rect x="66" y="72" width="18" height="34"/>
+        <rect x="32" y="106" width="24" height="8"/>
+        <rect x="64" y="106" width="24" height="8"/>
+      </svg>`,
+    },
+  ];
+  let selectedMechIndex = 0;
+
+  function selectVirtualoid(index: number) {
+    selectedMechIndex = index;
+    const mech = virtualoids[index];
+
+    virtualoids.forEach((_, idx) => {
+      const card = document.getElementById(`mech-card-${idx}`);
+      if (card) card.classList.toggle('active', idx === index);
+    });
+
+    document.getElementById('selected-mech-badge')!.textContent = mech.fullName;
+    document.getElementById('disc-mech-name')!.textContent = mech.code;
+    document.getElementById('mech-blueprint-svg')!.innerHTML = mech.svg;
+    document.getElementById('bp-code')!.textContent = mech.code;
+    document.getElementById('bp-name')!.textContent = mech.shortName;
+    document.getElementById('bp-weapons')!.innerHTML = mech.weapons;
+    document.getElementById('bp-stats')!.textContent = mech.stats;
+    document.getElementById('bp-sector')!.textContent = mech.sector;
+  }
+
+  // =========================================================================
+  // 5. 4 CAPTURAS PIXEL ART PARA LA CONTRAPORTADA AMARILLA
+  // =========================================================================
+  function drawIsometricBoard(ctx: CanvasRenderingContext2D, w: number, h: number, variant: number) {
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = '#051014';
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = 'rgba(16, 245, 122, 0.18)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < w; x += 16) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+    for (let y = 0; y < h; y += 16) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+
+    // Tablero isométrico del Lago
+    ctx.fillStyle = '#0B4358';
+    ctx.beginPath();
+    ctx.moveTo(w / 2, 20);
+    ctx.lineTo(w - 22, h / 2 + 8);
+    ctx.lineTo(w / 2, h - 12);
+    ctx.lineTo(22, h / 2 + 8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#C2B280';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Puente Rafael Urdaneta
+    ctx.strokeStyle = '#94A3B8';
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(75, 65);
+    ctx.lineTo(175, 40);
+    ctx.stroke();
+
+    const p1x = variant === 4 ? 148 : 115;
+    const p1y = variant === 4 ? 76 : 85;
+    ctx.fillStyle = '#1D4ED8';
+    ctx.fillRect(p1x, p1y, 12, 16);
+    ctx.fillStyle = '#FFD23F';
+    ctx.fillRect(p1x - 2, p1y + 2, 16, 4);
+
+    const p2x = variant === 4 ? 168 : 205;
+    const p2y = variant === 4 ? 70 : 58;
+    ctx.fillStyle = '#DC2626';
+    ctx.fillRect(p2x, p2y, 12, 16);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(p2x + 2, p2y - 3, 8, 4);
+
+    if (variant === 1) {
+      // Duelo isométrico en el Lago
+      ctx.strokeStyle = '#00F0FF';
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(p1x + 6, p1y + 8);
+      ctx.lineTo(p1x + 52, p1y - 14);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    } else if (variant === 2) {
+      // Impacto de relámpago en el Puente
+      ctx.strokeStyle = '#FFD23F';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(145, 6);
+      ctx.lineTo(132, 34);
+      ctx.lineTo(146, 40);
+      ctx.lineTo(130, 56);
+      ctx.stroke();
+    } else if (variant === 3) {
+      // Emboscada en Palafitos
+      ctx.fillStyle = '#92400E';
+      ctx.fillRect(62, 92, 16, 12);
+      ctx.fillRect(82, 98, 16, 12);
+      ctx.fillStyle = '#10F57A';
+      ctx.fillRect(102, 94, 5, 5);
+      ctx.fillRect(116, 88, 5, 5);
+    } else if (variant === 4) {
+      // Choque de sables láser
+      ctx.strokeStyle = '#00F0FF';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(p1x + 12, p1y + 4);
+      ctx.lineTo(p2x, p2y + 4);
+      ctx.stroke();
+
+      ctx.fillStyle = '#FFD23F';
+      ctx.fillRect(p1x + 13, p2y + 1, 6, 6);
+    }
+  }
+
+  function renderBackCoverScreenshots() {
+    [1, 2, 3, 4].forEach((num) => {
+      const c = document.getElementById(`shot-${num}`) as HTMLCanvasElement | null;
+      if (c) drawIsometricBoard(c.getContext('2d') as CanvasRenderingContext2D, c.width, c.height, num);
+    });
+  }
+
+  // =========================================================================
+  // 6. WIRING
+  // =========================================================================
+  function wireInteractions() {
+    document.querySelectorAll<HTMLButtonElement>('[data-stop]').forEach((btn) => {
+      btn.addEventListener('click', () => scrollToStop(Number(btn.dataset.stop)));
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('[data-mech]').forEach((btn) => {
+      btn.addEventListener('click', () => selectVirtualoid(Number(btn.dataset.mech)));
+    });
+
+    document.getElementById('btn-manual-lid')?.addEventListener('click', toggleManualLid);
+
+    window.addEventListener('scroll', updateScrollStory, { passive: true });
+  }
+
+  function boot() {
+    initJewelCase3D();
+    animate3D();
+    selectVirtualoid(0);
+    renderBackCoverScreenshots();
+    updateScrollStory();
+    wireInteractions();
+  }
+
+  if (document.readyState === 'complete') {
+    boot();
+  } else {
+    window.addEventListener('load', boot);
+  }
+</script>

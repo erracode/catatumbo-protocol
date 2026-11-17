@@ -10,9 +10,12 @@
     "test": "node tools/test-net.cjs"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.3.5",
     "astro": "^5.0.0",
     "phaser": "^3.87.0",
-    "playroomkit": "^0.0.73"
+    "playroomkit": "^0.0.73",
+    "tailwindcss": "^4.3.5",
+    "three": "^0.187.0"
   },
   "devDependencies": {
     "cross-env": "^10.1.0"
