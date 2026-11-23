@@ -27,11 +27,15 @@ const log = (...a) => console.log('[e2e]', ...a);
   log('opening host');
   const host = await makePage('host');
   await host.page.goto(`${BASE}/play?mode=net&gameId=${GAME_ID}&debug=1`, { waitUntil: 'commit' });
-  await sleep(4000);
-  const hs = await host.page.locator('#net-status').textContent().catch(() => null);
-  const m = /Room ([A-Z0-9]+)/.exec(hs || '');
-  if (!m) { log('FAILED no room', hs); await browser.close(); process.exit(1); }
-  const room = m[1];
+  // Room code lives in the URL hash as `#r=R<code>`; the leading `R` is a
+  // display prefix and must be stripped before passing it as `?r=`.
+  let room = null;
+  for (let i = 0; i < 40; i++) {
+    await sleep(500);
+    const hm = /[#&?]r=R([A-Za-z0-9]+)/.exec(host.page.url());
+    if (hm) { room = hm[1]; break; }
+  }
+  if (!room) { log('FAILED no room', host.page.url()); await browser.close(); process.exit(1); }
   log('room:', room);
 
   const guest = await makePage('guest');

@@ -28,11 +28,17 @@ const log = (...a) => console.log('[e2e]', ...a);
   log('opening host (creates room)');
   const host = await makePage('host');
   await host.page.goto(`${BASE}/play?mode=net&gameId=${GAME_ID}&debug=1`, { waitUntil: 'commit' });
-  await sleep(4000);
-  const hostStatus = await host.page.locator('#net-status').textContent().catch(() => null);
-  const m = /Room ([A-Z0-9]+)/.exec(hostStatus || '');
-  if (!m) { log('FAILED: no room code', hostStatus); await browser.close(); process.exit(1); }
-  const room = m[1];
+  // Playroom writes the room code into the URL hash as `#r=R<code>` and the
+  // status chip clears as soon as the match mounts, so the URL is the reliable
+  // source. The leading `R` in the hash is a display prefix: the canonical room
+  // code (what getRoomCode() returns and what `?r=` must carry) excludes it.
+  let room = null;
+  for (let i = 0; i < 40; i++) {
+    await sleep(500);
+    const hm = /[#&?]r=R([A-Za-z0-9]+)/.exec(host.page.url());
+    if (hm) { room = hm[1]; break; }
+  }
+  if (!room) { log('FAILED: no room code', host.page.url()); await browser.close(); process.exit(1); }
   log('room:', room);
 
   log('opening guest (joins room)');
