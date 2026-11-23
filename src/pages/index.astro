@@ -19,24 +19,33 @@ import Base from '../layouts/Base.astro';
           <span class="bg-[#00F0FF] text-black pixel-font font-bold px-2 py-0.5 text-[10px] border border-black">
             PSX / SATURN
           </span>
-          <span class="mono-font text-xs text-[#10F57A] hidden xl:inline font-bold tracking-wider">
+          <span class="mono-font text-xs text-[#00F0FF] hidden xl:inline font-bold tracking-wider">
             CATATUMBO PROTOCOL // OBI SLUS-1996-MCBO
           </span>
         </div>
 
-        <!-- 4 Paradas de navegación -->
+        <!-- 7 Paradas de navegación (carátula → lomo → dorso → 4 zonas de caja abierta) -->
         <nav class="flex items-center gap-1 sm:gap-1.5 overflow-x-auto" aria-label="Archive sections">
           <button type="button" data-stop="0" id="nav-stop-0" class="nav-stop nav-stop-active" aria-current="true">
             01 PORTADA
           </button>
           <button type="button" data-stop="1" id="nav-stop-1" class="nav-stop">
-            02 LOMO / MECHAS
+            02 LOMO
           </button>
           <button type="button" data-stop="2" id="nav-stop-2" class="nav-stop">
-            03 CONTRAPORTADA
+            03 DORSO
           </button>
           <button type="button" data-stop="3" id="nav-stop-3" class="nav-stop">
-            04 MANUAL &amp; DISCO
+            04 ORIGEN
+          </button>
+          <button type="button" data-stop="4" id="nav-stop-4" class="nav-stop">
+            05 MÉTODO
+          </button>
+          <button type="button" data-stop="5" id="nav-stop-5" class="nav-stop">
+            06 MÚSICA
+          </button>
+          <button type="button" data-stop="6" id="nav-stop-6" class="nav-stop">
+            07 GAMEPLAY
           </button>
         </nav>
 
@@ -58,348 +67,190 @@ import Base from '../layouts/Base.astro';
     <div id="scroll-track" aria-hidden="true"></div>
 
     <!-- ===================================================================== -->
-    <!-- STOP 01: PORTADA (ARCHIVE EDITION STORE LISTING)                      -->
+    <!-- OVERLAYS DE ZONA: el copy vive sobre la caja 3D; solo el activo se ve. -->
     <!-- ===================================================================== -->
-    <section id="panel-0" class="story-panel active">
-      <div class="max-w-7xl mx-auto w-full px-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-        <div class="lg:col-start-7 lg:col-span-6 interactive-card panel-scroll-box mt-[42vh] lg:mt-0">
-          <div class="bg-[#060C13]/95 border-2 border-[#00F0FF] p-4 sm:p-5 shadow-[8px_8px_0px_#000000] space-y-3.5">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
-              <span class="inline-flex items-center gap-2 bg-black border border-[#FFD23F] px-2.5 py-1">
-                <span class="w-2 h-2 bg-[#10F57A] animate-ping"></span>
-                <span class="pixel-font text-[9px] sm:text-[10px] text-[#FFD23F]">ARCHIVE EDITION • NTSC-U</span>
-              </span>
-              <span class="mono-font text-xs text-[#00F0FF] font-bold">SCROLL PARA GIRAR CAJA ↓</span>
-            </div>
+    <div id="zone-layer" class="zone-layer">
 
-            <div>
-              <h1 class="virtual-title text-4xl sm:text-5xl md:text-6xl leading-none">CATATUMBO</h1>
-              <h2 class="virtual-subtitle text-3xl sm:text-4xl md:text-5xl leading-tight mt-1">PROTOCOL</h2>
-            </div>
+      <!-- STOP 01 — CARÁTULA (frente) -->
+      <article class="zone-copy zone-copy--hero" data-stop="0">
+        <div class="zone-card">
+          <div class="zone-topline">
+            <span class="pixel-font text-[10px] text-[#FFD23F]">ARCHIVE EDITION • NTSC-U • SLUS-1996-MCBO</span>
+            <span class="mono-font text-[11px] text-[#00F0FF] font-bold">SCROLL: GIRA LA CAJA ↓</span>
+          </div>
+          <h1 class="virtual-title text-4xl sm:text-5xl md:text-6xl leading-none">CATATUMBO</h1>
+          <h2 class="virtual-subtitle text-3xl sm:text-4xl md:text-5xl leading-tight mt-1">PROTOCOL</h2>
+          <p class="zone-lead">
+            Duelo de mechas <strong>1v1 por turnos simultáneos</strong> sobre el Lago de Maracaibo.
+            Ambos pilotos comprometen su maniobra en secreto y la resuelven a la vez.
+          </p>
+          <p class="zone-body">
+            Predice al rival, encadena <strong>posturas</strong>, gasta <strong>Guts</strong> en especiales
+            y sobrevive al relámpago eterno del Catatumbo.
+          </p>
+          <a href="/play" class="btn-brutal zone-cta bg-[#FF2A55] hover:bg-[#ff3b63] text-white">
+            <span class="pixel-font text-base sm:text-lg tracking-wider blink-coin font-bold">JUGAR</span>
+            <span class="mono-font text-[11px] font-bold uppercase tracking-widest text-yellow-200">INSERT COIN · MODOS Y MÁQUINAS DENTRO DEL JUEGO</span>
+          </a>
+        </div>
+      </article>
 
-            <p class="text-slate-200 text-sm sm:text-base leading-relaxed border-l-2 border-[#FF2A55] pl-3.5 bg-white/5 py-2">
-              Duelo de mechas <strong>1v1 por turnos simultáneos</strong> sobre el Lago de Maracaibo.
-              Ambos pilotos eligen su acción en secreto y la resuelven a la vez: la <strong>velocidad</strong> decide quién golpea primero.
-              Encadena <strong>posturas</strong>, gasta <strong>Guts</strong> en especiales y sobrevive al relámpago del Catatumbo.
-            </p>
-
-            <!-- Ticker de mecánicas reales -->
-            <div class="ticker bg-black border border-[#10F57A]/40 py-1" aria-hidden="true">
-              <span class="ticker__track mono-font text-[10px] font-bold tracking-wider text-[#10F57A]">
-                &gt;&gt; MECHA SIMULTACTICS · ACCIONES SECRETAS · ORDEN POR VELOCIDAD · POSTURAS: NORMAL→ATURDIDO→RETROCESO→DERRIBADO · GUTS DESDE PARRY/AGARRE/PETRÓLEO · RAYO CATATUMBO 12 DMG · VERDÍN 8 DMG · PETRÓLEO 10 DMG · LANZAMIENTOS ROMPEN PUENTE Y PALAFITOS &lt;&lt;
-              </span>
-            </div>
-
-            <!-- Ficha de Precio + Selector de Modo -->
-            <div class="bg-[#09121C] border border-slate-700 p-4 space-y-3">
-              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
-                <div class="flex items-center gap-2.5">
-                  <span class="text-slate-500 line-through text-base font-bold mono-font">Bs. 1996.00</span>
-                  <span class="bg-[#10F57A] text-black pixel-font text-[10px] px-2.5 py-1 border border-black font-bold">
-                    FREE / JUGAR EN NAVEGADOR
-                  </span>
-                </div>
-                <span class="mono-font text-xs text-[#00F0FF] font-bold">OBI: SLUS-1996-MCBO</span>
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <a
-                  href="/play?mode=cpu"
-                  class="btn-brutal bg-[#FFD23F] text-black p-3 text-left flex items-center justify-between cursor-pointer"
-                >
-                  <div>
-                    <div class="pixel-font text-[10px] sm:text-[11px] font-bold">[ 1P VS CPU ]</div>
-                    <div class="mono-font text-[11px] font-bold opacity-80">Arcade gauntlet · 5 rivales + jefe</div>
-                  </div>
-                  <span class="pixel-font text-xs" aria-hidden="true">▶</span>
-                </a>
-
-                <a
-                  href="/play?mode=net&gameId=9zfQpYpu1MrPWjldLTfD"
-                  class="btn-brutal bg-slate-900 text-white border-[#00F0FF] p-3 text-left flex items-center justify-between cursor-pointer"
-                >
-                  <div>
-                    <div class="pixel-font text-[10px] sm:text-[11px] font-bold text-[#00F0FF]">[ 2P ONLINE - PLAYROOM ]</div>
-                    <div class="mono-font text-[11px] text-slate-300">Sala P2P con código</div>
-                  </div>
-                  <span class="pixel-font text-[10px] text-[#00F0FF]">NET</span>
-                </a>
-              </div>
-
-              <a
-                href="/play"
-                class="btn-brutal w-full bg-[#FF2A55] hover:bg-[#ff3b63] text-white py-3.5 px-5 flex flex-col items-center justify-center gap-1 cursor-pointer"
-              >
-                <span class="pixel-font text-sm sm:text-base tracking-wider blink-coin font-bold">
-                  INSERT COIN / JUGAR AHORA
-                </span>
-                <span class="mono-font text-[11px] font-bold uppercase tracking-widest text-yellow-200">
-                  INICIAR CABINA VIRTUAL-ON EN NAVEGADOR
-                </span>
-              </a>
+      <!-- STOP 02 — LOMO / OBI STRIP (ficha técnica + mechas) -->
+      <article class="zone-copy zone-copy--left" data-stop="1">
+        <div class="zone-card">
+          <div class="zone-topline">
+            <span class="pixel-font text-[11px] text-[#00F0FF]">MACHINE SELECT</span>
+            <span class="mono-font text-[11px] text-slate-300">OBI: SLUS-1996-MCBO</span>
+          </div>
+          <h2 class="zone-title">FICHA TÉCNICA</h2>
+          <dl class="zone-spec">
+            <div><dt>ORIGEN</dt><dd>Platanus Hack 26 · Caracas, VE</dd></div>
+            <div><dt>ESTUDIO</dt><dd>ERRACODE</dd></div>
+            <div><dt>GÉNERO</dt><dd>Táctica isométrica · turnos simultáneos</dd></div>
+            <div><dt>JUGADORES</dt><dd>1 (CPU) / 2 (online)</dd></div>
+            <div><dt>PLATAFORMA</dt><dd>Navegador · Phaser 3.87</dd></div>
+            <div><dt>LÍMITE</dt><dd>1 archivo · ≤50 KB · 0 assets</dd></div>
+          </dl>
+          <div class="zone-bottomline"><span class="pixel-font text-[10px] text-[#FF2A55]">› 3 VIRTUALOIDS EN EL CARTUCHO ‹</span></div>
+          <div class="zone-mech-detail">
+            <div id="mech-blueprint-svg" class="zone-blueprint" aria-hidden="true"></div>
+            <div class="zone-mech-meta">
+              <div id="bp-code" class="mono-font text-[11px] text-[#FFD23F] font-bold">MBV-04-MCBO</div>
+              <div id="bp-name" class="display-font text-lg font-bold italic text-[#00F0FF] leading-none">VR.RELAMPAGO</div>
+              <div id="bp-weapons" class="mono-font text-[11px] text-[#FFD23F] font-bold leading-snug">RAYO OCULTO · CORTE V/H</div>
+              <div id="bp-stats" class="mono-font text-[10px] text-slate-300">HP: 160 | VEL: ALTA | POSTURA: BALANCE</div>
+              <div id="bp-sector" class="pixel-font text-[10px] text-[#00F0FF]">SECTOR: PUENTE RAFAEL URDANETA</div>
             </div>
           </div>
+          <div class="zone-mechs">
+            <button type="button" id="mech-card-0" data-mech="0" class="mech-card active">
+              <span class="mono-font text-[11px] text-[#00F0FF] font-bold">VR.RELAMPAGO</span>
+              <span class="mono-font text-[10px] text-slate-400">Equilibrado · Rayo</span>
+            </button>
+            <button type="button" id="mech-card-1" data-mech="1" class="mech-card">
+              <span class="mono-font text-[11px] text-[#10F57A] font-bold">VR.PALAFITO</span>
+              <span class="mono-font text-[10px] text-slate-400">Anfibio · Evasión</span>
+            </button>
+            <button type="button" id="mech-card-2" data-mech="2" class="mech-card">
+              <span class="mono-font text-[11px] text-[#FF2A55] font-bold">VR.URDANETA</span>
+              <span class="mono-font text-[10px] text-slate-400">Pesado · Cañón</span>
+            </button>
+          </div>
+          <span class="zone-mini-cta mono-font text-[12px]">ELEGIR EN EL JUEGO ▶</span>
         </div>
-      </div>
-    </section>
+      </article>
 
-    <!-- ===================================================================== -->
-    <!-- STOP 02: LOMO & OBI STRIP — MACHINE SELECT + SVG BLUEPRINTS           -->
-    <!-- ===================================================================== -->
-    <section id="panel-1" class="story-panel">
-      <div class="max-w-7xl mx-auto w-full px-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-        <div class="lg:col-span-6 interactive-card panel-scroll-box mt-[42vh] lg:mt-0">
-          <div class="bg-[#050B11]/95 border-2 border-[#10F57A] p-4 sm:p-5 shadow-[8px_8px_0px_#000000] space-y-3">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#10F57A]/40 pb-2">
-              <div>
-                <span class="pixel-font text-xs sm:text-sm text-[#10F57A] font-bold block">MACHINE SELECT</span>
-                <span class="mono-font text-[11px] text-slate-300">OBI STRIP: SLUS-1996-MCBO // SEGA AM3 SPEC</span>
-              </div>
-              <span id="selected-mech-badge" class="bg-[#FFD23F] text-black pixel-font text-[9px] sm:text-[10px] px-2.5 py-1 border border-black font-bold">
-                MBV-04-MCBO RELAMPAGO
-              </span>
-            </div>
-
-            <!-- Visor Blueprint Wireframe tipo VR.TEMJIN Saturn -->
-            <div class="bg-[#03080C] border border-[#00F0FF] p-3 grid grid-cols-1 sm:grid-cols-12 gap-3 items-center relative">
-              <div class="sm:col-span-5 flex items-center justify-center border border-[#10F57A]/30 bg-[#040D12] p-2">
-                <div id="mech-blueprint-svg" class="w-28 h-28 sm:w-32 sm:h-32"></div>
-              </div>
-              <div class="sm:col-span-7 space-y-1.5">
-                <div class="pixel-font text-[10px] text-[#FF2A55] tracking-widest">&gt; NEXT VIRTUALOID &lt;</div>
-                <div id="bp-code" class="mono-font text-xs text-[#10F57A] font-bold">MBV-04-MCBO</div>
-                <div id="bp-name" class="display-font text-xl sm:text-2xl font-bold italic text-[#00F0FF] leading-none">
-                  VR.RELAMPAGO
-                </div>
-                <div id="bp-weapons" class="mono-font text-[11px] text-[#FFD23F] font-bold leading-snug pt-1">
-                  RAYO OCULTO<br />CORTE V / CORTE H<br />ESQUIVA + TELEPORTE
-                </div>
-                <div id="bp-stats" class="mono-font text-[10px] text-slate-300 border-t border-slate-800 pt-1">
-                  HP: 160 | VEL: ALTA | POSTURA: BALANCE
-                </div>
-                <div id="bp-sector" class="pixel-font text-[9px] text-[#10F57A]">
-                  SECTOR: PUENTE RAFAEL URDANETA
-                </div>
-              </div>
-            </div>
-
-            <!-- Selector de 3 Virtualoids Zulianos -->
-            <div class="space-y-1.5">
-              <button type="button" id="mech-card-0" data-mech="0" class="mech-card active w-full p-2 text-left flex items-center justify-between gap-3 cursor-pointer">
-                <div>
-                  <div class="pixel-font text-[10px] sm:text-[11px] text-[#00F0FF] font-bold">01. VR.RELAMPAGO (MBV-04)</div>
-                  <div class="mono-font text-[11px] text-slate-300">Equilibrado • Rayo Oculto + Esquiva</div>
-                </div>
-                <span class="bg-[#00F0FF] text-black pixel-font text-[9px] px-2 py-0.5 font-bold">VEL S</span>
-              </button>
-
-              <button type="button" id="mech-card-1" data-mech="1" class="mech-card w-full p-2 text-left flex items-center justify-between gap-3 cursor-pointer">
-                <div>
-                  <div class="pixel-font text-[10px] sm:text-[11px] text-[#10F57A] font-bold">02. VR.PALAFITO (XBV-13)</div>
-                  <div class="mono-font text-[11px] text-slate-300">Anfibio Ágil • Orbe Rayo + Teleporte</div>
-                </div>
-                <span class="bg-[#10F57A] text-black pixel-font text-[9px] px-2 py-0.5 font-bold">EVA A+</span>
-              </button>
-
-              <button type="button" id="mech-card-2" data-mech="2" class="mech-card w-full p-2 text-left flex items-center justify-between gap-3 cursor-pointer">
-                <div>
-                  <div class="pixel-font text-[10px] sm:text-[11px] text-[#FF2A55] font-bold">03. VR.URDANETA (RVR-01)</div>
-                  <div class="mono-font text-[11px] text-slate-300">Pesado • Cañón Solazo + Escudo</div>
-                </div>
-                <span class="bg-[#FF2A55] text-white pixel-font text-[9px] px-2 py-0.5 font-bold">DEF MAX</span>
-              </button>
-            </div>
+      <!-- STOP 03 — CONTRAPORTADA (dorso amarillo) -->
+      <article class="zone-copy zone-copy--right" data-stop="2">
+        <div class="saturn-backcover zone-backcover">
+          <div class="zone-topline">
+            <span class="pixel-font text-[9px] bg-black text-[#FFD23F] px-2 py-0.5">SEGA SATURN / PSX · 1996</span>
+            <span class="mono-font text-[10px] text-black/70 font-bold">1 OR 2 PLAYERS</span>
+          </div>
+          <h2 class="text-lg sm:text-xl font-bold italic uppercase tracking-tight text-black leading-tight">
+            ¡ARMAGEDÓN TÁCTICO SOBRE EL LAGO DE MARACAIBO!
+          </h2>
+          <p class="mono-font text-[12px] font-bold text-black/90 leading-snug">
+            Pilota tu Virtualoid en duelos tácticos simultáneos. Acciones secretas, orden por velocidad y el relámpago eterno del Catatumbo.
+          </p>
+          <div class="zone-shots">
+            <figure><div class="vo-frame"><canvas id="shot-1" width="320" height="145" class="w-full h-auto block"></canvas></div><figcaption><strong>Duelo:</strong> ambos eligen en secreto.</figcaption></figure>
+            <figure><div class="vo-frame"><canvas id="shot-2" width="320" height="145" class="w-full h-auto block"></canvas></div><figcaption><strong>Rayo Catatumbo:</strong> 12 DMG.</figcaption></figure>
+            <figure><div class="vo-frame"><canvas id="shot-3" width="320" height="145" class="w-full h-auto block"></canvas></div><figcaption><strong>Palafitos:</strong> rompe cobertura.</figcaption></figure>
+            <figure><div class="vo-frame"><canvas id="shot-4" width="320" height="145" class="w-full h-auto block"></canvas></div><figcaption><strong>Posturas:</strong> encadena y remata.</figcaption></figure>
+          </div>
+          <div class="zone-barcode">
+            <div class="barcode-bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            <span class="mono-font text-[9px] font-bold tracking-widest text-black">0 10086 81042 4 · K-A</span>
           </div>
         </div>
-      </div>
-    </section>
+      </article>
 
-    <!-- ===================================================================== -->
-    <!-- STOP 03: CONTRAPORTADA (180°) — BLOQUE AMARILLO SEGA SATURN           -->
-    <!-- ===================================================================== -->
-    <section id="panel-2" class="story-panel">
-      <div class="max-w-7xl mx-auto w-full px-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-        <div class="lg:col-start-7 lg:col-span-6 interactive-card panel-scroll-box mt-[42vh] lg:mt-0">
-          <div class="saturn-backcover p-4 sm:p-5">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-black pb-2 mb-2.5">
-              <div>
-                <span class="bg-black text-[#FFD23F] pixel-font text-[9px] px-2 py-0.5">
-                  SEGA SATURN / PSX ARCHIVE • 1996
-                </span>
-                <h3 class="text-lg sm:text-xl font-bold italic uppercase tracking-tight text-black mt-1 leading-tight">
-                  ¡ARMAGEDÓN TÁCTICO SOBRE EL LAGO DE MARACAIBO!
-                </h3>
-              </div>
-              <div class="bg-black text-white px-2 py-1 border border-black text-right">
-                <div class="pixel-font text-[8px] text-[#00F0FF]">CYBER TROOPERS</div>
-                <div class="mono-font text-[10px] font-bold text-[#10F57A]">ZULIA ARENA</div>
-              </div>
-            </div>
-
-            <p class="mono-font text-[11px] font-bold text-black/90 mb-2.5 leading-snug">
-              Pilota tu Virtualoid en duelos tácticos simultáneos sobre el Lago de Maracaibo. Acciones secretas, orden por velocidad y el relámpago eterno del Catatumbo, straight out of the Arcade.
-            </p>
-
-            <!-- 4 Capturas enmarcadas en rojo (compactas) -->
-            <div class="grid grid-cols-2 gap-2.5">
-              <div class="space-y-1">
-                <div class="vo-frame">
-                  <canvas id="shot-1" width="320" height="145" class="w-full h-auto block"></canvas>
-                </div>
-                <p class="text-[11px] font-bold leading-tight">
-                  <strong>Duelo Simultáneo:</strong> Ambos eligen en secreto; la velocidad decide.
-                </p>
-              </div>
-
-              <div class="space-y-1">
-                <div class="vo-frame">
-                  <canvas id="shot-2" width="320" height="145" class="w-full h-auto block"></canvas>
-                </div>
-                <p class="text-[11px] font-bold leading-tight">
-                  <strong>Rayo del Catatumbo:</strong> 12 DMG en la casilla marcada.
-                </p>
-              </div>
-
-              <div class="space-y-1">
-                <div class="vo-frame">
-                  <canvas id="shot-3" width="320" height="145" class="w-full h-auto block"></canvas>
-                </div>
-                <p class="text-[11px] font-bold leading-tight">
-                  <strong>Palafitos:</strong> Lanza al rival y rompe la cobertura.
-                </p>
-              </div>
-
-              <div class="space-y-1">
-                <div class="vo-frame">
-                  <canvas id="shot-4" width="320" height="145" class="w-full h-auto block"></canvas>
-                </div>
-                <p class="text-[11px] font-bold leading-tight">
-                  <strong>Posturas:</strong> Encadena Aturdido→Retroceso→Derribado.
-                </p>
-              </div>
-            </div>
-
-            <!-- Código de barras + 1 or 2 Players + ESRB retro -->
-            <div class="mt-3 pt-2.5 border-t-2 border-black flex flex-wrap items-center justify-between gap-2">
-              <div class="bg-white border border-black px-2.5 py-1 flex flex-col items-center">
-                <div class="flex items-stretch h-6 gap-[2px]">
-                  <span class="w-1 bg-black"></span><span class="w-0.5 bg-black"></span><span class="w-1.5 bg-black"></span>
-                  <span class="w-0.5 bg-black"></span><span class="w-1 bg-black"></span><span class="w-2 bg-black"></span>
-                  <span class="w-0.5 bg-black"></span><span class="w-1 bg-black"></span><span class="w-1.5 bg-black"></span>
-                  <span class="w-0.5 bg-black"></span><span class="w-1 bg-black"></span><span class="w-2 bg-black"></span>
-                </div>
-                <span class="mono-font text-[9px] font-bold tracking-widest text-black">0 10086 81042 4</span>
-              </div>
-
-              <div class="bg-white border border-black px-2.5 py-1 flex items-center gap-2">
-                <div class="bg-[#1E1B4B] text-white font-black px-1.5 py-0.5 text-xs">1 OR 2</div>
-                <div class="text-[10px] font-black leading-none text-black">PLAYERS<br />ONLINE / CPU</div>
-              </div>
-
-              <div class="bg-white border border-black px-2.5 py-1 text-black flex items-center gap-2">
-                <div class="border border-black px-1.5 py-0.5 text-center leading-none">
-                  <div class="text-[7px] font-bold">KIDS TO ADULTS</div>
-                  <div class="text-sm font-black">K-A</div>
-                </div>
-                <div class="mono-font text-[9px] font-bold leading-tight">ANIMATED<br />MECHA COMBAT</div>
-              </div>
-            </div>
-          </div>
+      <!-- STOP 04a — ESQUINA INTERIOR TAPA (ORIGEN / HISTORIA) -->
+      <article class="zone-copy zone-copy--left" data-stop="3">
+        <div class="zone-card">
+          <div class="zone-label pixel-font text-[11px] text-[#FFD23F]">ORIGEN</div>
+          <h2 class="zone-title">¿POR QUÉ EL CATATUMBO?</h2>
+          <p class="zone-body">
+            Una carta de amor al arcade japonés de los 90 —los <em>Cyber Troopers</em> de Virtual-On,
+            la táctica por turnos de <em>Mecha Simultactics</em>— plantada en suelo venezolano.
+          </p>
+          <p class="zone-body">
+            El escenario no es genérico: es el <strong>Lago de Maracaibo</strong>, atravesado por el
+            <strong>Puente Rafael Urdaneta</strong> y salpicado de <strong>palafitos</strong>. Y sobre todo,
+            la tierra del <strong>Relámpago del Catatumbo</strong>: una tormenta casi permanente que
+            ilumina la noche zuliana. Ese relámpago no es decoración — es una mecánica de peligro
+            que cae sobre el tablero y castiga a quien estacione mal.
+          </p>
+          <p class="zone-body">
+            Los rivales llevan nombres de ciudades del Zulia: <strong>Cabimas, San Francisco,
+            Ciudad Ojeda, Santa Rita, Mene Grande</strong>. El jefe final es <strong>Catatumbo</strong> mismo.
+          </p>
         </div>
-      </div>
-    </section>
+      </article>
 
-    <!-- ===================================================================== -->
-    <!-- STOP 04: MANUAL & DISCO (CAJA ABIERTA + CD EXTRAÍDO A LA DERECHA)     -->
-    <!-- ===================================================================== -->
-    <section id="panel-3" class="story-panel">
-      <div class="max-w-7xl mx-auto w-full px-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-        <div class="lg:col-start-8 lg:col-span-5 interactive-card panel-scroll-box mt-[42vh] lg:mt-0">
-          <div class="bg-[#060C13]/95 border-2 border-[#10F57A] p-4 sm:p-5 shadow-[8px_8px_0px_#000000] space-y-3">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-              <div>
-                <span class="bg-[#00F0FF] text-black pixel-font text-[8px] px-2 py-0.5 border border-black font-bold">
-                  CD-ROM EXTRAÍDO • GIRANDO
-                </span>
-                <h4 class="pixel-font text-xs text-[#10F57A] font-bold mt-1">MANUAL &amp; DISC 1: MARACAIBO</h4>
-              </div>
-              <span class="mono-font text-[11px] text-slate-400">P.01</span>
-            </div>
-
-            <!-- Controles compactos -->
-            <div class="grid grid-cols-3 gap-1.5 text-[10px]">
-              <div class="bg-black p-2 border border-slate-800 text-center">
-                <kbd class="bg-[#FFD23F] text-black pixel-font text-[8px] px-1.5 py-0.5 border border-black font-bold block mb-1">WASD</kbd>
-                <span class="text-slate-300 font-bold">CURSOR</span>
-              </div>
-              <div class="bg-black p-2 border border-slate-800 text-center">
-                <kbd class="bg-[#00F0FF] text-black pixel-font text-[8px] px-1.5 py-0.5 border border-black font-bold block mb-1">TECLA U</kbd>
-                <span class="text-slate-300 font-bold">ACCIÓN 1</span>
-              </div>
-              <div class="bg-black p-2 border border-slate-800 text-center">
-                <kbd class="bg-[#FF2A55] text-white pixel-font text-[8px] px-1.5 py-0.5 border border-black font-bold block mb-1">TECLA I</kbd>
-                <span class="text-slate-300 font-bold">ACCIÓN 2</span>
-              </div>
-            </div>
-            <p class="mono-font text-[10px] text-slate-400 leading-snug">
-              <span class="text-[#10F57A] font-bold">ENTER</span> = START. En <span class="text-[#00F0FF] font-bold">2P online</span> cada piloto usa su propio teclado.
-            </p>
-
-            <!-- Cómo se juega (mecánicas reales) -->
-            <div class="bg-black/60 border border-slate-800 p-2.5 space-y-1.5">
-              <div class="pixel-font text-[9px] text-[#FFD23F]">MECHA SIMULTACTICS</div>
-              <ul class="mono-font text-[10px] text-slate-300 leading-snug space-y-1 list-none">
-                <li><span class="text-[#00F0FF] font-bold">SIMULTÁNEO:</span> ambos eligen acción en secreto y resuelven a la vez.</li>
-                <li><span class="text-[#00F0FF] font-bold">VELOCIDAD:</span> la acción más rápida golpea primero; si choca, clash.</li>
-                <li><span class="text-[#00F0FF] font-bold">POSTURAS:</span> Normal→Aturdido→Retroceso→Derribado; encadena para rematar.</li>
-                <li><span class="text-[#00F0FF] font-bold">GUTS:</span> se llena con parry, agarres y petróleo; gástalo en especiales.</li>
-                <li><span class="text-[#00F0FF] font-bold">ZONAS:</span> rayo Catatumbo, verdín resbaladizo y petróleo explosivo.</li>
-              </ul>
-            </div>
-
-            <!-- Top 5 High Scores compacto -->
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <span class="pixel-font text-[9px] text-[#FFD23F]">TOP 5 HIGH SCORES</span>
-                <a href="https://erracode.pages.dev" target="_blank" rel="noopener noreferrer" class="mono-font text-[10px] text-[#00F0FF] hover:underline font-bold">
-                  erracode.pages.dev ↗
-                </a>
-              </div>
-              <ul class="space-y-1 pixel-font text-[9px]">
-                <li class="flex justify-between bg-[#FFD23F]/15 border border-[#FFD23F]/50 px-2 py-1 text-[#FFD23F]">
-                  <span>1. AAA</span><span>9190 PTS</span>
-                </li>
-                <li class="flex justify-between bg-black px-2 py-1 text-[#10F57A]">
-                  <span>2. ZUL</span><span>8450 PTS</span>
-                </li>
-                <li class="flex justify-between bg-black px-2 py-1 text-slate-200">
-                  <span>3. MAR</span><span>7820 PTS</span>
-                </li>
-                <li class="flex justify-between bg-black px-2 py-1 text-slate-400">
-                  <span>4. TEM</span><span>6900 PTS</span>
-                </li>
-                <li class="flex justify-between bg-black px-2 py-1 text-slate-500">
-                  <span>5. CPU</span><span>5120 PTS</span>
-                </li>
-              </ul>
-            </div>
-
-            <!-- Nota de origen -->
-            <div class="p-2.5 bg-[#10F57A]/10 border-l-2 border-[#10F57A] text-[10px] text-slate-300 leading-snug">
-              <strong class="text-[#10F57A]">ORIGEN:</strong> Nacido en <strong>Platanus Hack 26 — Arcade Challenge</strong> (&lt;50 KB) y expandido con <strong>Playroom Kit</strong> para duelos online 2P.
-            </div>
-
-            <!-- Botón lanzar disco -->
-            <a
-              href="/play?mode=cpu"
-              class="btn-brutal w-full bg-[#10F57A] hover:bg-white text-black py-3 px-4 pixel-font text-[10px] sm:text-xs font-bold cursor-pointer block text-center"
-            >
-              SACAR DISCO / JUGAR (<span id="disc-mech-name">MBV-04</span>)
-            </a>
-          </div>
+      <!-- STOP 04b — MANUAL INTERIOR (CÓMO SE HIZO) -->
+      <article class="zone-copy zone-copy--right" data-stop="4">
+        <div class="zone-card">
+          <div class="zone-label pixel-font text-[11px] text-[#00F0FF]">CÓMO SE HIZO</div>
+          <h2 class="zone-title">INGENIERÍA EN 50 KB</h2>
+          <p class="zone-body">
+            El reto no fue diseñar el juego: fue hacerlo entrar en <strong>50 KB</strong> con arte y
+            sonido incluidos, sin cargar un solo archivo.
+          </p>
+          <ul class="zone-facts">
+            <li><span class="mono-font text-[#00F0FF] font-bold">ARTE:</span> todo se dibuja con Graphics de Phaser y texturas de canvas en runtime.</li>
+            <li><span class="mono-font text-[#00F0FF] font-bold">AUDIO:</span> cero .mp3. Todo sintetizado con la Web Audio API.</li>
+            <li><span class="mono-font text-[#00F0FF] font-bold">BYTES:</span> IIFE, renombrado de ~648 props y minificado con SWC.</li>
+            <li><span class="mono-font text-[#00F0FF] font-bold">ONLINE:</span> netcode <em>host-authoritative</em>: el host resuelve y broadcastea; cero desync.</li>
+          </ul>
+          <dl class="zone-spec">
+            <div><dt>CONTROLES</dt><dd>WASD mueve · U acc.1 · I acc.2 · Enter start</dd></div>
+          </dl>
         </div>
-      </div>
-    </section>
+      </article>
+
+      <!-- STOP 04c — CD SUPERFICIE (MÚSICA) -->
+      <article class="zone-copy zone-copy--left" data-stop="5">
+        <div class="zone-card">
+          <div class="zone-label pixel-font text-[11px] text-[#FFD23F]">BANDA SONORA</div>
+          <h2 class="zone-title">"COQUIVACOA STEEL"</h2>
+          <p class="zone-body">
+            El corazón venezolano: una <strong>gaita zuliana cruzada con techno</strong>. La gaita
+            —tambora, charrasca, cuatro y furruco— reimaginada como loop de combate a
+            <strong>185 BPM</strong> sobre tripletes de 12 pasos.
+          </p>
+          <ul class="zone-facts">
+            <li><span class="mono-font text-[#FFD23F] font-bold">TAMBORA</span> patrón 6/8 · <span class="mono-font text-[#FFD23F] font-bold">CHARRASCA</span> raspado</li>
+            <li><span class="mono-font text-[#FFD23F] font-bold">CUATRO</span> strum con delay LFO 0–3 ms</li>
+            <li><span class="mono-font text-[#FFD23F] font-bold">FURRUCO</span> low-end · arpegio de tripletes</li>
+            <li>Kick 170→40 Hz · progresión i–iv–V–i en La menor · 8 compases</li>
+          </ul>
+          <p class="zone-footnote mono-font text-[11px] text-slate-400">
+            Coquivacoa es el nombre indígena del lago. Es gaita, es techno, es Zulia.
+          </p>
+        </div>
+      </article>
+
+      <!-- STOP 04d — CENTRO DEL CD (GAMEPLAY + CTA) -->
+      <article class="zone-copy zone-copy--left" data-stop="6">
+        <div class="zone-card">
+          <div class="zone-label pixel-font text-[11px] text-[#00F0FF]">GAMEPLAY</div>
+          <h2 class="zone-title">CÓMO SE JUEGA</h2>
+          <p class="zone-lead">
+            Duelo <strong>1v1 por turnos simultáneos</strong> en tablero isométrico. Elegís sin ver la
+            acción rival; ambas se resuelven juntas, ordenadas por <strong>velocidad</strong>.
+          </p>
+          <dl class="zone-spec">
+            <div><dt>MOVIMIENTO</dt><dd>mover · dodge · teleport · pivot</dd></div>
+            <div><dt>ATAQUE</dt><dd>V-Slash · H-Slash · jab · lunge · parry · block · grab</dd></div>
+            <div><dt>ESPECIAL</dt><dd>40 Guts: Rayo · Orbe · Carga · Vent</dd></div>
+            <div><dt>POSTURAS</dt><dd>Normal → Staggered → Knockback → Down</dd></div>
+            <div><dt>HAZARDS</dt><dd>Catatumbo 12 · Verdín 8 · Oil 10 · Puente 8</dd></div>
+          </dl>
+        </div>
+      </article>
+
 
     <!-- ===================================================================== -->
     <!-- HUD INFERIOR DE PROGRESO + CONTROL MANUAL DE TAPA Y CD                -->
@@ -665,57 +516,275 @@ import Base from '../layouts/Base.astro';
       radial-gradient(40% 40% at 50% 50%, rgba(255, 210, 63, 0.05) 0%, transparent 70%);
   }
 
-  /* Pista de Scrollytelling de 420vh */
+  /* Pista de Scrollytelling de 7 paradas (~700vh) */
   #scroll-track {
     position: relative;
-    height: 420vh;
+    height: 700vh;
     z-index: 20;
     pointer-events: none;
   }
 
-  /* Paneles flotantes sincronizados */
-  .story-panel {
+  /* =========================================================================
+     OVERLAYS DE ZONA — el copy vive sobre la caja; solo el activo se ve.
+     ========================================================================= */
+  .zone-layer {
     position: fixed;
     inset: 0;
-    padding-top: 56px;
-    padding-bottom: 52px;
-    display: flex;
-    align-items: flex-end;
+    z-index: 26;
     pointer-events: none;
+  }
+
+  .zone-copy {
+    position: absolute;
+    display: flex;
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(14px);
     transition:
-      opacity 0.28s var(--ease-out),
-      transform 0.28s var(--ease-out);
-    z-index: 25;
+      opacity 0.3s var(--ease-out),
+      transform 0.3s var(--ease-out);
+    padding-top: 64px;
+    padding-bottom: 60px;
+    will-change: opacity, transform;
   }
 
-  @media (min-width: 1024px) {
-    .story-panel {
-      align-items: center;
-    }
-  }
-
-  .story-panel.active {
+  .zone-copy.is-active {
     opacity: 1;
     transform: translateY(0);
-  }
-
-  .story-panel.active .interactive-card {
     pointer-events: auto;
   }
 
-  .panel-scroll-box {
-    max-height: 46vh;
+  .zone-copy--hero {
+    inset: 0;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: max(1rem, 4vw);
+    padding-right: 1rem;
+  }
+  .zone-copy--left {
+    inset: 0;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: max(1rem, 3vw);
+    padding-right: 1rem;
+  }
+  .zone-copy--right {
+    inset: 0;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: max(1rem, 3vw);
+    padding-left: 1rem;
+  }
+
+  .zone-card {
+    width: min(440px, 92vw);
+    max-height: calc(100vh - 140px);
     overflow-y: auto;
+    background: #060c13f2;
+    border: 2px solid var(--holo-cyan);
+    box-shadow: 8px 8px 0 #000;
+    padding: 1.1rem 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
     scrollbar-width: thin;
     scrollbar-color: #00f0ff #05070a;
   }
 
-  @media (min-width: 1024px) {
-    .panel-scroll-box {
-      max-height: calc(100vh - 122px);
+  .zone-copy--hero .zone-card {
+    border-color: var(--saturn-yellow);
+  }
+
+  .zone-topline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 0.5rem;
+  }
+
+  .zone-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    font-size: 1.5rem;
+    line-height: 1.1;
+    color: var(--saturn-yellow);
+  }
+
+  .zone-label { letter-spacing: 0.18em; }
+
+  .zone-lead {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #e2e8f0;
+    border-left: 2px solid var(--arcade-red);
+    padding: 0.5rem 0 0.5rem 0.75rem;
+    background: #ffffff08;
+  }
+
+  .zone-body {
+    font-size: 0.9rem;
+    line-height: 1.62;
+    color: #cbd5e1;
+  }
+  .zone-body strong,
+  .zone-lead strong { color: #fff; }
+
+  .zone-footnote { line-height: 1.5; }
+
+  .zone-spec { display: grid; gap: 0.4rem; margin: 0; }
+  .zone-spec > div {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 0.6rem;
+    align-items: baseline;
+    border-bottom: 1px dashed #1e293b;
+    padding-bottom: 0.35rem;
+  }
+  .zone-spec dt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--holo-cyan);
+    text-transform: uppercase;
+  }
+  .zone-spec dd {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: #e2e8f0;
+  }
+
+  .zone-facts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .zone-facts li {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #cbd5e1;
+    padding-left: 0.9rem;
+    position: relative;
+  }
+  .zone-facts li::before {
+    content: '\25B8';
+    position: absolute;
+    left: 0;
+    color: var(--radar-green);
+  }
+
+  .zone-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.85rem 1rem;
+    text-align: center;
+  }
+
+  .zone-bottomline { border-top: 1px solid #1e293b; padding-top: 0.5rem; }
+
+  .zone-mech-detail {
+    display: grid;
+    grid-template-columns: 76px 1fr;
+    gap: 0.7rem;
+    align-items: center;
+    background: #03080c;
+    border: 1px solid var(--holo-cyan);
+    padding: 0.5rem 0.6rem;
+  }
+  .zone-blueprint {
+    width: 76px;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .zone-mech-meta { display: grid; gap: 0.2rem; }
+
+  .zone-mechs { display: grid; gap: 0.4rem; }
+
+  .zone-mini-cta {
+    text-align: center;
+    color: var(--radar-green);
+    font-weight: 700;
+    border: 1px solid #10f57a55;
+    padding: 0.5rem;
+    transition: background-color 0.15s var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .zone-mini-cta:hover { background: #10f57a18; }
+  }
+
+  /* Contraportada amarilla (dorso) */
+  .zone-backcover {
+    width: min(460px, 92vw);
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .zone-shots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem;
+  }
+  .zone-shots figure { margin: 0; }
+  .zone-shots figcaption {
+    font-size: 11px;
+    line-height: 1.3;
+    font-weight: 700;
+    color: #000;
+    margin-top: 2px;
+  }
+  .zone-barcode {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    border-top: 2px solid #000;
+    padding-top: 0.5rem;
+  }
+  .barcode-bars {
+    display: flex;
+    align-items: stretch;
+    height: 1.5rem;
+    gap: 2px;
+    background: #fff;
+    padding: 2px 4px;
+    border: 1px solid #000;
+  }
+  .barcode-bars span { display: block; background: #000; }
+  .barcode-bars span:nth-child(odd) { width: 2px; }
+  .barcode-bars span:nth-child(even) { width: 5px; }
+
+  /* Mobile: la tarjeta se ancla abajo, la caja respira arriba */
+  @media (max-width: 1023px) {
+    .zone-copy,
+    .zone-copy--hero,
+    .zone-copy--left,
+    .zone-copy--right {
+      align-items: flex-end;
+      justify-content: center;
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+      padding-bottom: 64px;
     }
+    .zone-card,
+    .zone-backcover { width: 100%; max-height: 46vh; }
+    .zone-title { font-size: 1.3rem; }
+    .zone-lead { font-size: 0.92rem; }
+    .zone-body { font-size: 0.85rem; }
   }
 
   /* Skip-link target: scroll-margin keeps the fixed nav from covering it. */
@@ -758,7 +827,7 @@ import Base from '../layouts/Base.astro';
     .blink-coin {
       animation: none;
     }
-    .story-panel {
+    .zone-copy {
       transition-duration: 0.01ms;
     }
     .btn-brutal,
@@ -1480,6 +1549,45 @@ import Base from '../layouts/Base.astro';
     return a + (b - a) * t;
   }
 
+  // Timeline de 7 paradas. Cada keyframe = pose objetivo de la caja.
+  // posX: lado opuesto a la tarjeta de copy (para no taparla en desktop).
+  type Keyframe = {
+    at: number;
+    posX: number; posY: number; posZ: number;
+    rotX: number; rotY: number;
+    lidAngle: number; discPop: number; scale: number;
+  };
+
+  const desktopFrames: Keyframe[] = [
+    { at: 0.0,  posX: 0.9,  posY: 0.0,  posZ: 0.0,  rotX: 0.1,  rotY: 0.32,      lidAngle: 0,     discPop: 0, scale: 1.0  },
+    { at: 0.16, posX: 1.5,  posY: 0.0,  posZ: 0.15, rotX: 0.04, rotY: 1.52,      lidAngle: 0,     discPop: 0, scale: 1.0  },
+    { at: 0.32, posX: -1.5, posY: 0.0,  posZ: 0.1,  rotX: 0.08, rotY: Math.PI,   lidAngle: 0,     discPop: 0, scale: 1.0  },
+    { at: 0.48, posX: 0.9,  posY: 0.0,  posZ: -1.0, rotX: 0.06, rotY: Math.PI*2, lidAngle: -2.15, discPop: 1, scale: 0.9  },
+    { at: 0.64, posX: -0.9, posY: 0.0,  posZ: -1.0, rotX: 0.06, rotY: Math.PI*2, lidAngle: -2.15, discPop: 1, scale: 0.9  },
+    { at: 0.80, posX: 0.9,  posY: 0.0,  posZ: -0.6, rotX: 0.06, rotY: Math.PI*2, lidAngle: -2.15, discPop: 1, scale: 0.95 },
+    { at: 1.0,  posX: -0.9, posY: 0.0,  posZ: -0.6, rotX: 0.06, rotY: Math.PI*2, lidAngle: -2.15, discPop: 1, scale: 0.95 },
+  ];
+
+  const mobileFrames: Keyframe[] = [
+    { at: 0.0,  posX: 0, posY: 0.9,  posZ: 0.0,  rotX: 0.1,  rotY: 0.32,      lidAngle: 0,     discPop: 0, scale: 0.72 },
+    { at: 0.16, posX: 0, posY: 0.9,  posZ: 0.1,  rotX: 0.04, rotY: 1.52,      lidAngle: 0,     discPop: 0, scale: 0.72 },
+    { at: 0.32, posX: 0, posY: 0.9,  posZ: 0.1,  rotX: 0.08, rotY: Math.PI,   lidAngle: 0,     discPop: 0, scale: 0.72 },
+    { at: 0.48, posX: 0, posY: 0.95, posZ: -0.8, rotX: 0.06, rotY: Math.PI*2, lidAngle: -2.15, discPop: 1, scale: 0.66 },
+    { at: 0.64, posX: 0, posY: 0.95, posZ: -0.8, rotX: 0.06, rotY: Math.PI*2, lidAngle: -2.15, discPop: 1, scale: 0.66 },
+    { at: 0.80, posX: 0, posY: 0.95, posZ: -0.5, rotX: 0.06, rotY: Math.PI*2, lidAngle: -2.15, discPop: 1, scale: 0.7  },
+    { at: 1.0,  posX: 0, posY: 0.95, posZ: -0.5, rotX: 0.06, rotY: Math.PI*2, lidAngle: -2.15, discPop: 1, scale: 0.7  },
+  ];
+
+  const STAGE_NAMES = [
+    '01 / 07 • PORTADA',
+    '02 / 07 • LOMO & MECHAS',
+    '03 / 07 • CONTRAPORTADA',
+    '04 / 07 • ORIGEN',
+    '05 / 07 • CÓMO SE HIZO',
+    '06 / 07 • MÚSICA',
+    '07 / 07 • GAMEPLAY',
+  ];
+
   function updateScrollStory() {
     const track = document.getElementById('scroll-track');
     if (!track) return;
@@ -1498,52 +1606,44 @@ import Base from '../layouts/Base.astro';
     }
 
     const isDesktop = window.innerWidth >= 1024;
-    let activeStop = 0;
+    const frames = isDesktop ? desktopFrames : mobileFrames;
 
-    // Stop 01 (0.00): Portada de frente
-    // Stop 02 (0.33): Lomo + Obi Strip (~90 deg / 1.52 rad)
-    // Stop 03 (0.66): Contraportada amarilla (180 deg / Math.PI)
-    // Stop 04 (1.00): Vuelta completa (360 deg) con tapa abierta y CD centrado
-    if (progress < 0.33) {
-      const t = progress / 0.33;
-      targetPose.posX = isDesktop ? lerp(-1.75, 1.85, t) : 0;
-      targetPose.posY = isDesktop ? 0 : 0.85;
-      targetPose.posZ = lerp(0, 0.25, t);
-      targetPose.rotY = lerp(0.32, 1.52, t);
-      targetPose.rotX = lerp(0.1, 0.04, t);
-      targetPose.lidAngle = 0;
-      targetPose.discPop = 0;
-      targetPose.scale = isDesktop ? 1 : 0.78;
-      activeStop = t < 0.55 ? 0 : 1;
-    } else if (progress < 0.66) {
-      const t = (progress - 0.33) / 0.33;
-      targetPose.posX = isDesktop ? lerp(1.85, -1.75, t) : 0;
-      targetPose.posY = isDesktop ? 0 : 0.85;
-      targetPose.posZ = lerp(0.25, 0.1, t);
-      targetPose.rotY = lerp(1.52, Math.PI - 0.18, t);
-      targetPose.rotX = lerp(0.04, 0.08, t);
-      targetPose.lidAngle = 0;
-      targetPose.discPop = 0;
-      targetPose.scale = isDesktop ? 1 : 0.78;
-      activeStop = t < 0.5 ? 1 : 2;
-    } else {
-      const t = (progress - 0.66) / 0.34;
-      const openRatio = Math.max(0, (t - 0.18) / 0.82);
-      targetPose.posX = isDesktop ? lerp(-1.75, -0.75, openRatio) : lerp(0, 0.25, openRatio);
-      targetPose.posY = isDesktop ? 0 : 0.85;
-      targetPose.posZ = lerp(0.1, -1.15, openRatio);
-      targetPose.rotY = lerp(Math.PI - 0.18, Math.PI * 2 + 0.08, t);
-      targetPose.rotX = lerp(0.08, 0.08, t);
-      targetPose.lidAngle = lerp(0, -2.15, openRatio);
-      targetPose.discPop = openRatio;
-      targetPose.scale = isDesktop ? lerp(1, 0.8, openRatio) : lerp(0.78, 0.62, openRatio);
-      activeStop = t < 0.42 ? 2 : 3;
+    // Segmento [i, i+1] que contiene a progress; lerp de pose entre keyframes.
+    let seg = 0;
+    for (let i = 0; i < frames.length - 1; i++) {
+      if (progress >= frames[i].at && progress <= frames[i + 1].at) { seg = i; break; }
+      if (progress > frames[frames.length - 1].at) seg = frames.length - 2;
+    }
+    const a = frames[seg];
+    const b = frames[seg + 1];
+    const span = Math.max(1e-6, b.at - a.at);
+    const t = Math.max(0, Math.min(1, (progress - a.at) / span));
+
+    targetPose.posX = lerp(a.posX, b.posX, t);
+    targetPose.posY = lerp(a.posY, b.posY, t);
+    targetPose.posZ = lerp(a.posZ, b.posZ, t);
+    targetPose.rotX = lerp(a.rotX, b.rotX, t);
+    targetPose.rotY = lerp(a.rotY, b.rotY, t);
+    targetPose.lidAngle = lerp(a.lidAngle, b.lidAngle, t);
+    targetPose.discPop = lerp(a.discPop, b.discPop, t);
+    targetPose.scale = lerp(a.scale, b.scale, t);
+
+    // Parada activa = keyframe más cercano.
+    let activeStop = 0;
+    let bestDist = Infinity;
+    for (let i = 0; i < frames.length; i++) {
+      const d = Math.abs(progress - frames[i].at);
+      if (d < bestDist) { bestDist = d; activeStop = i; }
     }
 
-    for (let i = 0; i < 4; i++) {
-      const panel = document.getElementById(`panel-${i}`);
+    // Overlays de zona: solo el activo visible.
+    const zones = document.querySelectorAll<HTMLElement>('.zone-copy');
+    zones.forEach((el) => {
+      el.classList.toggle('is-active', Number(el.dataset.stop) === activeStop);
+    });
+
+    for (let i = 0; i < 7; i++) {
       const navBtn = document.getElementById(`nav-stop-${i}`);
-      if (panel) panel.classList.toggle('active', i === activeStop);
       if (navBtn) {
         navBtn.classList.toggle('nav-stop-active', i === activeStop);
         if (i === activeStop) navBtn.setAttribute('aria-current', 'true');
@@ -1551,14 +1651,8 @@ import Base from '../layouts/Base.astro';
       }
     }
 
-    const stageNames = [
-      '01 / 04 • PORTADA',
-      '02 / 04 • LOMO & MECHAS',
-      '03 / 04 • CONTRAPORTADA',
-      '04 / 04 • MANUAL & DISCO',
-    ];
     const hudLabel = document.getElementById('hud-stage-label');
-    if (hudLabel) hudLabel.textContent = stageNames[activeStop];
+    if (hudLabel) hudLabel.textContent = STAGE_NAMES[activeStop];
 
     const effectiveLid = manualLidOverride !== null ? (manualLidOverride ? -2.15 : 0) : targetPose.lidAngle;
     const btnLid = document.getElementById('btn-manual-lid');
@@ -1571,8 +1665,9 @@ import Base from '../layouts/Base.astro';
     manualLidOverride = null;
     const docEl = document.documentElement;
     const maxScroll = Math.max(1, docEl.scrollHeight - window.innerHeight);
-    const ratios = [0, 0.33, 0.66, 1.0];
-    window.scrollTo({ top: maxScroll * ratios[stopIndex], behavior: 'smooth' });
+    const ratios = [0, 0.16, 0.32, 0.48, 0.64, 0.8, 1.0];
+    const target = ratios[Math.max(0, Math.min(6, stopIndex))];
+    window.scrollTo({ top: maxScroll * target, behavior: 'smooth' });
   }
 
   function toggleManualLid() {
@@ -1737,14 +1832,21 @@ import Base from '../layouts/Base.astro';
       if (card) card.classList.toggle('active', idx === index);
     });
 
-    document.getElementById('selected-mech-badge')!.textContent = mech.fullName;
-    document.getElementById('disc-mech-name')!.textContent = mech.code;
-    document.getElementById('mech-blueprint-svg')!.innerHTML = mech.svg;
-    document.getElementById('bp-code')!.textContent = mech.code;
-    document.getElementById('bp-name')!.textContent = mech.shortName;
-    document.getElementById('bp-weapons')!.innerHTML = mech.weapons;
-    document.getElementById('bp-stats')!.textContent = mech.stats;
-    document.getElementById('bp-sector')!.textContent = mech.sector;
+    const setText = (id: string, val: string) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
+    const setHtml = (id: string, val: string) => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = val;
+    };
+
+    setHtml('mech-blueprint-svg', mech.svg);
+    setText('bp-code', mech.code);
+    setText('bp-name', mech.shortName);
+    setText('bp-weapons', mech.weapons);
+    setText('bp-stats', mech.stats);
+    setText('bp-sector', mech.sector);
   }
 
   // =========================================================================
