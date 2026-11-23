@@ -41,7 +41,7 @@ const makeStorage = () => {
 // `myIndex` is which global unit index the LOCAL human controls (0 in CPU mode; in net
 // mode it is the player's seat). The camera and radial menu anchor to this unit, so
 // each client sees its own mecha up front without mirroring world coordinates.
-const BOOT = { ai: null, storage: makeStorage(), mode: 'cpu', myIndex: 0, net: null, debug: false };
+const BOOT = { ai: null, storage: makeStorage(), mode: 'cpu', myIndex: 0, net: null, debug: false, onMode: null };
 
 const W = 800;
 const H = 600;
@@ -1416,6 +1416,17 @@ const RIVAL_COLS = [0xd8232f, 0x7a2fd0, 0x23a04a, 0xd02f9a, 0x5a6270, 0xd4a020];
 const rival = (s) => RIVALS[(s.j - 1) % 6];
 const MECH_PALS = [[0x1d3a42, 0x3046d0, 0xe6dcc0, 0x4ff3ff, 0xff8a1e], [0x1d3a3a, 0xd8232f, 0xe6dcc0, 0x4ff3ff, 0xff8a1e]];
 
+// Player roster: the palette IS the machine. Every entry keeps MECH_PALS' five slots
+// ([dark, accent, cream, glow, hot]) and carries an arcade code plus a callsign.
+const MECHS = [
+  { c: 'MB-01', n: 'COQUIVACOA', p: [0x1d3a42, 0x3046d0, 0xe6dcc0, 0x4ff3ff, 0xff8a1e] },
+  { c: 'MB-02', n: 'TAMBORA', p: [0x2a1a18, 0xd8232f, 0xe6dcc0, 0xffd23c, 0xff8a1e] },
+  { c: 'MB-03', n: 'VERDIN', p: [0x13241a, 0x23a04a, 0xe6dcc0, 0x2bff7a, 0xffd23c] },
+  { c: 'MB-04', n: 'BOCA', p: [0x1a1a24, 0x5a6270, 0xe6dcc0, 0x35e9f2, 0xff8a1e] },
+  { c: 'MB-05', n: 'GAITA', p: [0x241320, 0xd02f9a, 0xe6dcc0, 0xffd23c, 0x35e9f2] },
+  { c: 'MB-06', n: 'RELAMPAGO', p: [0x141a2e, 0x7a2fd0, 0xe6dcc0, 0x4ff3ff, 0xffd23c] },
+];
+
 const mechTone = (c, k, flash) => {
   let r = M_min(255, (c >> 16) * k), q = M_min(255, ((c >> 8) & 255) * k), b = M_min(255, (c & 255) * k);
   flash = M_min(1, flash * 1.5);
@@ -1426,8 +1437,8 @@ const mechTone = (c, k, flash) => {
 };
 
 // Tiny orthographic software renderer: transform, pose, back-face cull, light and painter-sort.
-const drawMecha = (g, gx, gy, fc, color, alpha, flash, stance, pose = S_IDLE, frame = 0, wire = 0) => {
-  const c = toIso(gx, gy), d = DIRS[fc], pal = MECH_PALS[color === C_cpu ? 1 : 0];
+const drawMecha = (g, gx, gy, fc, color, alpha, flash, stance, pose = S_IDLE, frame = 0, wire = 0, palOverride) => {
+  const c = toIso(gx, gy), d = DIRS[fc], pal = palOverride || MECH_PALS[color === C_cpu ? 1 : 0];
   const st = stance || 0, tilt = st === ST_STAGGERED ? -0.15 : st === ST_KNOCKBACK ? 0.17 : st === ST_DOWN ? -1.5 : 0;
   const sn = M_sin(tilt), co = M_cos(tilt), down = st === ST_DOWN;
   if (down) pose = S_IDLE;
@@ -1545,6 +1556,9 @@ const drawBolt = (g, fx) => {
 const makeBoltPoints = (x, y) => [{ x: x - 25, y: 0 }, { x: x + 15, y: y * 0.35 }, { x: x - 12, y: y * 0.7 }, { x, y }];
 
 const unitColor = (i) => (i ? C_cpu : C_p1);
+
+// HUD callsign: online seats are P1/P2, the CPU gauntlet shows the chosen machine.
+const pilotName = (s, i) => (BOOT.mode === 'net' ? ['P1', 'P2'][i] : i === 0 ? MECHS[s.mi || 0].n : 'CPU');
 
 // Small HP bar under a unit.
 const drawMiniBar = (g, x, y, frac, color) => {
@@ -1801,6 +1815,11 @@ const createUi = (scene) => {
     press: txt(scene, W / 2, 520, 30, hex(C_gold), 0.5).setFontStyle(BI),
     // NEXT ENEMY briefing column: code, weapons, arena, mission.
     ne: [txt(scene, 560, 150, 20, hex(C_grid), 0.5), txt(scene, 560, 470, 26, hex(C_grid), 0.5).setFontStyle(BI).setPadding(24, 0)],
+    // In-game mode / machine select: two mode labels, six roster codes, six roster names.
+    sel: [txt(scene, W / 2, 0, 20, '#fff', 0.5), txt(scene, W / 2, 0, 20, '#fff', 0.5)],
+    roC: Array.from({ length: 6 }, () => txt(scene, 0, 0, 12, hex(C_grid), 0)),
+    roN: Array.from({ length: 6 }, () => txt(scene, 0, 0, 14, '#fff', 0)),
+    wait: txt(scene, W / 2, 300, 20, hex(C_gold), 0.5).setFontStyle(BI).setDepth(11),
     // Big italic turn clock, seconds plus small hundredths (Virtual-On style).
     tm: txt(scene, 690, 555, 40, hex(C_grid), 1).setFontStyle(BI).setPadding(16, 0),
     tc: txt(scene, 676, 545, 17, hex(C_grid), 0).setFontStyle(BI),
@@ -1862,6 +1881,13 @@ function create() {
   this.tk = 0;
   this.as = 0;
   this.top = [];
+  // Attract-menu state: 0 = title, 1 = mode select, 2 = machine select.
+  this.stg = 0;
+  this.mo = 0; // 0 = 1P vs CPU, 1 = 2P online
+  this.mi = 0; // selected machine in MECHS
+  this.wt = ''; // net wait banner text
+  this.wtS = 0;
+  this.netNo = 0; // "online unavailable" notice deadline
   // Storage persists across releases and may be missing or slow: validate entries, merge with
   // anything saved meanwhile, and never let it break the scene.
   try {
@@ -1968,6 +1994,7 @@ const resetMatch = (s, mode, next) => {
   s.mp = { col: 0, row: 0, o: 0 };
   s.wa = 0;
   if (mode === MD_ATTRACT) s.as = s.time.now;
+  if (mode === MD_ATTRACT) s.stg = 0;
   s.ms = s.time.now;
   beginTurn(s);
   if (mode === S_PLAY) {
@@ -2083,8 +2110,47 @@ const handleInput = (s, time) => {
   const start = () => consumePressed(c, 'START1') || consumePressed(c, 'P1_1');
 
   if (s.md === MD_ATTRACT) {
-    if (start()) {
-      resetMatch(s, S_PLAY);
+    const L = consumePressed(c, 'P1_L') || consumePressed(c, 'P1_U');
+    const R = consumePressed(c, 'P1_R') || consumePressed(c, 'P1_D');
+    const ok = start();
+    const back = consumePressed(c, 'P1_2');
+    // Mode select: the demo duel stays frozen behind the panel until a mode is locked in.
+    if (s.stg === 1) {
+      if (L || R) s.mo ^= 1;
+      if (L || R) s.sfx.start();
+      if (back) {
+        s.stg = 0;
+        s.sfx.start();
+      } else if (ok) {
+        s.sfx.start();
+        if (s.mo === 1) {
+          // Online needs a Phaser reboot: the net session owns the boot options.
+          if (BOOT.onMode) return BOOT.onMode('net');
+          s.netNo = s.time.now + 2400;
+          return clearPressed(c);
+        }
+        s.stg = 2;
+      }
+      return clearPressed(c);
+    }
+    // Machine select: cycle the roster, confirm applies the palette to P1 for the run.
+    if (s.stg === 2) {
+      const n = MECHS.length;
+      if (R) s.mi = (s.mi + 1) % n;
+      if (L) s.mi = (s.mi + n - 1) % n;
+      if (L || R) s.sfx.start();
+      if (back) {
+        s.stg = 1;
+        s.sfx.start();
+      } else if (ok) {
+        MECH_PALS[0] = [...MECHS[s.mi].p];
+        resetMatch(s, S_PLAY);
+        return s.sfx.start();
+      }
+      return clearPressed(c);
+    }
+    if (ok) {
+      s.stg = 1;
       return s.sfx.start();
     }
     if (s.ph === Q_LOCKED && time > s.cRdy) lockTurn(s);
@@ -2310,22 +2376,31 @@ const lockTurnNet = async (s, token) => {
   if (token !== s.tk) return;
 
   let segments;
-  if (net.isHost) {
-    // Host: we have (or will get) the guest's plan via RPC; run the turn ourselves.
-    const result = await net.runHostTurn();
-    segments = result.segments;
-    dbg('host resolved', segments.length, 'segments');
-  } else {
-    // Guest: wait for the host's broadcast.
-    segments = await net.awaitResult();
-    dbg('guest got', segments.length, 'segments');
+  try {
+    if (net.isHost) {
+      // Host: we have (or will get) the guest's plan via RPC; run the turn ourselves.
+      s.wt = 'ESPERANDO RIVAL';
+      s.wtS = s.time.now;
+      const result = await net.runHostTurn();
+      segments = result.segments;
+      dbg('host resolved', segments.length, 'segments');
+    } else {
+      // Guest: wait for the host's broadcast.
+      s.wt = 'ESPERANDO HOST';
+      s.wtS = s.time.now;
+      segments = await net.awaitResult();
+      dbg('guest got', segments.length, 'segments');
+    }
+    if (token !== s.tk) return;
+    s.wt = '';
+    await playSegments(s, segments, token);
+    if (token !== s.tk) return;
+    s.q = segments.length ? segments[segments.length - 1].state : s.q;
+    dbg('turn applied, hp', s.q.us.map((u) => u.hp).join('/'));
+    await finishTurnView(s);
+  } finally {
+    s.wt = '';
   }
-  if (token !== s.tk) return;
-  await playSegments(s, segments, token);
-  if (token !== s.tk) return;
-  s.q = segments.length ? segments[segments.length - 1].state : s.q;
-  dbg('turn applied, hp', s.q.us.map((u) => u.hp).join('/'));
-  await finishTurnView(s);
 };
 
 // Replays the host's resolved segments in order, applying each segment's state.
@@ -2781,7 +2856,7 @@ const drawWorld = (s, time, delta) => {
     const off = near ? M_sign(v.gx + v.gy - n.gx - n.gy || i * 2 - 1) * 22 : 0;
     drawMiniBar(gu, p.x + off, p.y + 12, s.dH[i] / s.q.us[i].mx, unitColor(i));
     s.ui.tags[i].setPosition(p.x + off, p.y + 25);
-    const stName = ['P1', 'CPU'][i] + (v.st ? '  ' + ST_NAME[v.st] : '') + (s.q.us[i].o ? '  EXPUESTO' : '');
+    const stName = pilotName(s, i) + (v.st ? '  ' + ST_NAME[v.st] : '') + (s.q.us[i].o ? '  EXPUESTO' : '');
     setT(s.ui.tags[i], stName);
   }
 
@@ -3011,20 +3086,99 @@ const drawHud = (s, time) => {
   let big2 = '';
   let card = '';
   let ne = ['', ''];
+  let press = '';
+  ui.sel.forEach((t) => setT(t, ''));
+  ui.roC.forEach((t) => setT(t, ''));
+  ui.roN.forEach((t) => setT(t, ''));
+  ui.card.setY(410);
   s.gWire.clear();
-  if (!play) {
+  if (!play && s.stg === 0) {
     // Title screen: the demo duel runs dimmed behind a CRT grid (arcade VS screen homage).
     g.fS(0x010806, 0.62);
     g.fR(0, 0, W, H);
     crtGrid(g, C_grid);
     g.fS(C_grid, 1);
     g.fR(255, 45, 290, 19);
-    card = 'WASD: MOVER Y ELEGIR\nU: ACEPTAR   I: CANCELAR' + (s.top.length ? '\n\nTOP 5\n' + s.top.map((e, k) => k + 1 + '. ' + e.n + '  ' + e.s).join('\n') : '');
+    card = 'WASD: MOVER Y ELEGIR\nU: ACEPTAR' + (s.top.length ? '\n\nTOP 5\n' + s.top.map((e, k) => k + 1 + '. ' + e.n + '  ' + e.s).join('\n') : '');
     big = 'CATATUMBO';
     big2 = 'PROTOCOL';
     tint(ui.big, C_gold);
     ui.big.setY(122).setScale(1);
     ui.big2.setPosition(W / 2, 184);
+    press = blinkOn ? 'PULSA START' : '';
+  } else if (!play && s.stg === 1) {
+    // Mode select: the demo is frozen behind a full CRT plate.
+    g.fS(0x01060a, 0.96);
+    g.fR(0, 0, W, H);
+    crtGrid(g, C_p1);
+    big = 'MODO';
+    big2 = 'DE JUEGO';
+    tint(ui.big, C_p1);
+    ui.big.setY(104).setScale(0.9);
+    ui.big2.setPosition(W / 2, 168);
+    [0, 1].forEach((k) => {
+      const y = 296 + k * 66;
+      const on = s.mo === k;
+      g.fS(on ? 0x0b2430 : 0x040b11, on ? 0.95 : 0.8);
+      g.fR(180, y, 440, 52);
+      g.lS(on ? 3 : 1, on ? C_gold : C_p1, on ? 1 : 0.35);
+      g.sR(180, y, 440, 52);
+      if (on) {
+        g.fS(C_gold, 1);
+        g.fillTriangle(150, y + 16, 150, y + 36, 168, y + 26);
+      }
+      setT(ui.sel[k], k ? '2P  ONLINE' : '1P  VS CPU');
+      tint(ui.sel[k], on ? C_gold : 0xc8ccd8);
+      ui.sel[k].setPosition(W / 2, y + 26);
+    });
+    card = 'A/D: MODO   U: ACEPTAR   I: VOLVER';
+    ui.card.setY(478);
+    if (s.netNo > time) {
+      card = 'ONLINE NO DISPONIBLE';
+      ui.card.setY(478);
+      tint(ui.card, C_cpu);
+    } else tint(ui.card, C_grid);
+  } else if (!play) {
+    // Machine select: palette + callsign roster, big wireframe of the chosen unit.
+    g.fS(0x01060a, 0.96);
+    g.fR(0, 0, W, H);
+    crtGrid(g, C_grid);
+    const m = MECHS[s.mi];
+    big = m.n;
+    big2 = m.c;
+    tint(ui.big, m.p[1]);
+    tint(ui.big2, C_grid);
+    ui.big.setY(66).setScale(0.62);
+    ui.big2.setPosition(W / 2, 126);
+    s.gWire.setScale(2.4);
+    const c = toIso(0, 0);
+    s.gWire.setPosition(200 - c.x * 2.4, 470 - c.y * 2.4);
+    drawMecha(s.gWire, 0, 0, DIR_KEYS[M_floor(time / 520) % 4], C_p1, 1, 0, 0, S_IDLE, 0, 1, m.p);
+    MECHS.forEach((e, k) => {
+      const y = 214 + k * 42;
+      const on = s.mi === k;
+      if (on) {
+        g.fS(0x0b2430, 0.95);
+        g.fR(408, y - 15, 368, 32);
+        g.lS(2, C_gold, 1);
+        g.sR(408, y - 15, 368, 32);
+        g.fS(C_gold, 1);
+        g.fillTriangle(390, y - 9, 390, y + 9, 402, y);
+      }
+      g.fS(e.p[1], 1);
+      g.fR(424, y - 8, 16, 16);
+      g.lS(1, e.p[3], 0.8);
+      g.sR(424, y - 8, 16, 16);
+      setT(ui.roC[k], e.c);
+      setT(ui.roN[k], e.n);
+      tint(ui.roC[k], on ? C_gold : C_grid);
+      tint(ui.roN[k], on ? '#ffffff' : '#c8ccd8');
+      ui.roC[k].setPosition(450, y);
+      ui.roN[k].setPosition(520, y);
+    });
+    card = 'A/D: MAQUINA   U: LISTO   I: VOLVER';
+    ui.card.setY(500);
+    tint(ui.card, C_grid);
   } else if (intro) {
     // NEXT ENEMY briefing: CRT grid, spinning wireframe of the rival, its spec sheet and the arena.
     g.fS(0x01060a, 0.97);
@@ -3044,10 +3198,13 @@ const drawHud = (s, time) => {
     ui.big2.setPosition(560, 205);
     ne = ['UNIDAD LV' + n, n > 5 ? 'MISION FINAL' : n + 'A MISION'];
   } else if (s.ph === 'over') {
+    // Winner is stored as a seat ('p1'/'cpu'); online it must be compared against my seat.
     const o = s.q.v;
-    title = o === 'p1' ? (s.j > 5 ? 'PROTOCOLO LISTO' : 'ETAPA ' + s.j + ' SUPERADA') : o === 'cpu' ? 'DERROTA' : 'EMPATE';
-    titleColor = o === 'p1' ? C_p1 : o === 'cpu' ? C_cpu : C_bolt;
-    sub = 'PUNTOS ' + s.z + '\n' + (time > s.phS + ATTRACT_OVER_MS && blinkOn ? (o === 'p1' && s.j < 6 ? 'SIGUIENTE' : 'PULSA START') : ' ');
+    const win = o === 'p1' ? 0 : o === 'cpu' ? 1 : -1;
+    const won = win === (BOOT.mode === 'net' ? BOOT.myIndex : 0);
+    title = win < 0 ? 'EMPATE' : !won ? 'DERROTA' : BOOT.mode === 'net' ? 'VICTORIA' : s.j > 5 ? 'PROTOCOLO LISTO' : 'ETAPA ' + s.j + ' SUPERADA';
+    titleColor = win < 0 ? C_bolt : won ? C_p1 : C_cpu;
+    sub = 'PUNTOS ' + s.z + '\n' + (time > s.phS + ATTRACT_OVER_MS && blinkOn ? (won && s.j < 6 && BOOT.mode !== 'net' ? 'SIGUIENTE' : 'PULSA START') : ' ');
   } else if (s.ph === 'name') {
     title = 'NUEVO RECORD';
     titleColor = C_bolt;
@@ -3069,7 +3226,9 @@ const drawHud = (s, time) => {
   setT(ui.vs[0], play ? '' : 'PLATANUS HACK 26  CARACAS');
   ne.forEach((t, k) => setT(ui.ne[k], t));
   setT(ui.card, card);
-  setT(ui.press, !play && blinkOn ? 'PULSA START' : '');
+  setT(ui.press, press);
+  // Delay the wait banner so a turn that resolves in under 250 ms never flashes it.
+  setT(ui.wait, play && s.wt && s.time.now - s.wtS > 250 ? s.wt : '');
 };
 
 // Boot last: every helper above is initialised before Phaser can call create().
@@ -3087,6 +3246,7 @@ export function bootGame(opts = {}) {
   if (opts.net) BOOT.net = opts.net;
   if (opts.myIndex !== undefined) BOOT.myIndex = opts.myIndex;
   if (opts.debug !== undefined) BOOT.debug = opts.debug;
+  if (opts.onMode) BOOT.onMode = opts.onMode;
   BOOT.ai = opts.ai || (BOOT.mode === 'net' ? null : CpuController);
   if (opts.parent) config.parent = opts.parent;
   return new Phaser.Game(config);
