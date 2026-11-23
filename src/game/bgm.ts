@@ -148,7 +148,9 @@ export async function bgmStart(): Promise<boolean> {
     if (!AC) return false;
     ctx = new AC();
     master = ctx.createGain();
-    master.gain.value = 0.6;
+    // Landing mix: the vamp sits UNDER reading volume (~-8 dB vs the game's
+    // 0.6 bus). Background music must never compete with the copy.
+    master.gain.value = 0.24;
     master.connect(ctx.destination);
     // Phaser/flanger sheen bus for the melodic voices (same as the game).
     mel = ctx.createGain();

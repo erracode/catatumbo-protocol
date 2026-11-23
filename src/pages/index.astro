@@ -209,18 +209,20 @@ import Base from '../layouts/Base.astro';
     <div class="fixed bottom-3 left-3 right-3 z-40 pointer-events-none">
       <div class="max-w-4xl mx-auto bg-[#05070A]/95 border border-slate-700 px-3.5 py-2 flex flex-wrap items-center justify-between gap-2 shadow-[4px_4px_0px_#000000] pointer-events-auto">
         <div class="flex items-center gap-2.5">
-          <span id="hud-stage-label" class="pixel-font text-[9px] sm:text-[10px] text-[#FFD23F]">
+          <span id="hud-stage-label" class="pixel-font text-[9px] sm:text-[10px] text-[#FFD23F] tabular-nums">
             01 / 04 • PORTADA
           </span>
           <div class="w-24 sm:w-36 h-2 bg-slate-800 border border-slate-600">
-            <div id="scroll-progress-bar" class="h-full bg-gradient-to-r from-[#00F0FF] via-[#FFD23F] to-[#10F57A] w-0"></div>
+            <div id="scroll-progress-bar" class="h-full bg-gradient-to-r from-[#00F0FF] via-[#FFD23F] to-[#10F57A] w-0 transition-[width] duration-150 ease-out"></div>
           </div>
         </div>
 
         <div class="flex items-center gap-2">
           <span class="mono-font text-[11px] text-slate-400 hidden sm:inline">Arrastra caja 360°</span>
           <button type="button" id="btn-bgm" class="btn-brutal bg-[#FFD23F] text-black pixel-font text-[9px] px-2.5 py-1 font-bold cursor-pointer" aria-pressed="false" aria-label="Reproducir la banda sonora Coquivacoa Steel">
-            ♪ MÚSICA
+            <span class="bgm-icon bgm-icon--play" aria-hidden="true">♪</span>
+            <span class="bgm-icon bgm-icon--stop bgm-hidden" aria-hidden="true">■</span>
+            <span class="bgm-label">MÚSICA</span>
           </button>
           <button type="button" id="btn-manual-lid" class="btn-brutal bg-[#00F0FF] text-black pixel-font text-[9px] px-2.5 py-1 font-bold cursor-pointer">
             ABRIR / CERRAR TAPA
@@ -382,6 +384,49 @@ import Base from '../layouts/Base.astro';
     background: #070e16;
   }
 
+  /* BGM toggle: cross-faded icon swap (scale 0.25 -> 1, blur 4px -> 0) and a
+     40x40+ hit area; UI animations stay under 300ms with ease-out. */
+  #btn-bgm {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+  }
+  #btn-bgm:active {
+    transform: translate(2px, 2px) scale(0.96);
+  }
+  .bgm-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 10px;
+    transition:
+      opacity 0.18s var(--ease-out),
+      transform 0.18s var(--ease-out),
+      filter 0.18s var(--ease-out);
+  }
+  .bgm-icon--stop {
+    position: absolute;
+  }
+  .bgm-hidden {
+    opacity: 0;
+    transform: scale(0.25);
+    filter: blur(4px);
+  }
+  #btn-bgm.is-playing .bgm-icon--play {
+    opacity: 0;
+    transform: scale(0.25);
+    filter: blur(4px);
+  }
+  #btn-bgm.is-playing .bgm-icon--stop {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  #btn-bgm.is-playing {
+    background: #00f0ff;
+  }
+
   @keyframes blinkInsert {
     0%,
     49% {
@@ -455,6 +500,32 @@ import Base from '../layouts/Base.astro';
     pointer-events: auto;
   }
 
+  /* Enter: split into chunks and stagger (~60ms), per stop activation. */
+  .zone-card > * {
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity 0.3s var(--ease-out),
+      transform 0.3s var(--ease-out);
+    transition-delay: 0ms;
+  }
+  .zone-copy.is-active .zone-card > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .zone-copy.is-active .zone-card > *:nth-child(2) { transition-delay: 60ms; }
+  .zone-copy.is-active .zone-card > *:nth-child(3) { transition-delay: 120ms; }
+  .zone-copy.is-active .zone-card > *:nth-child(4) { transition-delay: 180ms; }
+  .zone-copy.is-active .zone-card > *:nth-child(5) { transition-delay: 240ms; }
+  .zone-copy.is-active .zone-card > *:nth-child(6) { transition-delay: 300ms; }
+  .zone-copy.is-active .zone-card > *:nth-child(7) { transition-delay: 360ms; }
+  .zone-copy.is-active .zone-card > *:nth-child(8) { transition-delay: 420ms; }
+  /* Exit (default state): retargets for a quick soft settle, no extra delay. */
+  .zone-copy:not(.is-active) .zone-card > * {
+    transition-delay: 0ms;
+    transition-duration: 0.15s;
+  }
+
   .zone-copy--hero {
     inset: 0;
     align-items: center;
@@ -515,6 +586,7 @@ import Base from '../layouts/Base.astro';
     font-size: 1.5rem;
     line-height: 1.1;
     color: var(--saturn-yellow);
+    text-wrap: balance;
   }
 
   .zone-label { letter-spacing: 0.18em; }
@@ -730,6 +802,10 @@ import Base from '../layouts/Base.astro';
     }
     .zone-copy {
       transition-duration: 0.01ms;
+    }
+    .zone-card > * {
+      transition-duration: 0.01ms;
+      transition-delay: 0ms !important;
     }
     .btn-brutal,
     .mech-card {
@@ -1546,9 +1622,9 @@ import Base from '../layouts/Base.astro';
     const hudLabel = document.getElementById('hud-stage-label');
     if (hudLabel) hudLabel.textContent = STAGE_NAMES[activeStop];
 
-    // BGM intensity follows the visible stop: vamp everywhere, combat cycle
-    // once the visitor reaches the music/gameplay stops.
-    bgmSetIntensity(activeStop >= 5 ? 1 : 0);
+    // BGM stays on the soft gaita vamp (what the game's attract/title screen
+    // plays) at every stop; no combat drums on the landing.
+    bgmSetIntensity(0);
 
     const effectiveLid = manualLidOverride !== null ? (manualLidOverride ? -2.15 : 0) : targetPose.lidAngle;
     const btnLid = document.getElementById('btn-manual-lid');
@@ -1853,12 +1929,14 @@ import Base from '../layouts/Base.astro';
       const btn = bgmBtn as HTMLButtonElement;
       if (bgmIsPlaying()) {
         bgmStop();
-        btn.textContent = '♪ MÚSICA';
         btn.setAttribute('aria-pressed', 'false');
+        btn.classList.remove('is-playing');
       } else {
         const ok = await bgmStart().catch(() => false);
-        btn.textContent = ok ? '■ MÚSICA' : '♪ MÚSICA';
-        btn.setAttribute('aria-pressed', ok ? 'true' : 'false');
+        if (ok) {
+          btn.setAttribute('aria-pressed', 'true');
+          btn.classList.add('is-playing');
+        }
       }
     });
 
