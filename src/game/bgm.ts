@@ -20,6 +20,11 @@ let mBar = 0;
 let mNext = 0;
 let mInt = 0;
 let playing = false;
+// Auto-cycle: title vamp -> combat -> back to vamp, advanced on completed bars.
+let cycleOn = false;
+let cycleBars = 0;
+const CYCLE_VAMP = 12; // ~15.5s of menu vamp at 185 BPM before the drop
+const CYCLE_COMBAT = 8; // one full 8-bar combat phrase (~10.4s)
 
 function voice(
   f: number,
@@ -131,6 +136,10 @@ function pump() {
     if (++mStep === 12) {
       mStep = 0;
       mBar = (mBar + 1) % 8;
+      if (cycleOn && ++cycleBars >= (mInt ? CYCLE_COMBAT : CYCLE_VAMP)) {
+        cycleBars = 0;
+        bgmSetIntensity(mInt ? 0 : 1);
+      }
     }
     mNext += STEP;
   }
@@ -139,6 +148,13 @@ function pump() {
 export function bgmSetIntensity(intensity: 0 | 1) {
   if (intensity !== mInt) mBar = 0;
   mInt = intensity;
+}
+
+/** Toggle the automatic title-vamp <-> combat cycle. Always restarts on vamp. */
+export function bgmSetCycle(on: boolean) {
+  cycleOn = on;
+  cycleBars = 0;
+  if (on) bgmSetIntensity(0);
 }
 
 /** Start the loop. Resolves a lazily created AudioContext (call from a click). */
@@ -169,6 +185,10 @@ export async function bgmStart(): Promise<boolean> {
   if (ctx.state === 'suspended') await ctx.resume();
   if (playing) return true;
   playing = true;
+  if (cycleOn) {
+    cycleBars = 0;
+    bgmSetIntensity(0);
+  }
   mNext = ctx.currentTime + 0.1;
   timer = window.setInterval(pump, 40);
   return true;

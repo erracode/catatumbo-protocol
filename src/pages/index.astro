@@ -39,10 +39,16 @@ import Base from '../layouts/Base.astro';
             Predice al rival, encadena <strong>posturas</strong>, gasta <strong>Guts</strong> en especiales
             y sobrevive al relámpago eterno del Catatumbo.
           </p>
-          <a href="/play" class="btn-brutal zone-cta bg-[#FF2A55] hover:bg-[#ff3b63] text-white">
-            <span class="pixel-font text-base sm:text-lg tracking-wider blink-coin font-bold">JUGAR</span>
-            <span class="mono-font text-[11px] font-bold uppercase tracking-widest text-yellow-200">INSERT COIN · MODOS Y MÁQUINAS DENTRO DEL JUEGO</span>
-          </a>
+          <div class="zone-cta-wrap">
+            <a href="/play" class="play-cta" aria-label="Jugar Catatumbo Protocol">
+              <span class="play-cta__coin" aria-hidden="true">&#9654;</span>
+              <span class="play-cta__body">
+                <span class="play-cta__label pixel-font">JUGAR</span>
+                <span class="play-cta__sub mono-font"><span class="blink-coin">INSERT COIN</span> &middot; MODOS Y M&Aacute;QUINAS DENTRO DEL JUEGO</span>
+              </span>
+              <span class="play-cta__arrow" aria-hidden="true">&#8594;</span>
+            </a>
+          </div>
         </div>
       </article>
 
@@ -227,6 +233,9 @@ import Base from '../layouts/Base.astro';
           <button type="button" id="btn-manual-lid" class="btn-brutal bg-[#00F0FF] text-black pixel-font text-[9px] px-2.5 py-1 font-bold cursor-pointer">
             ABRIR / CERRAR TAPA
           </button>
+          <a href="/play" class="btn-brutal hud-cta bg-[#FF2A55] hover:bg-[#ff3b63] text-white pixel-font text-[10px] px-3 py-1.5 font-bold cursor-pointer" aria-label="Jugar Catatumbo Protocol ahora">
+            <span aria-hidden="true">&#9654;</span> JUGAR
+          </a>
         </div>
       </div>
     </div>
@@ -655,14 +664,93 @@ import Base from '../layouts/Base.astro';
     color: var(--radar-green);
   }
 
-  .zone-cta {
-    display: flex;
-    flex-direction: column;
+  /* Primary "JUGAR" CTA: a coin-slot block that reads as an arcade control
+     panel rather than a generic link. Icon + label + trailing arrow, hard
+     industrial shadow, sub-300ms ease-out motion. */
+  .play-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    width: 100%;
+    padding: 0.85rem 1.1rem;
+    background: var(--arcade-red);
+    color: #fff;
+    border: 2px solid #000;
+    box-shadow: 5px 5px 0 #000;
+    text-decoration: none;
+    transition:
+      transform 0.12s var(--ease-out),
+      box-shadow 0.12s var(--ease-out),
+      background-color 0.14s ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .play-cta:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 8px 8px 0 #000;
+      background: #ff3b63;
+    }
+    .play-cta:hover .play-cta__arrow {
+      transform: translateX(5px);
+    }
+    .play-cta:hover .play-cta__coin {
+      transform: scale(1.08);
+    }
+  }
+  .play-cta:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 #000;
+  }
+  .play-cta:focus-visible {
+    outline: 2px solid var(--holo-cyan);
+    outline-offset: 3px;
+  }
+  .play-cta__coin {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.25rem;
-    padding: 0.85rem 1rem;
-    text-align: center;
+    flex: none;
+    width: 2.6rem;
+    height: 2.6rem;
+    background: #05070a;
+    color: var(--saturn-yellow);
+    border: 2px solid #000;
+    font-size: 1rem;
+    transition: transform 0.14s var(--ease-out);
+  }
+  .play-cta__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+  .play-cta__label {
+    font-size: 1.65rem;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+  }
+  .play-cta__sub {
+    font-size: 10px;
+    line-height: 1.2;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #ffe9a8;
+  }
+  .play-cta__arrow {
+    margin-left: auto;
+    flex: none;
+    font-size: 1.35rem;
+    font-weight: 700;
+    transition: transform 0.14s var(--ease-out);
+  }
+
+  /* Persistent HUD call-to-action: always on screen at every scroll stop. */
+  .hud-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.04em;
   }
 
   .zone-bottomline { border-top: 1px solid #1e293b; padding-top: 0.5rem; }
@@ -808,7 +896,10 @@ import Base from '../layouts/Base.astro';
       transition-delay: 0ms !important;
     }
     .btn-brutal,
-    .mech-card {
+    .mech-card,
+    .play-cta,
+    .play-cta__arrow,
+    .play-cta__coin {
       transition-duration: 0.01ms;
     }
     /* Stop the infinite ticker; keep it readable as a static line. */
@@ -821,7 +912,7 @@ import Base from '../layouts/Base.astro';
 
 <script>
   import * as THREE from 'three';
-  import { bgmStart, bgmStop, bgmSetIntensity, bgmIsPlaying } from '../game/bgm';
+  import { bgmStart, bgmStop, bgmSetCycle, bgmIsPlaying } from '../game/bgm';
 
   // =========================================================================
   // 1. PINTURA PROCEDURAL DE LA CARÁTULA OFICIAL (PORTADA + SUPERFICIE DEL CD)
@@ -1622,9 +1713,8 @@ import Base from '../layouts/Base.astro';
     const hudLabel = document.getElementById('hud-stage-label');
     if (hudLabel) hudLabel.textContent = STAGE_NAMES[activeStop];
 
-    // BGM stays on the soft gaita vamp (what the game's attract/title screen
-    // plays) at every stop; no combat drums on the landing.
-    bgmSetIntensity(0);
+    // BGM runs its own auto-cycle (title vamp <-> combat), enabled once at boot;
+    // scrolling must not override it.
 
     const effectiveLid = manualLidOverride !== null ? (manualLidOverride ? -2.15 : 0) : targetPose.lidAngle;
     const btnLid = document.getElementById('btn-manual-lid');
@@ -1948,6 +2038,7 @@ import Base from '../layouts/Base.astro';
     animate3D();
     selectVirtualoid(0);
     renderBackCoverScreenshots();
+    bgmSetCycle(true);
     updateScrollStory();
     wireInteractions();
   }
