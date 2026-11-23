@@ -11,55 +11,6 @@ import Base from '../layouts/Base.astro';
     <div class="crt-overlay" aria-hidden="true"></div>
 
     <!-- ===================================================================== -->
-    <!-- BARRA DE NAVEGACIÓN SUPERIOR (4 PARADAS + ERRACODE // ARCHIVE)        -->
-    <!-- ===================================================================== -->
-    <header class="fixed top-0 left-0 right-0 border-b border-[#10F57A]/60 bg-[#05070A]/95 backdrop-blur-md z-40">
-      <div class="max-w-7xl mx-auto px-3 sm:px-5 py-2 flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          <span class="bg-[#00F0FF] text-black pixel-font font-bold px-2 py-0.5 text-[10px] border border-black">
-            PSX / SATURN
-          </span>
-          <span class="mono-font text-xs text-[#00F0FF] hidden xl:inline font-bold tracking-wider">
-            CATATUMBO PROTOCOL // OBI SLUS-1996-MCBO
-          </span>
-        </div>
-
-        <!-- 7 Paradas de navegación (carátula → lomo → dorso → 4 zonas de caja abierta) -->
-        <nav class="flex items-center gap-1 sm:gap-1.5 overflow-x-auto" aria-label="Archive sections">
-          <button type="button" data-stop="0" id="nav-stop-0" class="nav-stop nav-stop-active" aria-current="true">
-            01 PORTADA
-          </button>
-          <button type="button" data-stop="1" id="nav-stop-1" class="nav-stop">
-            02 LOMO
-          </button>
-          <button type="button" data-stop="2" id="nav-stop-2" class="nav-stop">
-            03 DORSO
-          </button>
-          <button type="button" data-stop="3" id="nav-stop-3" class="nav-stop">
-            04 ORIGEN
-          </button>
-          <button type="button" data-stop="4" id="nav-stop-4" class="nav-stop">
-            05 MÉTODO
-          </button>
-          <button type="button" data-stop="5" id="nav-stop-5" class="nav-stop">
-            06 MÚSICA
-          </button>
-          <button type="button" data-stop="6" id="nav-stop-6" class="nav-stop">
-            07 GAMEPLAY
-          </button>
-        </nav>
-
-        <a
-          href="https://erracode.pages.dev"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="pixel-font text-[9px] sm:text-[10px] bg-[#10F57A] hover:bg-white text-black border border-black px-2.5 py-1 font-bold shrink-0 transition-colors duration-150"
-        >
-          ERRACODE // ARCHIVE ↗
-        </a>
-      </div>
-    </header>
-
     <!-- ESCENARIO 3D INTERACTIVO -->
     <div id="three-stage" title="Arrastra para girar la caja en 360°"></div>
 
@@ -123,18 +74,18 @@ import Base from '../layouts/Base.astro';
             </div>
           </div>
           <div class="zone-mechs">
-            <button type="button" id="mech-card-0" data-mech="0" class="mech-card active">
+            <div id="mech-card-0" class="mech-card active" role="img" aria-label="Máquina VR.RELAMPAGO: equilibrada, rayo">
               <span class="mono-font text-[11px] text-[#00F0FF] font-bold">VR.RELAMPAGO</span>
               <span class="mono-font text-[10px] text-slate-400">Equilibrado · Rayo</span>
-            </button>
-            <button type="button" id="mech-card-1" data-mech="1" class="mech-card">
+            </div>
+            <div id="mech-card-1" class="mech-card" role="img" aria-label="Máquina VR.PALAFITO: anfibia, evasión">
               <span class="mono-font text-[11px] text-[#10F57A] font-bold">VR.PALAFITO</span>
               <span class="mono-font text-[10px] text-slate-400">Anfibio · Evasión</span>
-            </button>
-            <button type="button" id="mech-card-2" data-mech="2" class="mech-card">
+            </div>
+            <div id="mech-card-2" class="mech-card" role="img" aria-label="Máquina VR.URDANETA: pesada, cañón">
               <span class="mono-font text-[11px] text-[#FF2A55] font-bold">VR.URDANETA</span>
               <span class="mono-font text-[10px] text-slate-400">Pesado · Cañón</span>
-            </button>
+            </div>
           </div>
           <span class="zone-mini-cta mono-font text-[12px]">ELEGIR EN EL JUEGO ▶</span>
         </div>
@@ -268,6 +219,9 @@ import Base from '../layouts/Base.astro';
 
         <div class="flex items-center gap-2">
           <span class="mono-font text-[11px] text-slate-400 hidden sm:inline">Arrastra caja 360°</span>
+          <button type="button" id="btn-bgm" class="btn-brutal bg-[#FFD23F] text-black pixel-font text-[9px] px-2.5 py-1 font-bold cursor-pointer" aria-pressed="false" aria-label="Reproducir la banda sonora Coquivacoa Steel">
+            ♪ MÚSICA
+          </button>
           <button type="button" id="btn-manual-lid" class="btn-brutal bg-[#00F0FF] text-black pixel-font text-[9px] px-2.5 py-1 font-bold cursor-pointer">
             ABRIR / CERRAR TAPA
           </button>
@@ -422,62 +376,10 @@ import Base from '../layouts/Base.astro';
     background: #061217;
   }
 
-  /* Tarjetas de selección de mecha */
+  /* Tarjetas informativas de mecha (no clickeables) */
   .mech-card {
     border: 1px solid #334155;
     background: #070e16;
-    transition:
-      border-color 0.16s var(--ease-out),
-      background-color 0.16s var(--ease-out),
-      transform 0.16s var(--ease-out);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .mech-card:not(.active):hover {
-      border-color: #475569;
-      transform: translateX(2px);
-    }
-  }
-  .mech-card.active {
-    border: 2px solid #00f0ff;
-    background: #0b1928;
-    box-shadow: 4px 4px 0px #000000;
-  }
-  .mech-card:focus-visible {
-    outline: 2px solid #00f0ff;
-    outline-offset: 2px;
-  }
-
-  /* Nav stop buttons */
-  .nav-stop {
-    font-family: 'Geist Pixel', 'Silkscreen', monospace;
-    letter-spacing: 0.03em;
-    font-size: 9px;
-    padding: 0.25rem 0.625rem;
-    border: 1px solid #334155;
-    background: #0f172a;
-    color: #e2e8f0;
-    cursor: pointer;
-    transition:
-      background-color 0.15s var(--ease-out),
-      color 0.15s var(--ease-out),
-      border-color 0.15s var(--ease-out);
-  }
-  @media (min-width: 640px) {
-    .nav-stop {
-      font-size: 10px;
-    }
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .nav-stop:not(.nav-stop-active):hover {
-      color: #00f0ff;
-      border-color: #00f0ff;
-    }
-  }
-  .nav-stop-active {
-    background: #ffd23f;
-    color: #000000;
-    border-color: #000000;
-    font-weight: 700;
   }
 
   @keyframes blinkInsert {
@@ -793,7 +695,6 @@ import Base from '../layouts/Base.astro';
   }
 
   /* Accessible focus ring for icon/knob buttons that rely on the global ring. */
-  .nav-stop:focus-visible,
   #btn-manual-lid:focus-visible {
     outline: 2px solid #00f0ff;
     outline-offset: 2px;
@@ -831,8 +732,7 @@ import Base from '../layouts/Base.astro';
       transition-duration: 0.01ms;
     }
     .btn-brutal,
-    .mech-card,
-    .nav-stop {
+    .mech-card {
       transition-duration: 0.01ms;
     }
     /* Stop the infinite ticker; keep it readable as a static line. */
@@ -845,6 +745,7 @@ import Base from '../layouts/Base.astro';
 
 <script>
   import * as THREE from 'three';
+  import { bgmStart, bgmStop, bgmSetIntensity, bgmIsPlaying } from '../game/bgm';
 
   // =========================================================================
   // 1. PINTURA PROCEDURAL DE LA CARÁTULA OFICIAL (PORTADA + SUPERFICIE DEL CD)
@@ -1642,32 +1543,18 @@ import Base from '../layouts/Base.astro';
       el.classList.toggle('is-active', Number(el.dataset.stop) === activeStop);
     });
 
-    for (let i = 0; i < 7; i++) {
-      const navBtn = document.getElementById(`nav-stop-${i}`);
-      if (navBtn) {
-        navBtn.classList.toggle('nav-stop-active', i === activeStop);
-        if (i === activeStop) navBtn.setAttribute('aria-current', 'true');
-        else navBtn.removeAttribute('aria-current');
-      }
-    }
-
     const hudLabel = document.getElementById('hud-stage-label');
     if (hudLabel) hudLabel.textContent = STAGE_NAMES[activeStop];
+
+    // BGM intensity follows the visible stop: vamp everywhere, combat cycle
+    // once the visitor reaches the music/gameplay stops.
+    bgmSetIntensity(activeStop >= 5 ? 1 : 0);
 
     const effectiveLid = manualLidOverride !== null ? (manualLidOverride ? -2.15 : 0) : targetPose.lidAngle;
     const btnLid = document.getElementById('btn-manual-lid');
     if (btnLid) {
       btnLid.textContent = effectiveLid < -0.5 ? 'CERRAR TAPA' : 'ABRIR / CERRAR TAPA';
     }
-  }
-
-  function scrollToStop(stopIndex: number) {
-    manualLidOverride = null;
-    const docEl = document.documentElement;
-    const maxScroll = Math.max(1, docEl.scrollHeight - window.innerHeight);
-    const ratios = [0, 0.16, 0.32, 0.48, 0.64, 0.8, 1.0];
-    const target = ratios[Math.max(0, Math.min(6, stopIndex))];
-    window.scrollTo({ top: maxScroll * target, behavior: 'smooth' });
   }
 
   function toggleManualLid() {
@@ -1959,15 +1846,21 @@ import Base from '../layouts/Base.astro';
   // 6. WIRING
   // =========================================================================
   function wireInteractions() {
-    document.querySelectorAll<HTMLButtonElement>('[data-stop]').forEach((btn) => {
-      btn.addEventListener('click', () => scrollToStop(Number(btn.dataset.stop)));
-    });
-
-    document.querySelectorAll<HTMLButtonElement>('[data-mech]').forEach((btn) => {
-      btn.addEventListener('click', () => selectVirtualoid(Number(btn.dataset.mech)));
-    });
-
     document.getElementById('btn-manual-lid')?.addEventListener('click', toggleManualLid);
+
+    const bgmBtn = document.getElementById('btn-bgm');
+    bgmBtn?.addEventListener('click', async () => {
+      const btn = bgmBtn as HTMLButtonElement;
+      if (bgmIsPlaying()) {
+        bgmStop();
+        btn.textContent = '♪ MÚSICA';
+        btn.setAttribute('aria-pressed', 'false');
+      } else {
+        const ok = await bgmStart().catch(() => false);
+        btn.textContent = ok ? '■ MÚSICA' : '♪ MÚSICA';
+        btn.setAttribute('aria-pressed', ok ? 'true' : 'false');
+      }
+    });
 
     window.addEventListener('scroll', updateScrollStory, { passive: true });
   }

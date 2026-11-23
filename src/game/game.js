@@ -1768,6 +1768,11 @@ const config = {
 
 // Short aliases for hot Graphics methods: property names survive minification (~1.4KB saved).
 const GP = Phaser.GameObjects.Graphics.prototype;
+// Non-minified build: sR is a hand-written alias, not part of the loop above.
+// It was missing here, so g.sR(...) threw "H.sR is not a function" in the mode
+// select / machine select rendering pass and killed the whole update loop
+// (the reported "se traba todo" freeze on /play when pressing start).
+GP.sR = Phaser.GameObjects.Graphics.prototype.strokeRect;
 for (const [k, v] of Object.entries({ fillStyle: 'fS', lineStyle: 'lS', lineBetween: 'lB', strokePoints: 'sP', fillPoints: 'fP', fillRect: 'fR', fillCircle: 'fC' })) GP[v] = GP[k];
 
 
