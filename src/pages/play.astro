@@ -110,17 +110,30 @@ import Base from '../layouts/Base.astro';
     color: #10f57a;
     text-decoration: none;
     padding: 6px 10px;
-    background: color-mix(in oklab, #10f57a 10%, transparent);
+    background: #10f57a;
     clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-    box-shadow: inset 0 0 0 1px #10f57a;
-    transition: background-color 150ms var(--ease-out, ease-out), color 150ms var(--ease-out, ease-out),
-      box-shadow 200ms var(--ease-out, ease-out);
+    transition: background-color 150ms ease-out, color 150ms ease-out, filter 200ms ease-out;
+  }
+  .play-home::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    background: color-mix(in oklab, #10f57a 12%, #05070a);
+    clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+    transition: background-color 150ms ease-out;
+  }
+  .play-home {
+    position: relative;
+    isolation: isolate;
   }
   @media (hover: hover) and (pointer: fine) {
     .play-home:hover {
-      background: #10f57a;
       color: #05070a;
-      box-shadow: inset 0 0 0 1px #10f57a, 0 0 12px rgba(16, 245, 122, 0.5);
+      filter: drop-shadow(0 0 10px rgba(16, 245, 122, 0.6));
+    }
+    .play-home:hover::before {
+      background: #10f57a;
     }
   }
   .play-home:focus-visible {
@@ -128,24 +141,33 @@ import Base from '../layouts/Base.astro';
     outline-offset: 2px;
   }
 
-  /* Fullscreen button — cyberpunk corner-cut (ref: cyberpunk-ui cp-btn--cut) */
+  /* Fullscreen button — cyberpunk corner-cut, ring painted by fill (sandwich). */
   .fs-btn {
+    position: relative;
+    isolation: isolate;
     display: inline-flex;
     align-items: center;
     gap: 6px;
     min-height: 32px;
     padding: 6px 12px;
-    background: color-mix(in oklab, #00f0ff 10%, transparent);
+    background: #00f0ff;
     color: #00f0ff;
     border: 0;
     clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-    box-shadow: inset 0 0 0 1.5px #00f0ff;
     cursor: pointer;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    transition: background-color 150ms var(--ease-out, ease-out), color 150ms var(--ease-out, ease-out),
-      box-shadow 200ms var(--ease-out, ease-out), transform 120ms var(--ease-out, ease-out);
+    transition: color 150ms ease-out, filter 200ms ease-out, transform 120ms ease-out;
+  }
+  .fs-btn::before {
+    content: '';
+    position: absolute;
+    inset: 1.5px;
+    z-index: -1;
+    background: color-mix(in oklab, #00f0ff 12%, #05070a);
+    clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+    transition: background-color 150ms ease-out;
   }
   .fs-icon {
     font-size: 15px;
@@ -158,9 +180,11 @@ import Base from '../layouts/Base.astro';
   }
   @media (hover: hover) and (pointer: fine) {
     .fs-btn:hover {
-      background: #00f0ff;
       color: #05070a;
-      box-shadow: inset 0 0 0 1.5px #00f0ff, 0 0 12px rgba(0, 240, 255, 0.5);
+      filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.6));
+    }
+    .fs-btn:hover::before {
+      background: #00f0ff;
     }
   }
   .fs-btn:active {
@@ -171,9 +195,10 @@ import Base from '../layouts/Base.astro';
     outline-offset: 2px;
   }
   .fs-btn[aria-pressed='true'] {
-    background: #ffd23f;
     color: #05070a;
-    box-shadow: inset 0 0 0 1.5px #ffd23f, 0 0 12px rgba(255, 210, 63, 0.5);
+  }
+  .fs-btn[aria-pressed='true']::before {
+    background: #ffd23f;
   }
 
   #game-root {
@@ -229,6 +254,8 @@ import Base from '../layouts/Base.astro';
     display: none;
   }
   .net-copy {
+    position: relative;
+    isolation: isolate;
     flex: 0 0 auto;
     padding: 4px 10px;
     font-size: 10px;
@@ -236,20 +263,30 @@ import Base from '../layouts/Base.astro';
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #ffd23f;
-    background: color-mix(in oklab, #ffd23f 10%, transparent);
+    background: #ffd23f;
     border: 0;
     clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
-    box-shadow: inset 0 0 0 1px #ffd23f;
     cursor: pointer;
-    transition: background-color 150ms ease-out, color 150ms ease-out, box-shadow 200ms ease-out;
+    transition: color 150ms ease-out, filter 200ms ease-out;
+  }
+  .net-copy::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    background: color-mix(in oklab, #ffd23f 12%, #05070a);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+    transition: background-color 150ms ease-out;
   }
   .net-copy[hidden] {
     display: none;
   }
   .net-copy:hover {
-    background: #ffd23f;
     color: #05070a;
-    box-shadow: inset 0 0 0 1px #ffd23f, 0 0 12px rgba(255, 210, 63, 0.5);
+    filter: drop-shadow(0 0 10px rgba(255, 210, 63, 0.6));
+  }
+  .net-copy:hover::before {
+    background: #ffd23f;
   }
 
   /* Persistent room banner (net mode): code + copy-link, top-right over the canvas. */

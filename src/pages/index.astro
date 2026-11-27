@@ -333,13 +333,16 @@ import Base from '../layouts/Base.astro';
     filter: drop-shadow(2px 2px 0px #000000);
   }
 
-  /* Botones arcade cyberpunk (ref: cyberpunk-ui cp-btn): corner-cut geometry,
-     borde repintado via inset shadow (clip-path se come el border), fill al
-     hover con glow del color del botón, snap rápido de 120-150ms. */
+  /* Botones arcade cyberpunk (ref: cyberpunk-ui cp-btn): corner-cut geometry.
+     Border via "sandwich": the element's own background IS the ring color and
+     a ::before inset paints the face — clip-path eats inset shadows on the
+     diagonal cuts, so the ring must be painted by fill, not shadow. */
   .btn-brutal {
     --btn-col: var(--holo-cyan);
-    --btn-glow: 0 0 12px color-mix(in oklab, var(--btn-col) 55%, transparent);
+    --btn-cc: 10px;
+    --btn-bo: 1.5px;
     position: relative;
+    isolation: isolate;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -350,20 +353,33 @@ import Base from '../layouts/Base.astro';
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--btn-col);
-    background: color-mix(in oklab, var(--btn-col) 10%, transparent);
-    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-    box-shadow: inset 0 0 0 1.5px var(--btn-col);
-    transition:
-      background-color 150ms var(--ease-out),
-      color 150ms var(--ease-out),
-      box-shadow 200ms var(--ease-out),
-      transform 120ms var(--ease-out);
+    background: var(--btn-col);
+    clip-path: polygon(var(--btn-cc) 0, 100% 0, 100% calc(100% - var(--btn-cc)), calc(100% - var(--btn-cc)) 100%, 0 100%, 0 var(--btn-cc));
+    transition: color 150ms var(--ease-out), filter 200ms var(--ease-out), transform 120ms var(--ease-out);
+  }
+  .btn-brutal::before {
+    content: '';
+    position: absolute;
+    inset: var(--btn-bo);
+    z-index: -1;
+    background: color-mix(in oklab, var(--btn-col) 12%, #05070a);
+    clip-path: polygon(
+      calc(var(--btn-cc) - var(--btn-bo)) 0,
+      100% 0,
+      100% calc(100% - var(--btn-cc) + var(--btn-bo)),
+      calc(100% - var(--btn-cc) + var(--btn-bo)) 100%,
+      0 100%,
+      0 calc(var(--btn-cc) - var(--btn-bo))
+    );
+    transition: background-color 150ms var(--ease-out);
   }
   @media (hover: hover) and (pointer: fine) {
     .btn-brutal:hover {
-      background: var(--btn-col);
       color: #05070a;
-      box-shadow: inset 0 0 0 1.5px var(--btn-col), var(--btn-glow);
+      filter: drop-shadow(0 0 10px color-mix(in oklab, var(--btn-col) 60%, transparent));
+    }
+    .btn-brutal:hover::before {
+      background: var(--btn-col);
     }
   }
   .btn-brutal:active {
@@ -435,9 +451,10 @@ import Base from '../layouts/Base.astro';
     filter: blur(0);
   }
   #btn-bgm.is-playing {
-    background: var(--holo-cyan);
     color: #05070a;
-    box-shadow: inset 0 0 0 1.5px var(--holo-cyan), 0 0 12px color-mix(in oklab, var(--holo-cyan) 55%, transparent);
+  }
+  #btn-bgm.is-playing::before {
+    background: var(--holo-cyan);
   }
 
   @keyframes blinkInsert {
@@ -567,26 +584,33 @@ import Base from '../layouts/Base.astro';
   }
 
   .zone-card {
+    position: relative;
+    isolation: isolate;
     width: min(440px, 92vw);
     max-height: calc(100vh - 140px);
     overflow-y: auto;
-    background: #060c13f2;
-    border: 0;
-    color: var(--holo-cyan);
+    background: var(--holo-cyan);
+    color: #e2e8f0;
     clip-path: polygon(18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 18px);
-    box-shadow: inset 0 0 0 2px var(--holo-cyan), 0 0 22px rgba(0, 240, 255, 0.12);
     padding: 1.1rem 1.15rem;
     display: flex;
     flex-direction: column;
     gap: 0.7rem;
     scrollbar-width: thin;
     scrollbar-color: #00f0ff #05070a;
-    position: relative;
   }
-
+  /* Card face: dark surface inset 2px inside the accent ring (sandwich).
+     z-index -1 keeps it under the content; the ring shows on all edges. */
+  .zone-card::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    z-index: -1;
+    background: #060c13f2;
+    clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+  }
   .zone-copy--hero .zone-card {
-    color: var(--saturn-yellow);
-    box-shadow: inset 0 0 0 2px var(--saturn-yellow), 0 0 22px rgba(255, 210, 63, 0.14);
+    background: var(--saturn-yellow);
   }
 
   .zone-copy--hero .zone-card {
@@ -696,22 +720,29 @@ import Base from '../layouts/Base.astro';
     color: var(--radar-green);
   }
 
-  /* Primary "JUGAR" CTA: coin-slot block with cyberpunk corner-cut geometry
-     (ref: cyberpunk-ui cp-btn--cut), glow on hover, snap motion. */
+  /* Primary "JUGAR" CTA: coin-slot block with cyberpunk corner-cut geometry.
+     Ring painted by fill (sandwich), like cp-btn--octa in cyberpunk-ui. */
   .play-cta {
+    position: relative;
+    isolation: isolate;
     display: inline-flex;
     align-items: center;
     gap: 0.85rem;
     width: 100%;
     padding: 0.85rem 1.1rem;
-    background: var(--arcade-red);
+    background: #ff2a55;
     color: #fff;
     clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
-    box-shadow: inset 0 0 0 2px #ff2a55, inset 0 0 0 4px #05070a;
     text-decoration: none;
-    transition:
-      transform 0.12s var(--ease-out),
-      filter 0.14s ease;
+    transition: transform 0.12s var(--ease-out), filter 0.14s ease;
+  }
+  .play-cta::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    z-index: -1;
+    background: #ff2a55;
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
   }
   @media (hover: hover) and (pointer: fine) {
     .play-cta:hover {
