@@ -60,6 +60,20 @@ const log = (...a) => console.log('[e2e]', ...a);
   log('host info:', JSON.stringify(await info(host.page)));
   log('guest info:', JSON.stringify(await info(guest.page)));
 
+  // Lobby: both seats lock a machine; the start fires automatically once both do.
+  log('lobby: confirming machines');
+  for (let i = 0; i < 20; i++) {
+    const ok = await Promise.all([
+      host.page.evaluate(() => typeof window.__lobby === 'function').catch(() => false),
+      guest.page.evaluate(() => typeof window.__lobby === 'function').catch(() => false),
+    ]);
+    if (ok[0] && ok[1]) break;
+    await sleep(800);
+  }
+  await host.page.evaluate(() => window.__lobby && window.__lobby(0)).catch(() => {});
+  await guest.page.evaluate(() => window.__lobby && window.__lobby(2)).catch(() => {});
+  await sleep(6000); // lobby handshake + start signal + match intro
+
   // Play 4 turns: force a wait plan on both, then wait for resolution.
   for (let t = 0; t < 4; t++) {
     await host.page.evaluate(() => window.__forcePlan && window.__forcePlan({ a: 'wait' })).catch(() => {});

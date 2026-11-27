@@ -913,6 +913,15 @@ import Base from '../layouts/Base.astro';
 <script>
   import * as THREE from 'three';
   import { bgmStart, bgmStop, bgmSetCycle, bgmIsPlaying } from '../game/bgm';
+  import { sfxBlip } from '../game/ui-sfx';
+
+  // Arcade click feedback on landing buttons (BGM toggle, lid, CTA).
+  ['#btn-bgm', '#btn-manual-lid'].forEach((sel) => {
+    document.getElementById(sel.slice(1))?.addEventListener('click', () => sfxBlip(true));
+  });
+  document.querySelectorAll('.hud-cta, .play-cta').forEach((el) => {
+    el.addEventListener('click', () => sfxBlip(true));
+  });
 
   // =========================================================================
   // 1. PINTURA PROCEDURAL DE LA CARÁTULA OFICIAL (PORTADA + SUPERFICIE DEL CD)

@@ -7,7 +7,9 @@ import Base from '../layouts/Base.astro';
       <a href="/" class="play-home mono-font" aria-label="Back to archive landing">
         <span aria-hidden="true">◀</span> ARCHIVE
       </a>
-      <span class="play-bar-title pixel-font">CATATUMBO PROTOCOL</span>
+      <span class="play-bar-title" aria-label="Catatumbo Protocol">
+        <span class="logo-a">CATATUMBO</span><span class="logo-b">PROTOCOL</span>
+      </span>
       <button
         type="button"
         id="fs-toggle"
@@ -55,14 +57,25 @@ import Base from '../layouts/Base.astro';
     flex: 0 0 auto;
   }
   .play-bar-title {
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    color: #ffd23f;
     text-align: center;
     flex: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .logo-a {
+    color: #ffd23f;
+    text-shadow: 2px 2px 0 #000;
+  }
+  .logo-b {
+    color: #00f0ff;
+    text-shadow: 2px 2px 0 #000;
   }
   .play-home {
     display: inline-flex;
@@ -214,10 +227,16 @@ import Base from '../layouts/Base.astro';
 
 <script>
   import { bootGame } from '../game/game.js';
+  import { sfxBlip } from '../game/ui-sfx.ts';
 
   const params = new URLSearchParams(location.search);
   const initialMode = params.get('mode') === 'net' ? 'net' : 'cpu';
   const debugMode = params.get('debug') === '1';
+
+  // Arcade click feedback on DOM buttons (works without any asset).
+  document.getElementById('fs-toggle')?.addEventListener('click', () => sfxBlip(true));
+  document.getElementById('net-copy')?.addEventListener('click', () => sfxBlip(true));
+  document.querySelector('.play-home')?.addEventListener('click', () => sfxBlip(false));
   const statusEl = document.getElementById('net-status');
   const statusText = document.getElementById('net-status-text');
   const copyBtn = document.getElementById('net-copy') as HTMLButtonElement | null;

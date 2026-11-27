@@ -42,11 +42,16 @@ import {
 const RPC_SUBMIT = 'cp:submitPlan';
 const RPC_THROW = 'cp:throwDir';
 const RPC_CLASH = 'cp:clashPick';
+const RPC_READY = 'cp:ready';
 const STATE_RESULT = 'cp:result';
+const STATE_LOBBY = 'cp:lobby';
+const STATE_START = 'cp:start';
+
+// Default Playroom gameId for this game. ?gameId= still wins if present.
+const DEFAULT_GAME_ID = '9zfQpYpu1MrPWjldLTfD';
 
 export async function createNetSession({ gameId, roomCode } = {}) {
-  const id = gameId || new URLSearchParams(location.search).get('gameId');
-  if (!id) throw new Error('Playroom gameId missing: pass ?gameId=... in the URL');
+  const id = gameId || new URLSearchParams(location.search).get('gameId') || DEFAULT_GAME_ID;
   const code = roomCode || new URLSearchParams(location.search).get('r') || undefined;
 
   // skipLobby: we run our own minimal flow (no profile needed for a duel).
@@ -96,6 +101,25 @@ export async function createNetSession({ gameId, roomCode } = {}) {
     return api.onClashRequest ? api.onClashRequest(data.seq) : null;
   });
 
+  // Lobby handshake: each client RPCs its lobby slot to the host, which mirrors it
+  // into shared state so BOTH clients observe the same lobby. Playroom can drop
+  // RPCs sent during coin insert, so we also mirror via setState as a fallback.
+  RPC.register(RPC_READY, async (data) => {
+    if (!host) return null;
+    setState(STATE_LOBBY, { ...getState(STATE_LOBBY), [data.slotKey]: data.value });
+    return true;
+  });
+
+  const publishLobby = (slotKey, value) => {
+    if (host) {
+      setState(STATE_LOBBY, { ...getState(STATE_LOBBY), [slotKey]: value });
+    } else {
+      RPC.call(RPC_READY, { slotKey, value }, RPC.Mode.HOST).catch(() => {
+        setState(STATE_LOBBY, { ...getState(STATE_LOBBY), [slotKey]: value });
+      });
+    }
+  };
+
   const api = {
     seat,
     roomCode: getRoomCode(),
@@ -124,6 +148,73 @@ export async function createNetSession({ gameId, roomCode } = {}) {
         // host's turn loop simply won't block (plans arrive via RPC). Resolve after
         // a short grace so a lone player can still see the attract screen.
         setTimeout(resolve, 1500);
+      });
+    },
+
+    // --- Lobby protocol ---
+    // Each seat publishes { joined, mech } under seat-0 / seat-1. The HOST mirrors
+    // both slots into shared state (STATE_LOBBY), so every client sees the same
+    // lobby and the match can only start when BOTH seats selected a machine.
+
+    // Read the current lobby snapshot (or null).
+    readLobby() {
+      return getState(STATE_LOBBY) || null;
+    },
+
+    // Resolves as soon as `pred(lobby)` holds (polled; cheap and robust).
+    waitLobby(pred, timeoutMs = 0) {
+      const start = Date.now();
+      return new Promise((resolve) => {
+        const tick = () => {
+          const l = getState(STATE_LOBBY);
+          if (l && pred(l)) return resolve(l);
+          if (timeoutMs && Date.now() - start > timeoutMs) return resolve(null);
+          setTimeout(tick, 80);
+        };
+        tick();
+      });
+    },
+
+    // Observe lobby changes (for lobby UI). Returns an unsubscribe fn.
+    whenLobby(fn) {
+      let last = '';
+      const t = setInterval(() => {
+        const l = getState(STATE_LOBBY);
+        const sig = l ? JSON.stringify(l) : '';
+        if (sig !== last) {
+          last = sig;
+          fn(l || {});
+        }
+        // keep polling; caller unsubscribes when the lobby closes
+      }, 250);
+      return () => clearInterval(t);
+    },
+
+    // Confirm our machine pick in the lobby and (as host) decide when to start.
+    async confirmMech(mechIdx) {
+      publishLobby('seat-' + seat, { joined: true, mech: mechIdx });
+    },
+
+    // Host: bump the shared start signal once both seats confirmed.
+    tryStart() {
+      if (!host) return;
+      const l = getState(STATE_LOBBY);
+      if (l && l['seat-0'] && l['seat-1'] && l['seat-0'].mech >= 0 && l['seat-1'].mech >= 0) {
+        setState(STATE_START, { n: (getState(STATE_START) || { n: 0 }).n + 1 });
+      }
+    },
+
+    // Both seats: wait for the host's start signal (resolves with { n }).
+    waitStart(timeoutMs = 0) {
+      const start = Date.now();
+      return new Promise((resolve) => {
+        const tick = () => {
+          const st = getState(STATE_START);
+          if (st && st.n) return resolve(st);
+          if (timeoutMs && Date.now() - start > timeoutMs) return resolve(null);
+          setTimeout(tick, 80);
+        };
+        tick();
       });
     },
 
@@ -176,6 +267,9 @@ export async function createNetSession({ gameId, roomCode } = {}) {
       return result;
     },
   };
+
+  // Announce our seat in the lobby as soon as the session exists.
+  publishLobby('seat-' + seat, { joined: true, mech: -1 });
 
   return api;
 }

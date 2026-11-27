@@ -1411,20 +1411,18 @@ const MECH_MODEL = [
 const MECH_FACES = [[0, 3, 2, 1], [4, 5, 6, 7], [0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7]];
 // Gauntlet rivals: one lakeside municipality per stage, each with its own armour colour; the
 // sixth is the Catatumbo boss and beating it ends the run.
-const RIVALS = 'CABIMAS,SAN FRANCISCO,CIUDAD OJEDA,SANTA RITA,MENE GRANDE,CATATUMBO'.split(',');
-const RIVAL_COLS = [0xd8232f, 0x7a2fd0, 0x23a04a, 0xd02f9a, 0x5a6270, 0xd4a020];
-const rival = (s) => RIVALS[(s.j - 1) % 6];
 const MECH_PALS = [[0x1d3a42, 0x3046d0, 0xe6dcc0, 0x4ff3ff, 0xff8a1e], [0x1d3a3a, 0xd8232f, 0xe6dcc0, 0x4ff3ff, 0xff8a1e]];
 
 // Player roster: the palette IS the machine. Every entry keeps MECH_PALS' five slots
 // ([dark, accent, cream, glow, hot]) and carries an arcade code plus a callsign.
+// Callsigns mirror the rival cities so select and briefing read as one world.
 const MECHS = [
-  { c: 'MB-01', n: 'COQUIVACOA', p: [0x1d3a42, 0x3046d0, 0xe6dcc0, 0x4ff3ff, 0xff8a1e] },
-  { c: 'MB-02', n: 'TAMBORA', p: [0x2a1a18, 0xd8232f, 0xe6dcc0, 0xffd23c, 0xff8a1e] },
-  { c: 'MB-03', n: 'VERDIN', p: [0x13241a, 0x23a04a, 0xe6dcc0, 0x2bff7a, 0xffd23c] },
-  { c: 'MB-04', n: 'BOCA', p: [0x1a1a24, 0x5a6270, 0xe6dcc0, 0x35e9f2, 0xff8a1e] },
-  { c: 'MB-05', n: 'GAITA', p: [0x241320, 0xd02f9a, 0xe6dcc0, 0xffd23c, 0x35e9f2] },
-  { c: 'MB-06', n: 'RELAMPAGO', p: [0x141a2e, 0x7a2fd0, 0xe6dcc0, 0x4ff3ff, 0xffd23c] },
+  { c: 'MB-01', n: 'CABIMAS', p: [0x1d3a42, 0x3046d0, 0xe6dcc0, 0x4ff3ff, 0xff8a1e] },
+  { c: 'MB-02', n: 'SAN FRANCISCO', p: [0x2a1a18, 0xd8232f, 0xe6dcc0, 0xffd23c, 0xff8a1e] },
+  { c: 'MB-03', n: 'CIUDAD OJEDA', p: [0x13241a, 0x23a04a, 0xe6dcc0, 0x2bff7a, 0xffd23c] },
+  { c: 'MB-04', n: 'SANTA RITA', p: [0x1a1a24, 0x5a6270, 0xe6dcc0, 0x35e9f2, 0xff8a1e] },
+  { c: 'MB-05', n: 'MENE GRANDE', p: [0x241320, 0xd02f9a, 0xe6dcc0, 0xffd23c, 0x35e9f2] },
+  { c: 'MB-06', n: 'CATATUMBO', p: [0x141a2e, 0x7a2fd0, 0xe6dcc0, 0x4ff3ff, 0xffd23c] },
 ];
 
 const mechTone = (c, k, flash) => {
@@ -1559,6 +1557,19 @@ const unitColor = (i) => (i ? C_cpu : C_p1);
 
 // HUD callsign: online seats are P1/P2, the CPU gauntlet shows the chosen machine.
 const pilotName = (s, i) => (BOOT.mode === 'net' ? ['P1', 'P2'][i] : i === 0 ? MECHS[s.mi || 0].n : 'CPU');
+
+// Lobby palette for a seat: the machine that seat locked, falling back to defaults.
+const lobbyPal = (seat) => {
+  const net = BOOT.net;
+  const idx = net && lobbyMechOf(net, seat);
+  return idx >= 0 ? [...MECHS[idx].p] : [...MECH_PALS[seat]];
+};
+// Machine index a seat locked in the lobby (-1 when unknown).
+const lobbyMechOf = (net, seat) => {
+  const l = net.readLobby && net.readLobby();
+  const v = l && l['seat-' + seat];
+  return v && v.mech != null ? v.mech : -1;
+};
 
 // Small HP bar under a unit.
 const drawMiniBar = (g, x, y, frac, color) => {
@@ -1837,8 +1848,8 @@ const setupCameras = (s) => {
   s.hc = s.cameras.add(0, 0, W, H);
   main.setBounds(0, 0, WORLD_W, WORLD_H).setDeadzone(64, 44).startFollow(s.cf, false, 0.09, 0.09);
   const fixed = Object.values(s.ui).flat().filter((o) => !s.ui.tags.includes(o));
-  main.ignore([s.gUi, s.gWire, ...fixed]);
-  s.hc.ignore([s.gBg, s.gMap, s.gFx, s.gUnits, s.gTop, ...s.ui.tags]);
+  main.ignore([s.gUi, s.gWire, s.gWire2, ...fixed]);
+  s.hc.ignore([s.gBg, s.gMap, s.gFx, s.gUnits, s.gTop, s.gWire2, ...s.ui.tags]);
 };
 
 const updateCamera = (s, snap) => {
@@ -1877,6 +1888,7 @@ function create() {
   this.gTop = this.add.graphics();
   this.gUi = this.add.graphics();
   this.gWire = this.add.graphics().setScale(3.2).setDepth(9);
+  this.gWire2 = this.add.graphics().setDepth(9); // second lobby wireframe (seat 1)
   this.ui = createUi(this);
   setupCameras(this);
   this.oTi = [];
@@ -1886,10 +1898,12 @@ function create() {
   this.tk = 0;
   this.as = 0;
   this.top = [];
-  // Attract-menu state: 0 = title, 1 = mode select, 2 = machine select.
+  // Attract-menu state: 0 = title, 1 = mode select, 2 = machine select, 3 = net lobby.
   this.stg = 0;
   this.mo = 0; // 0 = 1P vs CPU, 1 = 2P online
   this.mi = 0; // selected machine in MECHS
+  this.mj = [-1, -1]; // lobby: machine index chosen per seat (net mode)
+  this.lbOff = null; // lobby subscription cancel fn
   this.wt = ''; // net wait banner text
   this.wtS = 0;
   this.netNo = 0; // "online unavailable" notice deadline
@@ -1901,8 +1915,16 @@ function create() {
       this.top = [...this.top, ...ok].sort((a, b) => b.s - a.s).slice(0, 5);
     }).catch(() => {});
   } catch (e) {}
-  // Net mode starts straight into the match (no CPU-vs-CPU attract loop).
-  resetMatch(this, BOOT.mode === 'net' ? S_PLAY : MD_ATTRACT);
+  // Net mode enters the VS lobby (stg=3) over a frozen attract duel; CPU keeps the loop.
+  resetMatch(this, BOOT.mode === 'net' ? MD_ATTRACT : MD_ATTRACT);
+  if (BOOT.mode === 'net' && BOOT.net) {
+    this.stg = 3;
+    this.mj = [-1, -1];
+    const scene = this;
+    this.lbOff = BOOT.net.whenLobby((l) => {
+      scene.mj = [l['seat-0'] && l['seat-0'].mech != null ? l['seat-0'].mech : -1, l['seat-1'] && l['seat-1'].mech != null ? l['seat-1'].mech : -1];
+    });
+  }
   // Debug hook (only with ?debug=1): force-lock a plan so e2e tests don't depend on
   // fragile menu input. Exposed on window for Playwright.
   if (BOOT.debug) {
@@ -1920,11 +1942,43 @@ function create() {
     // Answer sub-round UIs deterministically (throw direction / clash pick).
     window.__forceThrow = (dir) => { if (scene.thR) scene.thR(dir); };
     window.__forceClash = (pick) => { if (scene.clR) scene.clR(pick); };
+    // Lobby helper: confirm our machine (or force both seats) for deterministic e2e.
+    window.__lobby = (mine, theirs) => {
+      const net = BOOT.net;
+      if (net) net.confirmMech(mine);
+      if (theirs !== undefined) {
+        scene.mj[1 - net.seat] = theirs;
+        net.tryStart();
+      }
+      scene.mi = mine;
+    };
   }
 }
 
 function update(time, delta) {
   handleInput(this, time);
+  // Net lobby: once both seats locked a machine, host fires the shared start signal
+  // and each client applies the paired seats before entering the fight.
+  if (this.stg === 3 && BOOT.mode === 'net' && BOOT.net) {
+    const net = BOOT.net;
+    if (this.mj[0] >= 0 && this.mj[1] >= 0) {
+      if (!this.lbWait) {
+        this.lbWait = true;
+        net.tryStart();
+        net.waitStart(15000).then((st) => {
+          const scene = this;
+          scene.lbWait = false;
+          if (!st) return;
+          if (scene.lbOff) scene.lbOff();
+          scene.lbOff = null;
+          MECH_PALS[0] = lobbyPal(net.seat);
+          MECH_PALS[1] = lobbyPal(1 - net.seat);
+          scene.stg = 0;
+          resetMatch(scene, S_PLAY);
+        });
+      }
+    }
+  }
   updateCamera(this);
   drawWorld(this, time, delta);
   drawHud(this, time);
@@ -1985,7 +2039,8 @@ const resetMatch = (s, mode, next) => {
     s.j = 1;
     s.z = s.rt = 0;
   }
-  MECH_PALS[1][1] = RIVAL_COLS[(s.j - 1) % 6];
+  // The rival pilots the stage's machine: full five-slot palette from the roster.
+  MECH_PALS[1] = [...MECHS[(s.j - 1) % MECHS.length].p];
   s.q = newState(s.j, hp);
   s.gMap.clear();
   drawMap(s.gMap);
@@ -2151,6 +2206,34 @@ const handleInput = (s, time) => {
         MECH_PALS[0] = [...MECHS[s.mi].p];
         resetMatch(s, S_PLAY);
         return s.sfx.start();
+      }
+      return clearPressed(c);
+    }
+    // Net lobby: pick machine, confirm locks it in for our seat; start is automatic.
+    if (s.stg === 3) {
+      const net = BOOT.net;
+      if (!net) {
+        s.stg = 0;
+        return clearPressed(c);
+      }
+      const confirmed = s.mj[net.seat] >= 0;
+      const n = MECHS.length;
+      if (!confirmed) {
+        if (R) s.mi = (s.mi + 1) % n;
+        if (L) s.mi = (s.mi + n - 1) % n;
+        if (L || R) s.sfx.start();
+        if (back) {
+          if (BOOT.onMode) return BOOT.onMode('cpu');
+          s.stg = 0;
+          return clearPressed(c);
+        }
+        if (ok) {
+          net.confirmMech(s.mi);
+          s.sfx.start();
+        }
+      } else if (ok && s.mj[0] >= 0 && s.mj[1] >= 0 && s.mj[0] !== s.mj[1]) {
+        // Both locked but the host hasn't fired the start signal yet: nudge it.
+        net.tryStart();
       }
       return clearPressed(c);
     }
@@ -3099,6 +3182,7 @@ const drawHud = (s, time) => {
   ui.roN.forEach((t) => setT(t, ''));
   ui.card.setY(410);
   s.gWire.clear();
+  if (!(s.stg === 3 && !play)) s.gWire2.clear();
   if (!play && s.stg === 0) {
     // Title screen: the demo duel runs dimmed behind a CRT grid (arcade VS screen homage).
     g.fS(0x010806, 0.7);
@@ -3145,8 +3229,68 @@ const drawHud = (s, time) => {
       ui.card.setY(478);
       tint(ui.card, C_cpu);
     } else tint(ui.card, C_grid);
+  } else if (!play && s.stg === 3 && BOOT.mode === 'net' && BOOT.net) {
+    // VS lobby (M.S.B.S. homage): two seat panels over a green/red CRT grid.
+    // Each panel shows the seat's wireframe + callsign once joined, and the
+    // chosen machine once locked. Start fires automatically when both lock.
+    const net = BOOT.net;
+    const l = net.readLobby();
+    g.fS(0x01060a, 0.97);
+    g.fR(0, 0, W, H);
+    // Split screen: green grid left (my seat), red grid right (rival seat).
+    g.fS(0x02070c, 0.55);
+    g.fillRect(0, 0, W / 2, H);
+    crtGrid(g, net.seat ? C_cpu : C_p1);
+    g.save();
+    g.translateCanvas(W / 2, 0);
+    crtGrid(g, net.seat ? C_p1 : C_cpu);
+    g.restore();
+    g.lS(3, C_gold, 0.9);
+    g.lB(W / 2 - 1, 0, W / 2 + 1, H);
+    big = 'SALA';
+    big2 = 'VS';
+    tint(ui.big, C_gold);
+    ui.big.setY(64).setScale(0.72);
+    ui.big2.setPosition(W / 2, 118);
+    const my = net.seat;
+    [0, 1].forEach((k) => {
+      const joined = l && l['seat-' + k] && l['seat-' + k].joined;
+      const mech = s.mj[k];
+      const cx = k ? 590 : 210;
+      const col = k ? C_cpu : C_p1;
+      const gw = k ? s.gWire2 : s.gWire;
+      // Seat panel frame.
+      g.lS(2, mech >= 0 ? C_gold : col, joined ? 1 : 0.35);
+      g.sR(cx - 150, 160, 300, 210);
+      g.lS(1, col, 0.3);
+      g.sR(cx - 142, 168, 284, 194);
+      gw.clear();
+      if (mech >= 0) {
+        // Locked-in: colored wireframe of the chosen machine.
+        gw.setScale(1.7);
+        const c = toIso(0, 0);
+        gw.setPosition(cx - c.x * 1.7, 320 - c.y * 1.7);
+        drawMecha(gw, 0, 0, DIR_KEYS[M_floor(time / 520) % 4], col, 1, 0, 0, S_IDLE, 0, 1, MECHS[mech].p);
+      } else if (joined) {
+        // Joined but still choosing: dim scanning wireframe of the cursor.
+        gw.setScale(1.7);
+        const c = toIso(0, 0);
+        gw.setPosition(cx - c.x * 1.7, 320 - c.y * 1.7);
+        drawMecha(gw, 0, 0, DIR_KEYS[M_floor(time / 520) % 4], col, 0.35, 0, 0, S_IDLE, 0, 1, MECHS[s.mi].p);
+      }
+      setT(ui.sel[k], mech >= 0 ? MECHS[mech].n : joined ? 'ELIGIENDO...' : 'ESPERANDO...');
+      tint(ui.sel[k], mech >= 0 ? hex(MECHS[mech].p[1]) : '#c8ccd8');
+      ui.sel[k].setPosition(cx, 386);
+      setT(ui.roC[k], k === my ? 'PLAYER ' + (k + 1) + ' (TU)' : 'PLAYER ' + (k + 1));
+      tint(ui.roC[k], col);
+      ui.roC[k].setPosition(cx, 148);
+    });
+    // Room code + status card.
+    const both = s.mj[0] >= 0 && s.mj[1] >= 0;
+    card = both ? 'PREPARANDO COMBATE...' : 'A/D: MAQUINA   U: LISTO   I: SALIR   SALA ' + (net.roomCode || '???');
+    ui.card.setY(500);
+    tint(ui.card, both ? C_gold : C_grid);
   } else if (!play) {
-    // Machine select: palette + callsign roster, big wireframe of the chosen unit.
     g.fS(0x01060a, 0.96);
     g.fR(0, 0, W, H);
     crtGrid(g, C_grid);
@@ -3187,23 +3331,26 @@ const drawHud = (s, time) => {
     ui.card.setY(500);
     tint(ui.card, C_grid);
   } else if (intro) {
-    // NEXT ENEMY briefing: CRT grid, spinning wireframe of the rival, its spec sheet and the arena.
+    // NEXT ENEMY briefing: CRT grid, spinning wireframe of the rival machine
+    // (same roster entry the stage uses), spec column centred like M.S.B.S.
     g.fS(0x01060a, 0.97);
     g.fR(0, 0, W, H);
     crtGrid(g, C_p1);
     g.fS(C_cpu, 1);
     g.fillTriangle(122, 38, 122, 66, 138, 52);
     g.fillTriangle(678, 38, 678, 66, 662, 52);
+    const m = MECHS[(s.j - 1) % MECHS.length];
     const c = toIso(0, 0);
-    s.gWire.setPosition(200 - c.x * 3.2, 515 - c.y * 3.2);
-    drawMecha(s.gWire, 0, 0, DIR_KEYS[M_floor(time / 450) % 4], C_cpu, 1, 0, 0, S_IDLE, 0, 1);
+    s.gWire.setScale(2.4);
+    s.gWire.setPosition(230 - c.x * 2.4, 480 - c.y * 2.4);
+    drawMecha(s.gWire, 0, 0, DIR_KEYS[M_floor(time / 450) % 4], C_cpu, 1, 0, 0, S_IDLE, 0, 1, m.p);
     const n = s.j;
     big = 'PROXIMO RIVAL';
-    big2 = rival(s);
-    tint(ui.big, C_cpu);
+    big2 = m.n;
+    tint(ui.big, m.p[1]);
     ui.big.setY(52).setScale(0.8);
     ui.big2.setPosition(560, 205);
-    ne = ['UNIDAD LV' + n, n > 5 ? 'MISION FINAL' : n + 'A MISION'];
+    ne = ['UNIDAD ' + m.c + ' LV' + n, n > 5 ? 'MISION FINAL' : n + 'A MISION'];
   } else if (s.ph === 'over') {
     // Winner is stored as a seat ('p1'/'cpu'); online it must be compared against my seat.
     const o = s.q.v;
@@ -3230,7 +3377,7 @@ const drawHud = (s, time) => {
   setT(ui.sub, title ? sub : '');
   setT(ui.big, big);
   setT(ui.big2, big2);
-  setT(ui.vs[0], play ? '' : 'PLATANUS HACK 26  CARACAS');
+  setT(ui.vs[0], !play && s.stg === 0 ? 'PLATANUS HACK 26  CARACAS' : '');
   ne.forEach((t, k) => setT(ui.ne[k], t));
   setT(ui.card, card);
   setT(ui.press, press);
