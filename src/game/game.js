@@ -1776,7 +1776,8 @@ GP.sR = Phaser.GameObjects.Graphics.prototype.strokeRect;
 for (const [k, v] of Object.entries({ fillStyle: 'fS', lineStyle: 'lS', lineBetween: 'lB', strokePoints: 'sP', fillPoints: 'fP', fillRect: 'fR', fillCircle: 'fC' })) GP[v] = GP[k];
 
 
-const hex = (n) => '#' + n.toString(16).padStart(6, '0');
+// Accepts a packed 0xRRGGBB number or an already-formatted CSS string.
+const hex = (n) => (typeof n === 'string' ? n : '#' + n.toString(16).padStart(6, '0'));
 const MENU_TITLES = ['MOVIMIENTO', 'ATAQUE', 'ESPECIAL'];
 const MENU_COLS = [C_p1, C_cpu, C_bolt];
 
@@ -1786,8 +1787,7 @@ const buildMenu = (u) => {
   return [MOVE_ACTS, COMBAT_ACTS, SPECIAL_ACTS];
 };
 
-const txt = (scene, x, y, size, color, originX = 0) => {
-  return scene.add
+const txt = (scene, x, y, size, color, originX = 0) => {  return scene.add
     .text(x, y, '', { fontFamily: 'Arial Black, Impact, monospace', fontSize: size + 'px', fontStyle: 'bold', color, align: 'center', stroke: '#050b12', strokeThickness: size > 15 ? 2 : 1 })
     .setOrigin(originX, 0.5)
     .setDepth(10);
@@ -2892,6 +2892,8 @@ const drawHud = (s, time) => {
   const g = s.gUi;
   const ui = s.ui;
   g.clear();
+  // Menu cursor pulse: the selection triangle breathes instead of sitting static.
+  const pulse = 0.62 + M_sin(time / 130) * 0.3;
   const us = s.q.us;
   const play = s.md === S_PLAY;
   const arc = (x, y, r, a, b, color, width, alpha = 1) => {
@@ -3099,7 +3101,7 @@ const drawHud = (s, time) => {
   s.gWire.clear();
   if (!play && s.stg === 0) {
     // Title screen: the demo duel runs dimmed behind a CRT grid (arcade VS screen homage).
-    g.fS(0x010806, 0.62);
+    g.fS(0x010806, 0.7);
     g.fR(0, 0, W, H);
     crtGrid(g, C_grid);
     g.fS(C_grid, 1);
@@ -3129,7 +3131,7 @@ const drawHud = (s, time) => {
       g.lS(on ? 3 : 1, on ? C_gold : C_p1, on ? 1 : 0.35);
       g.sR(180, y, 440, 52);
       if (on) {
-        g.fS(C_gold, 1);
+        g.fS(C_gold, pulse);
         g.fillTriangle(150, y + 16, 150, y + 36, 168, y + 26);
       }
       setT(ui.sel[k], k ? '2P  ONLINE' : '1P  VS CPU');
@@ -3167,7 +3169,7 @@ const drawHud = (s, time) => {
         g.fR(408, y - 15, 368, 32);
         g.lS(2, C_gold, 1);
         g.sR(408, y - 15, 368, 32);
-        g.fS(C_gold, 1);
+        g.fS(C_gold, pulse);
         g.fillTriangle(390, y - 9, 390, y + 9, 402, y);
       }
       g.fS(e.p[1], 1);
