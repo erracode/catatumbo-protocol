@@ -9,10 +9,12 @@
 const STEP = 60 / 185 / 3; // triplet eighth (~108 ms)
 const ROOTS = [110, 146.83, 164.81, 110]; // i - iv - V - i in A minor
 const THIRD = (bar: number) => (bar % 4 === 2 ? 1.26 : 1.19);
+const BEAT_FADE = 1.3; // ~12 triplet steps: combat bus eases in/out, no hard drop
 
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
 let mel: GainNode | null = null;
+let beatBus: GainNode | null = null;
 let nb: Float32Array | null = null;
 let timer: number | null = null;
 let mStep = 0;
@@ -24,7 +26,7 @@ let playing = false;
 let cycleOn = false;
 let cycleBars = 0;
 const CYCLE_VAMP = 12; // ~15.5s of menu vamp at 185 BPM before the drop
-const CYCLE_COMBAT = 8; // one full 8-bar combat phrase (~10.4s)
+const CYCLE_COMBAT = 12; // ~15.5s combat phrase before falling back to the vamp
 
 function voice(
   f: number,
@@ -62,7 +64,7 @@ function voice(
 }
 
 function perc(dur: number, vol: number, when: number) {
-  if (!ctx || !master) return;
+  if (!ctx || !beatBus) return;
   if (!nb) {
     // Noise buffer must be a real AudioBuffer, not a raw Float32Array.
     nb = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
@@ -75,7 +77,7 @@ function perc(dur: number, vol: number, when: number) {
   g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
   src.buffer = nb;
   src.connect(g);
-  g.connect(master);
+  g.connect(beatBus);
   src.start(when, Math.random() * 0.5, dur + 0.02);
 }
 
@@ -146,7 +148,18 @@ function pump() {
 }
 
 export function bgmSetIntensity(intensity: 0 | 1) {
-  if (intensity !== mInt) mBar = 0;
+  if (intensity !== mInt) {
+    mBar = 0;
+    // Ease the combat bus toward its new level over BEAT_FADE seconds so the
+    // vamp/drop boundary never slams. Anchor the ramp to the next scheduled
+    // step (the lookahead is ~150 ms ahead, hence the small floor).
+    if (beatBus && ctx) {
+      const t = Math.max(mNext, ctx.currentTime) + 0.05;
+      beatBus.gain.cancelScheduledValues(t);
+      beatBus.gain.setValueAtTime(beatBus.gain.value, t);
+      beatBus.gain.linearRampToValueAtTime(intensity ? 1 : 0.0001, t + BEAT_FADE);
+    }
+  }
   mInt = intensity;
 }
 
@@ -181,6 +194,11 @@ export async function bgmStart(): Promise<boolean> {
     mel.connect(dl);
     dl.connect(master);
     lfo.start();
+    // Combat bus: drums + bass + stabs ride here so the drop eases in and out
+    // instead of slamming. Ramps are scheduled ahead by the lookahead loop.
+    beatBus = ctx.createGain();
+    beatBus.gain.setValueAtTime(0.0001, ctx.currentTime);
+    beatBus.connect(master);
   }
   if (ctx.state === 'suspended') await ctx.resume();
   if (playing) return true;
@@ -188,6 +206,11 @@ export async function bgmStart(): Promise<boolean> {
   if (cycleOn) {
     cycleBars = 0;
     bgmSetIntensity(0);
+  }
+  if (beatBus && ctx) {
+    // A restart after a combat phrase must not inherit the open bus.
+    beatBus.gain.cancelScheduledValues(ctx.currentTime);
+    beatBus.gain.setValueAtTime(0.0001, ctx.currentTime);
   }
   mNext = ctx.currentTime + 0.1;
   timer = window.setInterval(pump, 40);
