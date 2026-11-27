@@ -198,7 +198,7 @@ import Base from '../layouts/Base.astro';
     <!-- HUD INFERIOR DE PROGRESO + CONTROL MANUAL DE TAPA Y CD                -->
     <!-- ===================================================================== -->
     <div class="fixed bottom-3 left-3 right-3 z-40 pointer-events-none">
-      <div class="max-w-4xl mx-auto bg-[#05070A]/95 border border-slate-700 px-3.5 py-2 flex flex-wrap items-center justify-between gap-2 shadow-[4px_4px_0px_#000000] pointer-events-auto">
+      <div class="max-w-4xl mx-auto bg-[#05070A]/95 border border-slate-700 px-3.5 py-2 flex flex-wrap items-center justify-between gap-2 shadow-[4px_4px_0px_#000000] pointer-events-auto hud-cut">
         <div class="flex items-center gap-2.5">
           <span id="hud-stage-label" class="pixel-font text-[9px] sm:text-[10px] text-[#FFD23F] tabular-nums">
             01 / 04 • PORTADA
@@ -210,15 +210,15 @@ import Base from '../layouts/Base.astro';
 
         <div class="flex items-center gap-2">
           <span class="mono-font text-[11px] text-slate-400 hidden sm:inline">Arrastra caja 360°</span>
-          <button type="button" id="btn-bgm" class="btn-brutal bg-[#FFD23F] text-black pixel-font text-[9px] px-2.5 py-1 font-bold cursor-pointer" aria-pressed="false" aria-label="Reproducir la banda sonora Coquivacoa Steel">
+          <button type="button" id="btn-bgm" class="btn-brutal bgm-btn pixel-font text-[9px] px-2.5 py-1 font-bold cursor-pointer" style="--btn-col: #ffd23f" aria-pressed="false" aria-label="Reproducir la banda sonora Coquivacoa Steel">
             <span class="bgm-icon bgm-icon--play" aria-hidden="true">♪</span>
             <span class="bgm-icon bgm-icon--stop bgm-hidden" aria-hidden="true">■</span>
             <span class="bgm-label">MÚSICA</span>
           </button>
-          <button type="button" id="btn-manual-lid" class="btn-brutal bg-[#00F0FF] text-black pixel-font text-[9px] px-2.5 py-1 font-bold cursor-pointer">
+          <button type="button" id="btn-manual-lid" class="btn-brutal pixel-font text-[9px] px-2.5 py-1 font-bold cursor-pointer" style="--btn-col: #00f0ff">
             ABRIR / CERRAR TAPA
           </button>
-          <a href="/play" class="btn-brutal hud-cta bg-[#FF2A55] hover:bg-[#ff3b63] text-white pixel-font text-[10px] px-3 py-1.5 font-bold cursor-pointer" aria-label="Jugar Catatumbo Protocol ahora">
+          <a href="/play" class="btn-brutal hud-cta pixel-font text-[10px] px-3 py-1.5 font-bold cursor-pointer" style="--btn-col: #ff2a55" aria-label="Jugar Catatumbo Protocol ahora">
             <span aria-hidden="true">&#9654;</span> JUGAR
           </a>
         </div>
@@ -333,30 +333,44 @@ import Base from '../layouts/Base.astro';
     filter: drop-shadow(2px 2px 0px #000000);
   }
 
-  /* Botones arcade M.S.B.S.: color pleno + gradiente de bisel, texto negro,
-     sombra dura — la cara de un panel de control, no un botón web genérico. */
+  /* Botones arcade cyberpunk (ref: cyberpunk-ui cp-btn): corner-cut geometry,
+     borde repintado via inset shadow (clip-path se come el border), fill al
+     hover con glow del color del botón, snap rápido de 120-150ms. */
   .btn-brutal {
-    border: 2px solid #000;
-    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 45%, rgba(0, 0, 0, 0.22));
-    box-shadow: 4px 4px 0px #000000;
+    --btn-col: var(--holo-cyan);
+    --btn-glow: 0 0 12px color-mix(in oklab, var(--btn-col) 55%, transparent);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border: 0;
+    border-radius: 0;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--btn-col);
+    background: color-mix(in oklab, var(--btn-col) 10%, transparent);
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    box-shadow: inset 0 0 0 1.5px var(--btn-col);
     transition:
-      transform 0.12s var(--ease-out),
-      box-shadow 0.12s var(--ease-out),
-      filter 0.14s ease;
+      background-color 150ms var(--ease-out),
+      color 150ms var(--ease-out),
+      box-shadow 200ms var(--ease-out),
+      transform 120ms var(--ease-out);
   }
   @media (hover: hover) and (pointer: fine) {
     .btn-brutal:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: 6px 6px 0px #000000;
-      filter: brightness(1.12);
+      background: var(--btn-col);
+      color: #05070a;
+      box-shadow: inset 0 0 0 1.5px var(--btn-col), var(--btn-glow);
     }
   }
   .btn-brutal:active {
-    transform: translate(2px, 2px) scale(0.99);
-    box-shadow: 2px 2px 0px #000000;
+    transform: translateY(1px);
   }
   .btn-brutal:focus-visible {
-    outline: 2px solid #00f0ff;
+    outline: 2px solid #ffd23f;
     outline-offset: 3px;
   }
 
@@ -421,7 +435,9 @@ import Base from '../layouts/Base.astro';
     filter: blur(0);
   }
   #btn-bgm.is-playing {
-    background: #00f0ff;
+    background: var(--holo-cyan);
+    color: #05070a;
+    box-shadow: inset 0 0 0 1.5px var(--holo-cyan), 0 0 12px color-mix(in oklab, var(--holo-cyan) 55%, transparent);
   }
 
   @keyframes blinkInsert {
@@ -436,6 +452,11 @@ import Base from '../layouts/Base.astro';
   }
   .blink-coin {
     animation: blinkInsert 1.1s infinite;
+  }
+
+  /* HUD bar with cyberpunk corner-cut (both top corners). */
+  .hud-cut {
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
   }
 
   /* Escenario 3D fijo a pantalla completa */
@@ -550,8 +571,10 @@ import Base from '../layouts/Base.astro';
     max-height: calc(100vh - 140px);
     overflow-y: auto;
     background: #060c13f2;
-    border: 2px solid var(--holo-cyan);
-    box-shadow: 8px 8px 0 #000;
+    border: 0;
+    color: var(--holo-cyan);
+    clip-path: polygon(18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 18px);
+    box-shadow: inset 0 0 0 2px var(--holo-cyan), 0 0 22px rgba(0, 240, 255, 0.12);
     padding: 1.1rem 1.15rem;
     display: flex;
     flex-direction: column;
@@ -559,34 +582,11 @@ import Base from '../layouts/Base.astro';
     scrollbar-width: thin;
     scrollbar-color: #00f0ff #05070a;
     position: relative;
-    color: var(--holo-cyan);
-  }
-
-  /* Arcade corner brackets (same language as the in-game VS lobby). */
-  .zone-card::before,
-  .zone-card::after {
-    content: '';
-    position: absolute;
-    width: 22px;
-    height: 22px;
-    pointer-events: none;
-  }
-  .zone-card::before {
-    top: -6px;
-    left: -6px;
-    border-top: 4px solid currentColor;
-    border-left: 4px solid currentColor;
-  }
-  .zone-card::after {
-    bottom: -6px;
-    right: -6px;
-    border-bottom: 4px solid currentColor;
-    border-right: 4px solid currentColor;
   }
 
   .zone-copy--hero .zone-card {
-    border-color: var(--saturn-yellow);
     color: var(--saturn-yellow);
+    box-shadow: inset 0 0 0 2px var(--saturn-yellow), 0 0 22px rgba(255, 210, 63, 0.14);
   }
 
   .zone-copy--hero .zone-card {
@@ -602,12 +602,12 @@ import Base from '../layouts/Base.astro';
     border-bottom: 1px solid #1e293b;
     padding-bottom: 0.5rem;
   }
-  /* First chip of the topline becomes an arcade header tile (M.S.B.S. style). */
+  /* First chip of the topline becomes an arcade header tile, corner-cut. */
   .zone-topline > .pixel-font:first-child {
     background: var(--saturn-yellow);
-    color: #000;
-    padding: 3px 8px 2px;
-    box-shadow: 2px 2px 0 #000;
+    color: #05070a;
+    padding: 3px 10px 2px;
+    clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
   }
 
   .zone-title {
@@ -628,8 +628,8 @@ import Base from '../layouts/Base.astro';
     align-self: flex-start;
     padding: 3px 10px 2px;
     background: var(--saturn-yellow);
-    color: #000;
-    box-shadow: 2px 2px 0 #000;
+    color: #05070a;
+    clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
   }
 
   .zone-lead {
@@ -696,9 +696,8 @@ import Base from '../layouts/Base.astro';
     color: var(--radar-green);
   }
 
-  /* Primary "JUGAR" CTA: a coin-slot block that reads as an arcade control
-     panel rather than a generic link. Icon + label + trailing arrow, hard
-     industrial shadow, sub-300ms ease-out motion. */
+  /* Primary "JUGAR" CTA: coin-slot block with cyberpunk corner-cut geometry
+     (ref: cyberpunk-ui cp-btn--cut), glow on hover, snap motion. */
   .play-cta {
     display: inline-flex;
     align-items: center;
@@ -707,19 +706,17 @@ import Base from '../layouts/Base.astro';
     padding: 0.85rem 1.1rem;
     background: var(--arcade-red);
     color: #fff;
-    border: 2px solid #000;
-    box-shadow: 5px 5px 0 #000;
+    clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+    box-shadow: inset 0 0 0 2px #ff2a55, inset 0 0 0 4px #05070a;
     text-decoration: none;
     transition:
       transform 0.12s var(--ease-out),
-      box-shadow 0.12s var(--ease-out),
-      background-color 0.14s ease;
+      filter 0.14s ease;
   }
   @media (hover: hover) and (pointer: fine) {
     .play-cta:hover {
       transform: translate(-2px, -2px);
-      box-shadow: 8px 8px 0 #000;
-      background: #ff3b63;
+      filter: drop-shadow(0 0 14px rgba(255, 42, 85, 0.55)) brightness(1.1);
     }
     .play-cta:hover .play-cta__arrow {
       transform: translateX(5px);
@@ -729,8 +726,7 @@ import Base from '../layouts/Base.astro';
     }
   }
   .play-cta:active {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0 #000;
+    transform: translateY(1px);
   }
   .play-cta:focus-visible {
     outline: 2px solid var(--holo-cyan);

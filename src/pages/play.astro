@@ -105,17 +105,22 @@ import Base from '../layouts/Base.astro';
     gap: 4px;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: #10f57a;
     text-decoration: none;
-    padding: 6px 8px;
-    border: 1px solid #10f57a;
-    transition: background-color 0.14s ease, color 0.14s ease;
+    padding: 6px 10px;
+    background: color-mix(in oklab, #10f57a 10%, transparent);
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    box-shadow: inset 0 0 0 1px #10f57a;
+    transition: background-color 150ms var(--ease-out, ease-out), color 150ms var(--ease-out, ease-out),
+      box-shadow 200ms var(--ease-out, ease-out);
   }
   @media (hover: hover) and (pointer: fine) {
     .play-home:hover {
       background: #10f57a;
-      color: #000;
+      color: #05070a;
+      box-shadow: inset 0 0 0 1px #10f57a, 0 0 12px rgba(16, 245, 122, 0.5);
     }
   }
   .play-home:focus-visible {
@@ -123,21 +128,24 @@ import Base from '../layouts/Base.astro';
     outline-offset: 2px;
   }
 
-  /* Fullscreen button — square, neon, pixel/mono */
+  /* Fullscreen button — cyberpunk corner-cut (ref: cyberpunk-ui cp-btn--cut) */
   .fs-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     min-height: 32px;
-    padding: 6px 10px;
-    background: #0b1928;
+    padding: 6px 12px;
+    background: color-mix(in oklab, #00f0ff 10%, transparent);
     color: #00f0ff;
-    border: 2px solid #00f0ff;
-    box-shadow: 3px 3px 0 #000;
+    border: 0;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    box-shadow: inset 0 0 0 1.5px #00f0ff;
     cursor: pointer;
-    transition: transform 0.12s cubic-bezier(0.23, 1, 0.32, 1),
-      box-shadow 0.12s cubic-bezier(0.23, 1, 0.32, 1),
-      background-color 0.14s ease, color 0.14s ease;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: background-color 150ms var(--ease-out, ease-out), color 150ms var(--ease-out, ease-out),
+      box-shadow 200ms var(--ease-out, ease-out), transform 120ms var(--ease-out, ease-out);
   }
   .fs-icon {
     font-size: 15px;
@@ -151,14 +159,12 @@ import Base from '../layouts/Base.astro';
   @media (hover: hover) and (pointer: fine) {
     .fs-btn:hover {
       background: #00f0ff;
-      color: #000;
-      transform: translate(-1px, -1px);
-      box-shadow: 4px 4px 0 #000;
+      color: #05070a;
+      box-shadow: inset 0 0 0 1.5px #00f0ff, 0 0 12px rgba(0, 240, 255, 0.5);
     }
   }
   .fs-btn:active {
-    transform: translate(2px, 2px) scale(0.98);
-    box-shadow: 1px 1px 0 #000;
+    transform: translateY(1px);
   }
   .fs-btn:focus-visible {
     outline: 2px solid #ffd23f;
@@ -166,8 +172,8 @@ import Base from '../layouts/Base.astro';
   }
   .fs-btn[aria-pressed='true'] {
     background: #ffd23f;
-    color: #000;
-    border-color: #ffd23f;
+    color: #05070a;
+    box-shadow: inset 0 0 0 1.5px #ffd23f, 0 0 12px rgba(255, 210, 63, 0.5);
   }
 
   #game-root {
@@ -211,7 +217,8 @@ import Base from '../layouts/Base.astro';
     padding: 8px 12px;
     border: 1px solid #14324a;
     background: #05070a;
-    box-shadow: 4px 4px 0 #000;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    box-shadow: inset 0 0 0 1px rgba(20, 50, 74, 0.8);
     font-size: 12px;
     letter-spacing: 0.04em;
     color: #7fb8dd;
@@ -223,20 +230,26 @@ import Base from '../layouts/Base.astro';
   }
   .net-copy {
     flex: 0 0 auto;
-    padding: 4px 8px;
+    padding: 4px 10px;
     font-size: 10px;
-    letter-spacing: 0.06em;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: #ffd23f;
-    background: transparent;
-    border: 1px solid #ffd23f;
+    background: color-mix(in oklab, #ffd23f 10%, transparent);
+    border: 0;
+    clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+    box-shadow: inset 0 0 0 1px #ffd23f;
     cursor: pointer;
+    transition: background-color 150ms ease-out, color 150ms ease-out, box-shadow 200ms ease-out;
   }
   .net-copy[hidden] {
     display: none;
   }
   .net-copy:hover {
     background: #ffd23f;
-    color: #000;
+    color: #05070a;
+    box-shadow: inset 0 0 0 1px #ffd23f, 0 0 12px rgba(255, 210, 63, 0.5);
   }
 
   /* Persistent room banner (net mode): code + copy-link, top-right over the canvas. */
@@ -248,9 +261,9 @@ import Base from '../layouts/Base.astro';
     align-items: center;
     gap: 8px;
     padding: 7px 10px;
-    border: 2px solid #ffd23f;
     background: #05070a;
-    box-shadow: 4px 4px 0 #000;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    box-shadow: inset 0 0 0 1.5px #ffd23f, 0 0 12px rgba(255, 210, 63, 0.2);
     z-index: 30;
   }
   .room-banner[hidden] {
@@ -288,8 +301,8 @@ import Base from '../layouts/Base.astro';
     gap: 12px;
     padding: 22px 26px;
     background: #05070a;
-    border: 2px solid #ffd23f;
-    box-shadow: 6px 6px 0 #000;
+    clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+    box-shadow: inset 0 0 0 2px #ffd23f, 0 0 18px rgba(255, 210, 63, 0.18);
   }
   .name-editor__tag {
     font-size: 10px;
@@ -306,12 +319,14 @@ import Base from '../layouts/Base.astro';
     text-transform: uppercase;
     color: #fff;
     background: #0b1928;
-    border: 2px solid #00f0ff;
+    border: 0;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    box-shadow: inset 0 0 0 1.5px #00f0ff;
     outline: none;
     caret-color: #ffd23f;
   }
   .name-editor__input:focus {
-    box-shadow: 3px 3px 0 #000, 0 0 0 2px #ffd23f inset;
+    box-shadow: inset 0 0 0 1.5px #00f0ff, inset 0 0 0 3px #ffd23f;
   }
 
   @media (prefers-reduced-motion: reduce) {
