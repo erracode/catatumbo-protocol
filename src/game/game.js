@@ -3177,6 +3177,7 @@ const drawHud = (s, time) => {
   let card = '';
   let ne = ['', ''];
   let press = '';
+  ui.press.setPosition(W / 2, 520);
   ui.sel.forEach((t) => setT(t, ''));
   ui.roC.forEach((t) => setT(t, ''));
   ui.roN.forEach((t) => setT(t, ''));
@@ -3237,16 +3238,12 @@ const drawHud = (s, time) => {
     const l = net.readLobby();
     g.fS(0x01060a, 0.97);
     g.fR(0, 0, W, H);
-    // Split screen: green grid left (my seat), red grid right (rival seat).
+    // Split screen: my seat's grid fills the full width; the rival half is a red overlay.
     g.fS(0x02070c, 0.55);
-    g.fillRect(0, 0, W / 2, H);
+    g.fR(0, 0, W / 2, H);
     crtGrid(g, net.seat ? C_cpu : C_p1);
-    g.save();
-    g.translateCanvas(W / 2, 0);
-    crtGrid(g, net.seat ? C_p1 : C_cpu);
-    g.restore();
-    g.lS(3, C_gold, 0.9);
-    g.lB(W / 2 - 1, 0, W / 2 + 1, H);
+    g.fS(0x12030a, 0.55);
+    g.fR(W / 2, 0, W / 2, H);
     big = 'SALA';
     big2 = 'VS';
     tint(ui.big, C_gold);
@@ -3259,11 +3256,15 @@ const drawHud = (s, time) => {
       const cx = k ? 590 : 210;
       const col = k ? C_cpu : C_p1;
       const gw = k ? s.gWire2 : s.gWire;
-      // Seat panel frame.
+      // Seat panel frame with arcade corner brackets.
       g.lS(2, mech >= 0 ? C_gold : col, joined ? 1 : 0.35);
       g.sR(cx - 150, 160, 300, 210);
       g.lS(1, col, 0.3);
       g.sR(cx - 142, 168, 284, 194);
+      g.lS(4, mech >= 0 ? C_gold : col, joined ? 1 : 0.6);
+      [[-150, -8, 26, 0], [150, -8, -26, 0], [-150, 8, 26, 0], [150, 8, -26, 0]].forEach((b) => {
+        g.lB(cx + b[0], 160 + b[1], cx + b[0] + b[2], 160 + b[1]);
+      });
       gw.clear();
       if (mech >= 0) {
         // Locked-in: colored wireframe of the chosen machine.
@@ -3281,15 +3282,23 @@ const drawHud = (s, time) => {
       setT(ui.sel[k], mech >= 0 ? MECHS[mech].n : joined ? 'ELIGIENDO...' : 'ESPERANDO...');
       tint(ui.sel[k], mech >= 0 ? hex(MECHS[mech].p[1]) : '#c8ccd8');
       ui.sel[k].setPosition(cx, 386);
-      setT(ui.roC[k], k === my ? 'PLAYER ' + (k + 1) + ' (TU)' : 'PLAYER ' + (k + 1));
-      tint(ui.roC[k], col);
-      ui.roC[k].setPosition(cx, 148);
+      // Pilot tag on a slab, M.S.B.S. header style.
+      drawLabelSlab(g, cx - 86, 137, 172, 20, col, k === my);
+      setT(ui.roC[k], k === my ? 'PLAYER ' + (k + 1) + ' — TU' : 'PLAYER ' + (k + 1));
+      tint(ui.roC[k], '#ffffff');
+      ui.roC[k].setPosition(cx, 147);
     });
-    // Room code + status card.
+    // Room code, big and gold: the share moment of the lobby.
+    press = 'SALA ' + (net.roomCode || '----');
+    ui.press.setPosition(W / 2, 448);
     const both = s.mj[0] >= 0 && s.mj[1] >= 0;
-    card = both ? 'PREPARANDO COMBATE...' : 'A/D: MAQUINA   U: LISTO   I: SALIR   SALA ' + (net.roomCode || '???');
-    ui.card.setY(500);
+    const oppJoined = l && l['seat-' + (1 - my)] && l['seat-' + (1 - my)].joined;
+    if (both) card = 'PREPARANDO COMBATE...';
+    else if (!oppJoined) card = blinkOn ? 'COMPARTE EL LINK PARA INVITAR' : '';
+    else card = 'A/D: MAQUINA   U: LISTO   I: SALIR';
+    ui.card.setY(505);
     tint(ui.card, both ? C_gold : C_grid);
+    tint(ui.press, C_gold);
   } else if (!play) {
     g.fS(0x01060a, 0.96);
     g.fR(0, 0, W, H);

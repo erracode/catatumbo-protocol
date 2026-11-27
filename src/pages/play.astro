@@ -28,6 +28,11 @@ import Base from '../layouts/Base.astro';
       <span id="net-status-text" class="mono-font"></span>
       <button type="button" id="net-copy" class="net-copy pixel-font" hidden>COPIAR LINK</button>
     </div>
+    <div id="room-banner" class="room-banner" hidden>
+      <span class="room-banner__tag pixel-font">SALA</span>
+      <span id="room-code" class="room-banner__code mono-font"></span>
+      <button type="button" id="room-copy" class="net-copy pixel-font">COPIAR LINK</button>
+    </div>
   </main>
 </Base>
 
@@ -217,6 +222,35 @@ import Base from '../layouts/Base.astro';
     color: #000;
   }
 
+  /* Persistent room banner (net mode): code + copy-link, top-right over the canvas. */
+  .room-banner {
+    position: fixed;
+    top: 46px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border: 2px solid #ffd23f;
+    background: #05070a;
+    box-shadow: 4px 4px 0 #000;
+    z-index: 30;
+  }
+  .room-banner[hidden] {
+    display: none;
+  }
+  .room-banner__tag {
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: #ffd23f;
+  }
+  .room-banner__code {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.12em;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .fs-btn,
     .play-home {
@@ -230,7 +264,11 @@ import Base from '../layouts/Base.astro';
   import { sfxBlip } from '../game/ui-sfx.ts';
 
   const params = new URLSearchParams(location.search);
-  const initialMode = params.get('mode') === 'net' ? 'net' : 'cpu';
+  // A shared invite link carries the room code in query (?r=) or hash (#r=):
+  // those links must boot straight into net mode even without ?mode=net.
+  const hashParams = new URLSearchParams(location.hash.replace(/^#/, ''));
+  const hasRoom = !!(params.get('r') || hashParams.get('r'));
+  const initialMode = params.get('mode') === 'net' || hasRoom ? 'net' : 'cpu';
   const debugMode = params.get('debug') === '1';
 
   // Arcade click feedback on DOM buttons (works without any asset).
@@ -351,9 +389,25 @@ import Base from '../layouts/Base.astro';
       try {
         const { createNetSession } = await import('../game/net.js');
         const net = await withTimeout(createNetSession({}), 15000);
-        inviteUrl = `${location.origin}/play?mode=net&gameId=${params.get('gameId') || ''}&r=${net.roomCode}`;
-        setStatus(`SALA ${net.roomCode} — ESPERANDO RIVAL`);
-        await net.waitForOpponent();
+        // Invite link keeps the canonical code (no display prefix).
+        inviteUrl = `${location.origin}/play/?mode=net&r=${net.roomCode}`;
+        // Persistent room banner: code + copy link, visible during lobby and match.
+        const banner = document.getElementById('room-banner');
+        const codeEl = document.getElementById('room-code');
+        const roomCopy = document.getElementById('room-copy');
+        if (codeEl) codeEl.textContent = net.roomCode || '????';
+        if (banner) banner.hidden = false;
+        roomCopy?.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(inviteUrl);
+            if (roomCopy) roomCopy.textContent = '¡COPIADO!';
+            setTimeout(() => {
+              if (roomCopy) roomCopy.textContent = 'COPIAR LINK';
+            }, 1600);
+          } catch {
+            if (codeEl) codeEl.textContent = inviteUrl;
+          }
+        });
         setStatus('');
         mount({ mode: 'net', net, myIndex: net.seat, onMode: requestMode, debug: debugMode });
       } catch (err: any) {

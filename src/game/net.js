@@ -51,11 +51,16 @@ const STATE_START = 'cp:start';
 const DEFAULT_GAME_ID = '9zfQpYpu1MrPWjldLTfD';
 
 export async function createNetSession({ gameId, roomCode } = {}) {
-  const id = gameId || new URLSearchParams(location.search).get('gameId') || DEFAULT_GAME_ID;
-  const code = roomCode || new URLSearchParams(location.search).get('r') || undefined;
+  const params = new URLSearchParams(location.search);
+  // Playroom writes the room code into the URL hash (`#r=RCODE`); accept both
+  // query (?r=) and hash (#r=), stripping Playroom's display prefix `R`.
+  const hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+  const id = gameId || params.get('gameId') || hash.get('gameId') || DEFAULT_GAME_ID;
+  const code = roomCode || params.get('r') || hash.get('r') || undefined;
+  const codeClean = code ? code.replace(/^R/, '') : undefined;
 
   // skipLobby: we run our own minimal flow (no profile needed for a duel).
-  await insertCoin({ gameId: id, roomCode: code, skipLobby: true, maxPlayersPerRoom: 2 });
+  await insertCoin({ gameId: id, roomCode: codeClean, skipLobby: true, maxPlayersPerRoom: 2 });
 
   const host = isHost();
   const seat = host ? 0 : 1;
