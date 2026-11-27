@@ -41,7 +41,7 @@ const makeStorage = () => {
 // `myIndex` is which global unit index the LOCAL human controls (0 in CPU mode; in net
 // mode it is the player's seat). The camera and radial menu anchor to this unit, so
 // each client sees its own mecha up front without mirroring world coordinates.
-const BOOT = { ai: null, storage: makeStorage(), mode: 'cpu', myIndex: 0, net: null, debug: false, onMode: null };
+const BOOT = { ai: null, storage: makeStorage(), mode: 'cpu', myIndex: 0, net: null, debug: false, onMode: null, onNameEdit: null };
 
 const W = 800;
 const H = 600;
@@ -2218,6 +2218,11 @@ const handleInput = (s, time) => {
       }
       const confirmed = s.mj[net.seat] >= 0;
       const n = MECHS.length;
+      // O (P1_3) opens the DOM name editor; the page wires BOOT.onNameEdit.
+      if (consumePressed(c, 'P1_3') && BOOT.onNameEdit) {
+        BOOT.onNameEdit();
+        return clearPressed(c);
+      }
       if (!confirmed) {
         if (R) s.mi = (s.mi + 1) % n;
         if (L) s.mi = (s.mi + n - 1) % n;
@@ -3282,9 +3287,9 @@ const drawHud = (s, time) => {
       setT(ui.sel[k], mech >= 0 ? MECHS[mech].n : joined ? 'ELIGIENDO...' : 'ESPERANDO...');
       tint(ui.sel[k], mech >= 0 ? hex(MECHS[mech].p[1]) : '#c8ccd8');
       ui.sel[k].setPosition(cx, 386);
-      // Pilot tag on a slab, M.S.B.S. header style.
+      // Pilot tag on a slab, M.S.B.S. header style: live usernames.
       drawLabelSlab(g, cx - 86, 137, 172, 20, col, k === my);
-      setT(ui.roC[k], k === my ? 'PLAYER ' + (k + 1) + ' — TU' : 'PLAYER ' + (k + 1));
+      setT(ui.roC[k], (k === my ? net.nameOf(k) + ' (TU)' : net.nameOf(k)).slice(0, 14));
       tint(ui.roC[k], '#ffffff');
       ui.roC[k].setPosition(cx, 147);
     });
@@ -3295,7 +3300,7 @@ const drawHud = (s, time) => {
     const oppJoined = l && l['seat-' + (1 - my)] && l['seat-' + (1 - my)].joined;
     if (both) card = 'PREPARANDO COMBATE...';
     else if (!oppJoined) card = blinkOn ? 'COMPARTE EL LINK PARA INVITAR' : '';
-    else card = 'A/D: MAQUINA   U: LISTO   I: SALIR';
+    else card = 'A/D: MAQUINA   U: LISTO   O: NOMBRE   I: SALIR';
     ui.card.setY(505);
     tint(ui.card, both ? C_gold : C_grid);
     tint(ui.press, C_gold);
@@ -3340,26 +3345,45 @@ const drawHud = (s, time) => {
     ui.card.setY(500);
     tint(ui.card, C_grid);
   } else if (intro) {
-    // NEXT ENEMY briefing: CRT grid, spinning wireframe of the rival machine
-    // (same roster entry the stage uses), spec column centred like M.S.B.S.
+    // VS briefing (M.S.B.S. style): your machine left, the stage rival right,
+    // mirrored wireframes over opposing CRT grids, mission line below.
     g.fS(0x01060a, 0.97);
     g.fR(0, 0, W, H);
+    // Opposing half-plates: cyan wash left, rival-tinted wash right.
+    g.fS(0x020e12, 0.5);
+    g.fR(0, 0, W / 2, H);
+    g.fS(0x12030a, 0.5);
+    g.fR(W / 2, 0, W / 2, H);
     crtGrid(g, C_p1);
-    g.fS(C_cpu, 1);
-    g.fillTriangle(122, 38, 122, 66, 138, 52);
-    g.fillTriangle(678, 38, 678, 66, 662, 52);
     const m = MECHS[(s.j - 1) % MECHS.length];
     const c = toIso(0, 0);
-    s.gWire.setScale(2.4);
-    s.gWire.setPosition(230 - c.x * 2.4, 480 - c.y * 2.4);
-    drawMecha(s.gWire, 0, 0, DIR_KEYS[M_floor(time / 450) % 4], C_cpu, 1, 0, 0, S_IDLE, 0, 1, m.p);
     const n = s.j;
+    // Left wireframe: the player's machine, cyan-tinted panel.
+    s.gWire.setScale(1.7);
+    s.gWire.setPosition(200 - c.x * 1.7, 380 - c.y * 1.7);
+    drawMecha(s.gWire, 0, 0, DIR_KEYS[M_floor(time / 520) % 4], C_p1, 1, 0, 0, S_IDLE, 0, 1, MECHS[s.mi || 0].p);
+    // Right wireframe: the stage rival on its own Graphics.
+    s.gWire2.clear();
+    s.gWire2.setScale(1.7);
+    s.gWire2.setPosition(600 - c.x * 1.7, 380 - c.y * 1.7);
+    drawMecha(s.gWire2, 0, 0, DIR_KEYS[M_floor(time / 450) % 4], C_cpu, 1, 0, 0, S_IDLE, 0, 1, m.p);
     big = 'PROXIMO RIVAL';
-    big2 = m.n;
-    tint(ui.big, m.p[1]);
-    ui.big.setY(52).setScale(0.8);
-    ui.big2.setPosition(560, 205);
-    ne = ['UNIDAD ' + m.c + ' LV' + n, n > 5 ? 'MISION FINAL' : n + 'A MISION'];
+    big2 = 'VS';
+    tint(ui.big, C_gold);
+    ui.big.setY(52).setScale(0.72);
+    ui.big2.setPosition(W / 2, 205);
+    tint(ui.big2, C_gold);
+    setT(ui.sel[0], MECHS[s.mi || 0].n);
+    tint(ui.sel[0], C_p1);
+    ui.sel[0].setPosition(200, 425);
+    setT(ui.sel[1], m.n);
+    tint(ui.sel[1], hex(m.p[1]));
+    ui.sel[1].setPosition(600, 425);
+    ne = ['', n > 5 ? 'MISION FINAL' : n + 'A MISION'];
+    ui.ne[0].setPosition(W / 2, 470);
+    tint(ui.ne[0], C_grid);
+    ui.ne[1].setPosition(W / 2, 505);
+    tint(ui.ne[1], C_gold);
   } else if (s.ph === 'over') {
     // Winner is stored as a seat ('p1'/'cpu'); online it must be compared against my seat.
     const o = s.q.v;
@@ -3410,6 +3434,7 @@ export function bootGame(opts = {}) {
   if (opts.myIndex !== undefined) BOOT.myIndex = opts.myIndex;
   if (opts.debug !== undefined) BOOT.debug = opts.debug;
   if (opts.onMode) BOOT.onMode = opts.onMode;
+  if (opts.onNameEdit) BOOT.onNameEdit = opts.onNameEdit;
   BOOT.ai = opts.ai || (BOOT.mode === 'net' ? null : CpuController);
   if (opts.parent) config.parent = opts.parent;
   return new Phaser.Game(config);

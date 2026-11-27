@@ -36,6 +36,7 @@ import {
   setState,
   waitForState,
   onPlayerJoin,
+  myPlayer,
   RPC,
 } from 'playroomkit';
 
@@ -197,7 +198,43 @@ export async function createNetSession({ gameId, roomCode } = {}) {
 
     // Confirm our machine pick in the lobby and (as host) decide when to start.
     async confirmMech(mechIdx) {
-      publishLobby('seat-' + seat, { joined: true, mech: mechIdx });
+      publishLobby('seat-' + seat, { joined: true, mech: mechIdx, name: api.myName });
+    },
+
+    // --- Usernames ---
+    // Playroom stores the profile in each player's own state (`profile` key).
+    // We publish our name into the lobby slot too (works regardless of host
+    // mirroring timing) and keep the raw PlayerState for live re-reads.
+    myName: '',
+    players: {},
+
+    // Track both seats' PlayerStates so getProfile() can be polled live.
+    trackPlayers() {
+      onPlayerJoin((p) => {
+        api.players[p.id] = p;
+      });
+    },
+
+    // Set our display name (1-12 chars, sanitized) and re-publish the lobby slot.
+    setName(raw) {
+      const v = String(raw || '').toUpperCase().replace(/[^A-Z0-9 _.-]/g, '').slice(0, 12);
+      api.myName = v || 'PILOTO';
+      try {
+        myPlayer().setState('profile', { name: api.myName });
+      } catch (e) {}
+      publishLobby('seat-' + seat, {
+        joined: true,
+        mech: (getState(STATE_LOBBY) || {})['seat-' + seat]?.mech ?? -1,
+        name: api.myName,
+      });
+      return api.myName;
+    },
+
+    // Display name for a seat: lobby slot (host-mirrored) first, fallback P1/P2.
+    nameOf(idx) {
+      const slot = (getState(STATE_LOBBY) || {})['seat-' + idx];
+      if (slot && slot.name) return slot.name;
+      return ['P1', 'P2'][idx] || 'PILOTO';
     },
 
     // Host: bump the shared start signal once both seats confirmed.
@@ -273,8 +310,15 @@ export async function createNetSession({ gameId, roomCode } = {}) {
     },
   };
 
-  // Announce our seat in the lobby as soon as the session exists.
-  publishLobby('seat-' + seat, { joined: true, mech: -1 });
+  // Track PlayerStates (for live profile reads) and announce our seat with any
+  // callsign the player saved previously (localStorage, set by the name editor).
+  api.trackPlayers();
+  let savedName = '';
+  try {
+    savedName = localStorage.getItem('cp:callsign') || '';
+  } catch (e) {}
+  api.setName(savedName);
+  publishLobby('seat-' + seat, { joined: true, mech: -1, name: api.myName });
 
   return api;
 }

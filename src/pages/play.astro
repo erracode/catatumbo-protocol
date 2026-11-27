@@ -33,6 +33,23 @@ import Base from '../layouts/Base.astro';
       <span id="room-code" class="room-banner__code mono-font"></span>
       <button type="button" id="room-copy" class="net-copy pixel-font">COPIAR LINK</button>
     </div>
+    <div id="name-editor" class="name-editor" hidden>
+      <div class="name-editor__panel">
+        <span class="name-editor__tag pixel-font">CALLSIGN</span>
+        <input
+          id="name-input"
+          class="name-editor__input mono-font"
+          maxlength="12"
+          placeholder="PILOTO"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Tu callsign"
+        />
+        <div class="name-editor__actions">
+          <button type="button" id="name-save" class="fs-btn pixel-font">GUARDAR</button>
+        </div>
+      </div>
+    </div>
   </main>
 </Base>
 
@@ -251,6 +268,52 @@ import Base from '../layouts/Base.astro';
     letter-spacing: 0.12em;
   }
 
+  /* Callsign editor overlay (net lobby): chunky arcade plate. */
+  .name-editor {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #02060bc9;
+    z-index: 40;
+  }
+  .name-editor[hidden] {
+    display: none;
+  }
+  .name-editor__panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 22px 26px;
+    background: #05070a;
+    border: 2px solid #ffd23f;
+    box-shadow: 6px 6px 0 #000;
+  }
+  .name-editor__tag {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: #ffd23f;
+  }
+  .name-editor__input {
+    width: 240px;
+    padding: 10px 12px;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-align: center;
+    text-transform: uppercase;
+    color: #fff;
+    background: #0b1928;
+    border: 2px solid #00f0ff;
+    outline: none;
+    caret-color: #ffd23f;
+  }
+  .name-editor__input:focus {
+    box-shadow: 3px 3px 0 #000, 0 0 0 2px #ffd23f inset;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .fs-btn,
     .play-home {
@@ -275,6 +338,47 @@ import Base from '../layouts/Base.astro';
   document.getElementById('fs-toggle')?.addEventListener('click', () => sfxBlip(true));
   document.getElementById('net-copy')?.addEventListener('click', () => sfxBlip(true));
   document.querySelector('.play-home')?.addEventListener('click', () => sfxBlip(false));
+
+  // ---- Callsign editor (opened with O from the net lobby) ----
+  const nameEditor = document.getElementById('name-editor');
+  const nameInput = document.getElementById('name-input') as HTMLInputElement | null;
+  const nameSave = document.getElementById('name-save');
+  let nameSession: any = null; // active net session, set on mount opts
+
+  function openNameEditor() {
+    if (!nameEditor || !nameInput) return;
+    nameInput.value = localStorage.getItem('cp:callsign') || '';
+    nameEditor.hidden = false;
+    nameInput.focus();
+    nameInput.select();
+  }
+
+  function closeNameEditor() {
+    if (nameEditor) nameEditor.hidden = true;
+    // Return focus to the canvas so WASD/Enter keep driving the lobby.
+    (document.querySelector('canvas') as HTMLCanvasElement | null)?.focus?.();
+  }
+
+  async function saveName() {
+    const v = (nameInput?.value || '').trim().toUpperCase().slice(0, 12);
+    try {
+      localStorage.setItem('cp:callsign', v);
+    } catch {}
+    sfxBlip(true);
+    if (nameSession?.setName) await nameSession.setName(v);
+    closeNameEditor();
+  }
+
+  nameSave?.addEventListener('click', saveName);
+  nameInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') saveName();
+    if (e.key === 'Escape') closeNameEditor();
+    e.stopPropagation(); // keep keystrokes out of the game input pump
+  });
+  nameEditor?.addEventListener('click', (e) => {
+    if (e.target === nameEditor) closeNameEditor();
+  });
+
   const statusEl = document.getElementById('net-status');
   const statusText = document.getElementById('net-status-text');
   const copyBtn = document.getElementById('net-copy') as HTMLButtonElement | null;
@@ -409,7 +513,8 @@ import Base from '../layouts/Base.astro';
           }
         });
         setStatus('');
-        mount({ mode: 'net', net, myIndex: net.seat, onMode: requestMode, debug: debugMode });
+        nameSession = net;
+        mount({ mode: 'net', net, myIndex: net.seat, onMode: requestMode, onNameEdit: openNameEditor, debug: debugMode });
       } catch (err: any) {
         console.error(err);
         setStatus('MULTIJUGADOR NO DISPONIBLE — MODO CPU');
