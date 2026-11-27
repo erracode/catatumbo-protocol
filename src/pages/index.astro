@@ -126,7 +126,7 @@ import Base from '../layouts/Base.astro';
       <!-- STOP 04a — ESQUINA INTERIOR TAPA (ORIGEN / HISTORIA) -->
       <article class="zone-copy zone-copy--left" data-stop="3">
         <div class="zone-card">
-          <div class="zone-label pixel-font text-[11px] text-[#FFD23F]">ORIGEN</div>
+          <div class="zone-label pixel-font text-[11px]">ORIGEN</div>
           <h2 class="zone-title">¿POR QUÉ EL CATATUMBO?</h2>
           <p class="zone-body">
             Una carta de amor al arcade japonés de los 90 —los <em>Cyber Troopers</em> de Virtual-On,
@@ -149,7 +149,7 @@ import Base from '../layouts/Base.astro';
       <!-- STOP 04b — MANUAL INTERIOR (CÓMO SE HIZO) -->
       <article class="zone-copy zone-copy--right" data-stop="4">
         <div class="zone-card">
-          <div class="zone-label pixel-font text-[11px] text-[#00F0FF]">CÓMO SE HIZO</div>
+          <div class="zone-label pixel-font text-[11px]">CÓMO SE HIZO</div>
           <h2 class="zone-title">INGENIERÍA EN UN ARCHIVO</h2>
           <p class="zone-body">
             El reto no fue diseñar el juego: fue que <strong>arte, sonido y netcode</strong> vivieran en
@@ -170,7 +170,7 @@ import Base from '../layouts/Base.astro';
       <!-- STOP 04c — CD SUPERFICIE (MÚSICA) -->
       <article class="zone-copy zone-copy--left" data-stop="5">
         <div class="zone-card">
-          <div class="zone-label pixel-font text-[11px] text-[#FFD23F]">BANDA SONORA</div>
+          <div class="zone-label pixel-font text-[11px]">BANDA SONORA</div>
           <h2 class="zone-title">"COQUIVACOA STEEL"</h2>
           <p class="zone-body">
             El corazón venezolano: una <strong>gaita zuliana cruzada con techno</strong>. La gaita
@@ -192,7 +192,7 @@ import Base from '../layouts/Base.astro';
       <!-- STOP 04d — CENTRO DEL CD (GAMEPLAY + CTA) -->
       <article class="zone-copy zone-copy--left" data-stop="6">
         <div class="zone-card">
-          <div class="zone-label pixel-font text-[11px] text-[#00F0FF]">GAMEPLAY</div>
+          <div class="zone-label pixel-font text-[11px]">GAMEPLAY</div>
           <h2 class="zone-title">CÓMO SE JUEGA</h2>
           <p class="zone-lead">
             Duelo <strong>1v1 por turnos simultáneos</strong> en tablero isométrico. Elegís sin ver la
@@ -570,6 +570,35 @@ import Base from '../layouts/Base.astro';
     gap: 0.7rem;
     scrollbar-width: thin;
     scrollbar-color: #00f0ff #05070a;
+    position: relative;
+    color: var(--holo-cyan);
+  }
+
+  /* Arcade corner brackets (same language as the in-game VS lobby). */
+  .zone-card::before,
+  .zone-card::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    pointer-events: none;
+  }
+  .zone-card::before {
+    top: -6px;
+    left: -6px;
+    border-top: 4px solid currentColor;
+    border-left: 4px solid currentColor;
+  }
+  .zone-card::after {
+    bottom: -6px;
+    right: -6px;
+    border-bottom: 4px solid currentColor;
+    border-right: 4px solid currentColor;
+  }
+
+  .zone-copy--hero .zone-card {
+    border-color: var(--saturn-yellow);
+    color: var(--saturn-yellow);
   }
 
   .zone-copy--hero .zone-card {
@@ -585,6 +614,13 @@ import Base from '../layouts/Base.astro';
     border-bottom: 1px solid #1e293b;
     padding-bottom: 0.5rem;
   }
+  /* First chip of the topline becomes an arcade header tile (M.S.B.S. style). */
+  .zone-topline > .pixel-font:first-child {
+    background: var(--saturn-yellow);
+    color: #000;
+    padding: 3px 8px 2px;
+    box-shadow: 2px 2px 0 #000;
+  }
 
   .zone-title {
     font-family: 'Space Grotesk', sans-serif;
@@ -598,7 +634,15 @@ import Base from '../layouts/Base.astro';
     text-wrap: balance;
   }
 
-  .zone-label { letter-spacing: 0.18em; }
+  .zone-label {
+    letter-spacing: 0.18em;
+    display: inline-block;
+    align-self: flex-start;
+    padding: 3px 10px 2px;
+    background: var(--saturn-yellow);
+    color: #000;
+    box-shadow: 2px 2px 0 #000;
+  }
 
   .zone-lead {
     font-size: 1rem;
